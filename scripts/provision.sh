@@ -281,7 +281,16 @@ echo "==> Configuring SEO (Rank Math titles/sitemap/robots, per-page meta, Redir
 # imported attachments. Idempotent + re-runnable. The JSON-LD + geo-meta + PWA
 # manifest layer itself lives in the 10-buckleup-seo.php / 11-buckleup-pwa.php
 # mu-plugins (always-on); this step only writes the Rank Math + Redirection options.
-wp_eval /scripts/wp/seo-config.php
+#
+# seo-config.php self-verifies and exits non-zero if Rank Math didn't engage
+# (wizard flag / titles missing). A fresh-activation race can leave Rank Math not
+# fully loaded on the first pass, so run it and RETRY ONCE on failure — this is
+# the reproducibility fix for the "Rank Math dormant after make reset" regression.
+# The end-of-provision verify gate is the final backstop either way.
+if ! wp eval-file /scripts/wp/seo-config.php; then
+  echo "    SEO config first pass failed (Rank Math may not have been ready) — retrying once..."
+  wp eval-file /scripts/wp/seo-config.php || echo "    WARNING: SEO config still failing — the verify gate below will catch it."
+fi
 
 echo "==> Flushing rewrite + page cache + Rank Math sitemap cache..."
 wp rewrite flush --hard
@@ -334,6 +343,25 @@ verify_out="$(wp eval '
   } else {
     echo "ok graduate: {$grad}" . ( $grad_min ? " (>= {$grad_min})" : " (live feed not staged this run)" ) . "\n";
   }
+
+  // --- SEO backstop: Rank Math per-page meta must be ACTIVE + reproducible. ---
+  // seo-config.php runs above with a retry-once, but its own WP_CLI::error only
+  // aborts that sub-shell — so this gate is the authoritative check that fails a
+  // make reset if Rank Math still went dormant (empty titles / wizard flag lost /
+  // per-page meta missing). Mirrors the HIGH regression where every page fell
+  // back to the WP-default <title>.
+  $rm_titles = (array) get_option( "rank_math_titles", array() );
+  $rm_wizard = (bool) get_option( "rank_math_wizard_completed" );
+  if ( ! $rm_wizard ) { echo "MISMATCH rank_math: wizard_completed not set (frontend head dormant)\n"; $fail = 1; }
+  elseif ( empty( $rm_titles["homepage_title"] ) || empty( $rm_titles["pt_page_title"] ) ) {
+    echo "MISMATCH rank_math: titles option empty (run seo-config.php)\n"; $fail = 1;
+  } else { echo "ok rank_math: wizard complete, titles populated (" . count( $rm_titles ) . " keys)\n"; }
+  // A representative inner page must carry its configured per-page title meta.
+  $about = get_page_by_path( "about" );
+  $about_title = $about ? (string) get_post_meta( $about->ID, "rank_math_title", true ) : "";
+  if ( "" === $about_title ) { echo "MISMATCH rank_math: /about has no rank_math_title meta (per-page SEO dead)\n"; $fail = 1; }
+  else { echo "ok rank_math: /about per-page title present\n"; }
+
   echo $fail ? "VERIFY_FAIL\n" : "VERIFY_OK\n";
 ' 2>&1)"
 echo "$verify_out" | sed 's/^/    /'

@@ -62,14 +62,19 @@ function buckleup_seo_logo_url() {
 	if ( '' === $url ) {
 		$url = (string) get_site_icon_url( 512 );
 	}
-	if ( '' === $url ) {
-		$url = BUCKLEUP_SEO_BASE_URL . '/wp-content/uploads/logo.png';
-	}
 
-	// Normalise dev/apex host → canonical www origin.
-	$home = home_url();
-	if ( $home && 0 === strpos( $url, $home ) ) {
-		$url = BUCKLEUP_SEO_BASE_URL . substr( $url, strlen( $home ) );
+	// IMPORTANT: emit the logo/image on the SAME host that is serving the page,
+	// i.e. the real, always-fetchable attachment URL — do NOT force it onto the
+	// www origin. The dev upload path (e.g. /uploads/2026/06/logo.png) exists on
+	// the serving host but NOT at that exact path on production, so www-forcing it
+	// makes the schema logo 403/404 for any crawler/validator (the HIGH-bug item
+	// (b)). A crawler fetching the live page at www.buckleupdriving.ca already
+	// gets a same-origin (www) attachment URL here; a validator hitting the dev
+	// host gets the dev URL — both resolve 200. schema.org accepts an absolute
+	// URL on the serving host.
+	if ( '' === $url ) {
+		// Last-resort default: a conventional, host-relative-on-serving-host path.
+		$url = home_url( '/wp-content/uploads/logo.png' );
 	}
 	return $url;
 }

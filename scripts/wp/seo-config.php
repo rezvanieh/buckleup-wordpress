@@ -448,8 +448,15 @@ if ( $missing ) {
  * 5. Redirection plugin — legacy URL-parity 301s + 404 logging.
  *    apex→www is handled at the server/nginx level (and by canonical), but we
  *    seed defensive in-app 301s so a few legacy/variant paths still resolve.
+ *
+ *    Wrapped in try/catch: this is the riskiest part of the script (it
+ *    instantiates Red_Database and runs DDL). The Rank Math config above is
+ *    ALREADY persisted by this point, so even if Redirection throws, the
+ *    critical per-page SEO output survives — a Redirection hiccup must never be
+ *    able to leave Rank Math dormant (the HIGH bug this task fixes).
  * ====================================================================== */
 
+try {
 if ( class_exists( 'Red_Item' ) && class_exists( 'Red_Group' ) ) {
 
 	// Ensure ALL of Redirection's DB tables exist. The plugin only creates them
@@ -567,9 +574,54 @@ if ( class_exists( 'Red_Item' ) && class_exists( 'Red_Group' ) ) {
 } else {
 	WP_CLI::log( '     Redirection plugin not active yet — skipping parity rules (re-run after activation).' );
 }
+} catch ( \Throwable $e ) {
+	// Never let a Redirection failure abort the SEO config — the Rank Math
+	// per-page meta (set above) is what matters most and is already saved.
+	WP_CLI::warning( '     Redirection setup threw (' . $e->getMessage() . ') — continuing; Rank Math config is already persisted.' );
+}
 
 /* =========================================================================
- * 6. Force the canonical home/siteurl note + flush.
+ * 6. Reload Rank Math's module registry + verify the critical config stuck.
+ * ====================================================================== */
+
+// Force Rank Math to drop any cached module/option state so the front-end head
+// engages on the very next request without needing a container restart. Safe
+// no-ops if the methods/classes aren't present in this RM version.
+if ( function_exists( 'rank_math' ) ) {
+	wp_cache_delete( 'rank_math_modules', 'options' );
+	wp_cache_delete( 'rank_math_titles', 'options' );
+	if ( class_exists( 'RankMath\\Helper' ) && method_exists( 'RankMath\\Helper', 'clear_cache' ) ) {
+		RankMath\Helper::clear_cache();
+	}
+}
+
+// HARD VERIFICATION GATE: re-read the options and fail LOUDLY if the critical
+// Rank Math config didn't persist. provision.sh runs this via wp_eval, which
+// swallows errors — so a silent failure here would otherwise ship a site with
+// dead per-page meta (the exact HIGH regression). WP_CLI::error exits non-zero.
+$verify_titles = (array) get_option( 'rank_math_titles', array() );
+$verify_wizard = (bool) get_option( 'rank_math_wizard_completed' );
+$verify_mods   = (array) get_option( 'rank_math_modules', array() );
+$problems      = array();
+if ( ! $verify_wizard ) {
+	$problems[] = 'rank_math_wizard_completed is not set';
+}
+if ( empty( $verify_titles['homepage_title'] ) ) {
+	$problems[] = 'rank_math_titles.homepage_title is empty';
+}
+if ( empty( $verify_titles['pt_page_title'] ) ) {
+	$problems[] = 'rank_math_titles.pt_page_title is empty';
+}
+if ( in_array( 'redirections', $verify_mods, true ) ) {
+	$problems[] = 'rank_math redirections module is still ON (should be OFF)';
+}
+if ( $problems ) {
+	WP_CLI::error( 'SEO config verification FAILED: ' . implode( '; ', $problems ) . '. Re-run /scripts/wp/seo-config.php after Rank Math is active.' );
+}
+WP_CLI::log( '     VERIFIED: Rank Math wizard complete, titles populated (' . count( $verify_titles ) . ' keys), redirections module off.' );
+
+/* =========================================================================
+ * 7. Flush rewrite rules.
  * ====================================================================== */
 
 // NOTE: we deliberately do NOT change home/siteurl to the production www URL in
