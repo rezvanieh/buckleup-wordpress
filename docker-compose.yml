@@ -73,9 +73,10 @@ services:
         define('WPMS_ON', true);
     volumes:
       - wp-core:/var/www/html
-      # Version-controlled theme + plugin bind-mounted over the volume
+      # Version-controlled theme + plugins bind-mounted over the volume
       - ./wp-content/themes/buckleup:/var/www/html/wp-content/themes/buckleup
       - ./wp-content/plugins/buckleup-core:/var/www/html/wp-content/plugins/buckleup-core
+      - ./wp-content/plugins/buckleup-app:/var/www/html/wp-content/plugins/buckleup-app
       # mu-plugin to force SMTP -> Mailpit (no UI config needed)
       - ./docker/wordpress/mu-plugins:/var/www/html/wp-content/mu-plugins
     networks: [buckleup]
@@ -91,6 +92,7 @@ services:
       - wp-core:/var/www/html:ro
       - ./wp-content/themes/buckleup:/var/www/html/wp-content/themes/buckleup:ro
       - ./wp-content/plugins/buckleup-core:/var/www/html/wp-content/plugins/buckleup-core:ro
+      - ./wp-content/plugins/buckleup-app:/var/www/html/wp-content/plugins/buckleup-app:ro
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
     networks: [buckleup]
 
@@ -136,6 +138,7 @@ services:
       - wp-core:/var/www/html
       - ./wp-content/themes/buckleup:/var/www/html/wp-content/themes/buckleup
       - ./wp-content/plugins/buckleup-core:/var/www/html/wp-content/plugins/buckleup-core
+      - ./wp-content/plugins/buckleup-app:/var/www/html/wp-content/plugins/buckleup-app
       # mu-plugins: same code surface as the web container, so `wp eval` sees the
       # SEO/PWA mu-plugin helpers (e.g. sitemap cache invalidation) the CLI calls.
       - ./docker/wordpress/mu-plugins:/var/www/html/wp-content/mu-plugins

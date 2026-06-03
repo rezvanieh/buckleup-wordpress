@@ -137,6 +137,13 @@ echo "==> Activating the buckleup-core plugin (registers CPTs/meta the seeds wri
 # below no-ops and the site comes up empty. Must run BEFORE the seed steps.
 wp plugin activate buckleup-core || echo "    WARNING: plugin 'buckleup-core' not found — CPT seeds will be skipped."
 
+echo "==> Activating the buckleup-app plugin (consoles: roles + bu_* tables via dbDelta)..."
+# Activates AFTER buckleup-core. Its activation hook runs dbDelta to create the
+# console tables (bookings/availability/exceptions/lesson_progress/reviews) and
+# registers the student/instructor/admin roles. No-op-safe if the plugin isn't
+# present yet (it's built under a separate task); guarded so it can't abort provision.
+wp plugin activate buckleup-app || echo "    (plugin 'buckleup-app' not present yet — consoles tables/roles skipped this run.)"
+
 echo "==> Activating the BuckleUp theme..."
 wp theme activate buckleup || echo "    WARNING: theme 'buckleup' not found — build it first."
 
@@ -233,6 +240,14 @@ if [ -d "$SOURCE_PUBLIC_DIR" ]; then
       cp -f "$SOURCE_PUBLIC_DIR/images/$f" "$STAGE_DIR/$f"
     fi
   done
+  # /about Mission photo: no dedicated source asset, so use the owner-with-car
+  # driving photo, staged under about-mission.png (import-media forces its slug to
+  # "about-mission" for the theme's lookup). Source is public/images/owner_withcar.
+  if [ -f "$SOURCE_PUBLIC_DIR/images/owner_withcar.png" ]; then
+    cp -f "$SOURCE_PUBLIC_DIR/images/owner_withcar.png" "$STAGE_DIR/about-mission.png"
+  elif [ -f "$SOURCE_PUBLIC_DIR/owner_withcar.png" ]; then
+    cp -f "$SOURCE_PUBLIC_DIR/owner_withcar.png" "$STAGE_DIR/about-mission.png"
+  fi
   echo "    staged $(ls -1 "$STAGE_DIR" 2>/dev/null | wc -l | tr -d ' ') file(s) into $STAGE_DIR"
 else
   echo "    SOURCE_PUBLIC_DIR not found ($SOURCE_PUBLIC_DIR) — skipping media staging."
@@ -387,6 +402,29 @@ verify_out="$(wp eval '
   $about_title = $about ? (string) get_post_meta( $about->ID, "rank_math_title", true ) : "";
   if ( "" === $about_title ) { echo "MISMATCH rank_math: /about has no rank_math_title meta (per-page SEO dead)\n"; $fail = 1; }
   else { echo "ok rank_math: /about per-page title present\n"; }
+
+  // --- CONSOLES backstop (only when buckleup-app is active) ---
+  // The consoles plugin creates its bu_* tables (dbDelta on activation) + the 3
+  // roles. Assert both came online so a reset cannot ship a console with missing
+  // tables/roles. Skipped (not failed) when the plugin is not present yet.
+  if ( in_array( "buckleup-app/buckleup-app.php", (array) get_option( "active_plugins", array() ), true ) ) {
+    global $wpdb;
+    $missing_tbl = array();
+    foreach ( array( "bu_bookings", "bu_availability", "bu_availability_exceptions", "bu_lesson_progress", "bu_reviews" ) as $t ) {
+      $full = $wpdb->prefix . $t;
+      if ( $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $full ) ) !== $full ) { $missing_tbl[] = $t; }
+    }
+    if ( $missing_tbl ) { echo "MISMATCH consoles tables: missing " . implode( ", ", $missing_tbl ) . "\n"; $fail = 1; }
+    else { echo "ok consoles tables: 5 bu_* tables present\n"; }
+    $missing_role = array();
+    foreach ( array( "buckleup_student", "buckleup_instructor", "buckleup_admin" ) as $r ) {
+      if ( null === get_role( $r ) ) { $missing_role[] = $r; }
+    }
+    if ( $missing_role ) { echo "MISMATCH consoles roles: missing " . implode( ", ", $missing_role ) . "\n"; $fail = 1; }
+    else { echo "ok consoles roles: student/instructor/admin present\n"; }
+  } else {
+    echo "ok consoles: buckleup-app not active (skipped)\n";
+  }
 
   echo $fail ? "VERIFY_FAIL\n" : "VERIFY_OK\n";
 ' 2>&1)"

@@ -75,6 +75,10 @@ $wanted = array(
 	'hero_card_image.png'   => 'BuckleUp hero card',
 	'farhad-instructor.jpg' => 'Farhad Sanaeifar — Senior Instructor',
 	'owner_withcar.png'     => 'BuckleUp owner with car',
+	// Dedicated /about Mission section photo (theme resolves it by slug
+	// "about-mission"; staged from owner_withcar in provision.sh). The explicit
+	// post_name is forced below so buckleup_asset_url('about-mission') resolves.
+	'about-mission.png'     => 'BuckleUp Driving School Mission — modern training fleet',
 	'icon-16x16.png'        => 'BuckleUp icon 16',
 	'icon-32x32.png'        => 'BuckleUp icon 32',
 	'icon-192x192.png'      => 'BuckleUp icon 192',
@@ -117,13 +121,23 @@ if ( ! empty( $ids['farhad-instructor.jpg'] ) && post_type_exists( 'instructor' 
 	}
 }
 
-/* owner_withcar is the /about Mission section image (theme adds the <img> and
- * resolves it via buckleup_asset_url('owner_withcar.png') -> slug
- * 'buckleup-owner-with-car'). Keep the short title (stable slug) but give it a
- * descriptive, Mission-appropriate alt for a11y/SEO. */
+/* owner_withcar — kept with a descriptive, Mission-appropriate alt for a11y/SEO. */
 if ( ! empty( $ids['owner_withcar.png'] ) ) {
 	update_post_meta( $ids['owner_withcar.png'], '_wp_attachment_image_alt',
 		'BuckleUp Driving School instructor with a training vehicle in Metro Vancouver' );
+}
+
+/* /about Mission photo: force the attachment slug to exactly "about-mission" so
+ * the theme's buckleup_asset_url('about-mission') / slug lookup resolves it (its
+ * derived slug would otherwise be the long title). Set the descriptive alt too. */
+if ( ! empty( $ids['about-mission.png'] ) ) {
+	$mission_id = $ids['about-mission.png'];
+	$cur = get_post_field( 'post_name', $mission_id );
+	if ( 'about-mission' !== $cur ) {
+		wp_update_post( array( 'ID' => $mission_id, 'post_name' => 'about-mission' ) );
+	}
+	update_post_meta( $mission_id, '_wp_attachment_image_alt',
+		'BuckleUp Driving School Mission — modern training fleet in Metro Vancouver' );
 }
 
 WP_CLI::success( 'Brand media imported (logos, hero, icons) + Site Icon + logo theme mods set.' );
