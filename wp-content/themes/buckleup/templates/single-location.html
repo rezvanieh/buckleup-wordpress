@@ -1,0 +1,24 @@
+<!-- wp:template-part {"slug":"header","tagName":"div"} /-->
+
+<!-- wp:group {"tagName":"main","layout":{"type":"default"}} -->
+<main class="wp-block-group">
+  <!-- Per-city hero (title/highlight/subtitle from the location CPT meta) -->
+  <!-- wp:buckleup/section {"name":"location-hero"} /-->
+
+  <!-- Optional per-city body copy from post_content -->
+  <!-- wp:group {"tagName":"section","layout":{"type":"constrained"},"className":"py-12 md:py-16"} -->
+  <section class="wp-block-group has-global-padding py-12 md:py-16">
+    <!-- wp:post-content {"layout":{"type":"constrained"},"className":"prose prose-lg max-w-none"} /-->
+  </section>
+  <!-- /wp:group -->
+
+  <!-- Shared conversion rail: Graduates → Pricing → Testimonials → FAQ
+       (FAQPage schema also lands here per the SEO mu-plugin) -->
+  <!-- wp:buckleup/section {"name":"home-graduates"} /-->
+  <!-- wp:buckleup/section {"name":"home-pricing"} /-->
+  <!-- wp:buckleup/section {"name":"home-testimonials"} /-->
+  <!-- wp:buckleup/section {"name":"home-faq"} /-->
+</main>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","tagName":"div"} /-->

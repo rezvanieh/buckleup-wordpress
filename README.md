@@ -7,7 +7,7 @@ Custom WordPress theme + plugin rebuild of the BuckleUp Driving School site
 
 ```bash
 cp .env.example .env
-make up           # start db, redis, wordpress, nginx, adminer, mailpit
+make up           # start db, wordpress, nginx, adminer, mailpit
 make provision    # install WP, theme, plugins, roles, users, seed data
 make build-assets # compile theme CSS/JS (Vite + Tailwind v4)
 ```

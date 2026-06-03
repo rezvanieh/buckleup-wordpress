@@ -1,0 +1,33 @@
+<!--
+  Tailwind purge-survival fixture.
+
+  This file is NOT shipped or rendered. It exists so the Tailwind v4 content
+  scanner sees the hardest arbitrary-value / custom-breakpoint utilities the
+  design system relies on, guaranteeing they survive purge in the compiled
+  bundle. `tests/verify-purge.mjs` greps build/assets/app.*.css for each of the
+  hero classes named in PLAN.md §7 (the "Tailwind v4 arbitrary classes" risk).
+
+  As real templates/parts/patterns are added (Tasks #2/#3), they become the live
+  source for these classes; this fixture is the belt-and-suspenders backstop and
+  the canonical list the verify script asserts on. Keep the data-purge-check
+  tokens below in sync with verify-purge.mjs.
+-->
+<div class="hidden" aria-hidden="true" data-purge-check>
+  <!-- Hero type scale (PLAN §3 responsive parity) -->
+  <h1 class="text-5xl md:text-7xl lg:text-[5.5rem] xl:text-[6.5rem] tracking-tighter leading-[0.95]">x</h1>
+
+  <!-- Ambient glow blobs behind the hero (PLAN §7) -->
+  <span class="blur-[120px] blur-[100px] opacity-30"></span>
+
+  <!-- Glass card surfaces use fractional alpha not on Tailwind's default scale -->
+  <div class="bg-card/98 bg-card/85 bg-background/80 border-border/50"></div>
+
+  <!-- Focus + selection rings -->
+  <button class="ring-[3px] ring-ring/50 ring-offset-2"></button>
+
+  <!-- Custom desktop-nav breakpoint (scroll-shrink h-32 -> h-16) -->
+  <nav class="min-[1100px]:h-32 min-[1100px]:h-16 min-[1100px]:flex hidden"></nav>
+
+  <!-- Misc arbitrary values used across sections -->
+  <div class="w-[200%] h-[200%] -translate-x-[100%] rotate-[30deg] [animation-delay:0.05s]"></div>
+</div>

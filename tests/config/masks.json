@@ -1,0 +1,21 @@
+{
+  "_comment": "Dynamic-region masking + per-page visual thresholds for the pixelmatch runner. A 'mask' is a list of CSS selectors painted over (filled flat) on BOTH sites before diffing, so legitimately non-deterministic content (which graduate photos exist, which testimonials/recent-blog posts surface, rendered relative dates) does not register as a parity failure. We match a stable data-* hook FIRST (the WP theme SHOULD emit [data-graduates]/[data-testimonials]/[data-recent-blogs]/[data-mask='date'] on these sections — reported to the team lead, not yet in the theme data-contract), falling back to id/class/href + <time> selectors that also work on the live Next site so the baseline can be captured today.",
+
+  "maskGroups": {
+    "graduates":    ["[data-mask='graduates']",    "[data-graduates]",    "#graduates",    "[id*='graduate' i]"],
+    "testimonials": ["[data-mask='testimonials']", "[data-testimonials]", "#testimonials", "[id*='testimonial' i]"],
+    "recent-blogs": ["[data-mask='recent-blogs']", "[data-recent-blogs]", "[class*='recent-blog' i]", "footer [href*='/blog/']"],
+    "dates":        ["[data-mask='date']",         "time",                "[datetime]"]
+  },
+
+  "_thresholdNote": "maxDiffPixelRatio is the share of total pixels allowed to differ (0.0-1.0) after anti-alias-tolerant comparison. Tighter on text-heavy static pages, looser where masking is imperfect or large media dominates. `pixelmatchThreshold` (0-1) is pixelmatch's per-pixel color-distance tolerance; 0.1 ignores sub-perceptual AA noise. These are STARTING values — Task #9 will tune them against the real WP build and record any change here with a one-line reason.",
+  "defaultThreshold": { "pixelmatchThreshold": 0.1, "maxDiffPixelRatio": 0.02 },
+
+  "perPage": {
+    "home":         { "maxDiffPixelRatio": 0.05, "reason": "hero gradient/glow + masked graduates+testimonials+recent-blogs; most dynamic page" },
+    "blog-index":   { "maxDiffPixelRatio": 0.04, "reason": "post grid order/excerpts + masked dates" },
+    "blog-post":    { "maxDiffPixelRatio": 0.04, "reason": "prose reflow tolerance + masked date/recent-blogs" },
+    "instructors":  { "maxDiffPixelRatio": 0.03, "reason": "instructor photos" },
+    "resources-icbc": { "maxDiffPixelRatio": 0.04, "reason": "long-form article reflow tolerance" }
+  }
+}

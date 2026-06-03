@@ -1,0 +1,85 @@
+{
+  "_comment": "Semantic SEO ground-truth. Values under `liveObserved` were captured from https://www.buckleupdriving.ca on 2026-06-03 and are what the live-baseline snapshot is checked against (regression guard on the golden master itself). Values under `businessFacts` are the canonical NAP/schema facts the WP build MUST reproduce verbatim (per PLAN.md §4). `intendedDivergences` are the three places the WP build is REQUIRED to differ from live — these are PASS conditions, not failures, and surface in the Parity Matrix as EXPECTED.",
+
+  "businessFacts": {
+    "name": "BuckleUp Driving School",
+    "alternateName": "BuckleUp Driving School Ltd",
+    "telephone": "+1-604-441-3677",
+    "telephoneDisplay": "(604) 441-3677",
+    "whatsapp": "16044413677",
+    "email": "info@buckleupdriving.ca",
+    "address": {
+      "streetAddress": "136 Maple Dr",
+      "addressLocality": "Port Moody",
+      "addressRegion": "BC",
+      "postalCode": "V3H 0A8",
+      "addressCountry": "CA"
+    },
+    "geo": { "latitude": 49.2838, "longitude": -122.8556 },
+    "geoMeta": { "region": "CA-BC", "placename": "Port Moody", "position": "49.2838;-122.8556", "icbm": "49.2838, -122.8556" },
+    "openingHours": { "opens": "09:00", "closes": "18:00", "days": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"] },
+    "foundingDate": "2014",
+    "aggregateRating": { "ratingValue": "4.98", "reviewCount": "500", "bestRating": "5", "worstRating": "1" },
+    "priceRange": "$$",
+    "priceMin": 100,
+    "priceMax": 620,
+    "packages": [
+      { "name": "Single Session", "price": 100 },
+      { "name": "4 Sessions",     "price": 360 },
+      { "name": "6 Sessions",     "price": 480, "popular": true },
+      { "name": "8 Sessions",     "price": 620 }
+    ],
+    "paymentAccepted": ["Cash", "Credit Card", "E-Transfer"],
+    "schemaTypes": ["LocalBusiness", "EducationalOrganization", "DrivingSchool"],
+    "faqCount": 14,
+    "social": {
+      "instagram": "budrivingschool",
+      "facebook": "DriveMasterca"
+    }
+  },
+
+  "liveObserved": {
+    "capturedAt": "2026-06-03",
+    "home": {
+      "title": "Best Driving School Vancouver | BuckleUp Driving School",
+      "canonical": "https://www.buckleupdriving.ca",
+      "robots": "index, follow",
+      "jsonLdBlocks": ["LocalBusiness/EducationalOrganization/DrivingSchool", "FAQPage(14)"],
+      "ogType": "website",
+      "ogSiteName": "BuckleUp Driving School"
+    },
+    "sitemapUrlCount": 3,
+    "sitemapUrls": [
+      "https://www.buckleupdriving.ca",
+      "https://www.buckleupdriving.ca/about",
+      "https://www.buckleupdriving.ca/contact"
+    ]
+  },
+
+  "intendedDivergences": {
+    "_note": "Three deliberate SEO fixes in the WP build. The semantic-diff script ASSERTS these hold on the WP build and reports them as EXPECTED in the matrix — a WP page that matched the live BUG would be the failure.",
+    "self-canonicals": {
+      "description": "Every WP page emits its OWN absolute canonical. Live BUG: /locations/* and /blog/* inherit the homepage canonical (https://www.buckleupdriving.ca); /about & /services self-canonical but on the APEX host.",
+      "liveBugExamples": {
+        "/locations/coquitlam": "https://www.buckleupdriving.ca",
+        "/blog/winter-driving-bc-essential-safety-tips": "https://www.buckleupdriving.ca",
+        "/about": "https://buckleupdriving.ca/about"
+      },
+      "wpExpected": "self-referential canonical equal to the page's own www URL, e.g. https://www.buckleupdriving.ca/locations/coquitlam"
+    },
+    "www-standardization": {
+      "description": "All WP URLs (canonical, OG, sitemap, JSON-LD url/logo/image) use the www host and apex 301-redirects to www.",
+      "liveBugExamples": {
+        "jsonLd.url": "https://buckleupdriving.ca",
+        "jsonLd.logo": "https://buckleupdriving.ca/logo.png",
+        "canonical./about": "https://buckleupdriving.ca/about"
+      },
+      "wpExpected": "https://www.buckleupdriving.ca everywhere; apex returns 301 to www"
+    },
+    "complete-sitemap": {
+      "description": "WP sitemap lists ALL public URLs + CPTs + posts.",
+      "liveBug": "sitemap.xml lists only 3 URLs (/, /about, /contact)",
+      "wpExpectedMinUrls": 14
+    }
+  }
+}
