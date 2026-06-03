@@ -204,8 +204,14 @@ for r in rows:
 print(f"    staged {ok} graduate image(s) into {stage}")
 PY
   wp_eval /scripts/wp/seed-graduates.php
+elif [ -s "$GRAD_STAGE/manifest.json" ] && ls "$GRAD_STAGE"/*.jpeg >/dev/null 2>&1; then
+  # Live feed unreachable, but a previous run already staged the manifest + images
+  # into wp-data/graduates (a host bind mount that survives `down -v`). Re-import
+  # from that so a clean make reset still yields the full graduates while offline.
+  echo "    live feed unreachable — re-importing from the persisted staging dir ($(ls -1 "$GRAD_STAGE"/*.jpeg 2>/dev/null | wc -l | tr -d ' ') image(s))."
+  wp_eval /scripts/wp/seed-graduates.php
 else
-  echo "    live graduates feed unreachable ($GRADUATES_API_URL) — skipping graduate migration."
+  echo "    live graduates feed unreachable ($GRADUATES_API_URL) and no staged copy — skipping graduate migration."
   echo "    (Drop a manifest.json + images into $GRAD_STAGE manually to seed offline.)"
 fi
 
@@ -343,6 +349,26 @@ verify_out="$(wp eval '
   } else {
     echo "ok graduate: {$grad}" . ( $grad_min ? " (>= {$grad_min})" : " (live feed not staged this run)" ) . "\n";
   }
+
+  // --- MEDIA backstop: a reset must re-import ALL media, not land media-light. ---
+  // (Concurrent resets / a missing SOURCE_PUBLIC_DIR / an unreachable graduates
+  // feed could otherwise leave the instance with empty brand URLs + no thumbnails
+  // yet still pass the content gate. Assert the media is fully populated.)
+  $att = (int) wp_count_posts( "attachment" )->inherit;
+  if ( $att < 16 ) { echo "MISMATCH attachments: got {$att}, want >= 16 (brand media + blog cards + graduates)\n"; $fail = 1; }
+  else { echo "ok attachments: {$att}\n"; }
+  // Every published post must have a featured image (15/15).
+  $no_thumb = 0;
+  foreach ( get_posts( array( "post_type" => "post", "posts_per_page" => -1, "post_status" => "publish", "fields" => "ids" ) ) as $pid ) {
+    if ( ! get_post_thumbnail_id( $pid ) ) { $no_thumb++; }
+  }
+  if ( $no_thumb > 0 ) { echo "MISMATCH post thumbnails: {$no_thumb} post(s) missing a featured image\n"; $fail = 1; }
+  else { echo "ok post thumbnails: 15/15\n"; }
+  // The hero brand image must be in the Library AND resolve to an uploads URL.
+  $hero = get_posts( array( "post_type" => "attachment", "posts_per_page" => 1, "fields" => "ids", "meta_key" => "_bu_source_file", "meta_value" => "image2.png", "no_found_rows" => true ) );
+  $hero_url = $hero ? (string) wp_get_attachment_url( $hero[0] ) : "";
+  if ( "" === $hero_url || false === strpos( $hero_url, "/uploads/" ) ) { echo "MISMATCH brand media: image2 hero not imported / URL empty\n"; $fail = 1; }
+  else { echo "ok brand media: image2 hero resolves\n"; }
 
   // --- SEO backstop: Rank Math per-page meta must be ACTIVE + reproducible. ---
   // seo-config.php runs above with a retry-once, but its own WP_CLI::error only
