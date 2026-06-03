@@ -115,6 +115,12 @@ wp eval '
     ewww_image_optimizer_set_option( "ewww_image_optimizer_metadata_remove", true );
     ewww_image_optimizer_set_option( "ewww_image_optimizer_jpg_level", 10 );
     ewww_image_optimizer_set_option( "ewww_image_optimizer_png_level", 10 );
+    // CWV: resize oversized uploads on import + tune WebP/JPEG quality so the
+    // hero LCP payload stays small. 1920px max comfortably covers full-bleed.
+    ewww_image_optimizer_set_option( "ewww_image_optimizer_maxmediawidth", 1920 );
+    ewww_image_optimizer_set_option( "ewww_image_optimizer_maxmediaheight", 1920 );
+    ewww_image_optimizer_set_option( "ewww_image_optimizer_jpg_quality", 82 );
+    ewww_image_optimizer_set_option( "ewww_image_optimizer_webp_quality", 75 );
   }
 ' || echo "    (EWWW not active yet — settings will apply on next run.)"
 
@@ -242,6 +248,24 @@ echo "==> Assigning on-brand default featured images to posts (per category)..."
 # Runs AFTER media import (needs the brand images in the Library) + after the post
 # imports. Non-destructive: only fills posts with an empty _thumbnail_id.
 wp_eval /scripts/wp/assign-post-images.php
+
+echo "==> Optimizing images + generating WebP (EWWW bulk, via the web container)..."
+# CWV/LCP: generate WebP siblings + compress every Media Library image so the
+# theme's <picture>/preload serves next-gen WebP. EWWW's local binaries (cwebp,
+# optipng, jpegtran, …) live in the WEB image, NOT the wpcli runner — so this MUST
+# run via `docker compose exec wordpress`, not the wp() wpcli wrapper. Media is
+# imported through wpcli (no binaries), so auto-on-upload doesn't fire; this is the
+# explicit pass that makes the optimized WebP part of the reproducible build.
+if docker compose exec -T -u www-data wordpress sh -c 'command -v cwebp >/dev/null'; then
+  # --force so PNG cards + every size variant get a .webp sibling even if EWWW's
+  # table already marks them "done" (a plain run can skip PNG->WebP and leave the
+  # blog cards without webp). Safe + idempotent: re-encodes to the same output.
+  docker compose exec -T -u www-data wordpress wp ewwwio optimize media --force --noprompt --path=/var/www/html \
+    || echo "    (EWWW bulk-optimize reported an issue — continuing; re-run to retry)"
+else
+  echo "    cwebp not in the web container — skipping WebP generation."
+  echo "    (Rebuild the image: 'docker compose build wordpress' adds the EWWW binaries.)"
+fi
 
 echo "==> Configuring SEO (Rank Math titles/sitemap/robots, per-page meta, Redirection parity)..."
 # Runs AFTER content + media so per-page meta lands on the real pages/CPT posts
