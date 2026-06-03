@@ -121,12 +121,14 @@ wp eval '
     ewww_image_optimizer_set_option( "ewww_image_optimizer_maxmediaheight", 1920 );
     ewww_image_optimizer_set_option( "ewww_image_optimizer_jpg_quality", 82 );
     ewww_image_optimizer_set_option( "ewww_image_optimizer_webp_quality", 75 );
-    // Front-end WebP DELIVERY: rewrite img tags into picture+webp source with an
-    // original fallback, server-side. The Cache Enabler webp rewrite does not
-    // engage on this nginx+FPM stack (it caches nothing), so EWWW handles delivery.
-    // Verified clean: it wraps WP-generated images (post featured, cards, content)
-    // and skips the hand-built hero picture in the theme, so no double-wrap.
-    ewww_image_optimizer_set_option( "ewww_image_optimizer_webp_for_cdn", true );
+    // NOTE on front-end WebP DELIVERY: EWWWs HTML rewrite (webp_for_cdn /
+    // picture_webp) does NOT engage on this nginx + PHP-FPM + Cache-Enabler stack
+    // (its output-buffer parser never fires here), so we do NOT enable it — it
+    // would be misleading dead config. WebP GENERATION still runs (the .webp
+    // siblings exist for the theme hero picture/preload and any future CDN layer).
+    // The hero LCP is served as WebP by the theme (home-hero.php <picture> +
+    // preload). Content/featured-image WebP delivery, if wanted, is a theme-side
+    // the_post_thumbnail/wp_get_attachment_image <picture> filter (theme lane).
   }
 ' || echo "    (EWWW not active yet — settings will apply on next run.)"
 
