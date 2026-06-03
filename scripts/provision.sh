@@ -121,6 +121,12 @@ wp eval '
     ewww_image_optimizer_set_option( "ewww_image_optimizer_maxmediaheight", 1920 );
     ewww_image_optimizer_set_option( "ewww_image_optimizer_jpg_quality", 82 );
     ewww_image_optimizer_set_option( "ewww_image_optimizer_webp_quality", 75 );
+    // Front-end WebP DELIVERY: rewrite img tags into picture+webp source with an
+    // original fallback, server-side. The Cache Enabler webp rewrite does not
+    // engage on this nginx+FPM stack (it caches nothing), so EWWW handles delivery.
+    // Verified clean: it wraps WP-generated images (post featured, cards, content)
+    // and skips the hand-built hero picture in the theme, so no double-wrap.
+    ewww_image_optimizer_set_option( "ewww_image_optimizer_webp_for_cdn", true );
   }
 ' || echo "    (EWWW not active yet — settings will apply on next run.)"
 
