@@ -45,10 +45,28 @@ $graduates = function_exists( 'buckleup_get_graduates' ) ? buckleup_get_graduate
 						data-title="<?php echo esc_attr( $g['title'] ); ?>"
 						data-desc="<?php echo esc_attr( $g['description'] ); ?>"
 						class="group relative rounded-3xl overflow-hidden border border-border/40 bg-card cursor-pointer shadow-sm hover:shadow-2xl transition-all duration-700 hover:-translate-y-1 w-[260px] md:w-[340px] lg:w-[380px] flex-shrink-0 snap-start aspect-[4/5]">
-						<?php if ( $g['image'] ) : ?>
-							<img src="<?php echo esc_url( $g['image'] ); ?>" alt="<?php echo esc_attr( $g['title'] ); ?>"
-								class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" decoding="async">
-						<?php endif; ?>
+						<?php
+						// Prefer wp_get_attachment_image() so WP emits responsive srcset+sizes
+						// (mobile pulls a ~340px variant, not the full 768px) and EWWW can WebP
+						// it. Fall back to a raw <img> on the URL if the attachment id is absent.
+						$img_class = 'absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105';
+						if ( ! empty( $g['image_id'] ) ) {
+							echo wp_get_attachment_image( (int) $g['image_id'], 'large', false, array(
+								'class'    => $img_class,
+								'alt'      => $g['title'],
+								'loading'  => 'lazy',
+								'decoding' => 'async',
+								'sizes'    => '(min-width: 1024px) 380px, (min-width: 768px) 340px, 260px',
+							) );
+						} elseif ( $g['image'] ) {
+							printf(
+								'<img src="%s" alt="%s" class="%s" loading="lazy" decoding="async">',
+								esc_url( $g['image'] ),
+								esc_attr( $g['title'] ),
+								esc_attr( $img_class )
+							);
+						}
+						?>
 						<div class="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent"></div>
 						<div class="absolute bottom-0 left-0 right-0 p-5 text-left">
 							<div class="text-lg font-bold text-foreground"><?php echo esc_html( $g['title'] ); ?></div>

@@ -95,6 +95,29 @@ function buckleup_asset_url( string $filename ): string {
 }
 
 /**
+ * Return the optimized WebP sibling URL for a brand asset if EWWW produced one
+ * (it writes `<file>.webp` alongside the original), else ''. We serve next-gen
+ * WebP for the hero LCP via <picture>/preload because EWWW's front-end <img>
+ * rewrite isn't enabled on this nginx + Cache-Enabler stack.
+ *
+ * @param string $filename Source filename (same key as buckleup_asset_url()).
+ * @return string Absolute .webp URL, or '' if none.
+ */
+function buckleup_asset_webp_url( string $filename ): string {
+	$url = buckleup_asset_url( $filename );
+	if ( '' === $url ) {
+		return '';
+	}
+	// Map the URL back to its file path to check for the .webp sibling on disk.
+	$uploads = wp_get_upload_dir();
+	if ( empty( $uploads['baseurl'] ) || 0 !== strpos( $url, $uploads['baseurl'] ) ) {
+		return ''; // theme assets/ fallback — no EWWW webp there
+	}
+	$path = $uploads['basedir'] . substr( $url, strlen( $uploads['baseurl'] ) );
+	return file_exists( $path . '.webp' ) ? $url . '.webp' : '';
+}
+
+/**
  * Public primary-nav items (v1 marketing site). Services + Instructors are the
  * feature-flagged-on pages per PLAN §1. Locations is a dropdown built from the
  * location CPT so it stays in sync with content.

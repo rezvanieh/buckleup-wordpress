@@ -18,9 +18,10 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-$bg     = buckleup_asset_url( 'image2.png' );
-$card   = buckleup_asset_url( 'hero_card_image.png' );
-$farhad = buckleup_asset_url( 'farhad-instructor.jpg' );
+$bg      = buckleup_asset_url( 'image2.png' );
+$bg_webp = buckleup_asset_webp_url( 'image2.png' ); // optimized next-gen LCP source
+$card    = buckleup_asset_url( 'hero_card_image.png' );
+$farhad  = buckleup_asset_url( 'farhad-instructor.jpg' );
 
 $badges = array(
 	array( 'icon' => 'shield-check', 'text' => __( 'ICBC Certified', 'buckleup' ) ),
@@ -34,7 +35,12 @@ $badges = array(
 	<!-- Background image + overlays -->
 	<div class="absolute inset-0 z-0">
 		<?php if ( $bg ) : ?>
-			<img src="<?php echo esc_url( $bg ); ?>" alt="<?php esc_attr_e( 'Scenic winding road', 'buckleup' ); ?>" class="absolute inset-0 w-full h-full object-cover" fetchpriority="high" loading="eager" decoding="async">
+			<picture>
+				<?php if ( $bg_webp ) : ?>
+					<source srcset="<?php echo esc_url( $bg_webp ); ?>" type="image/webp">
+				<?php endif; ?>
+				<img src="<?php echo esc_url( $bg ); ?>" alt="<?php esc_attr_e( 'Scenic winding road', 'buckleup' ); ?>" class="absolute inset-0 w-full h-full object-cover" fetchpriority="high" loading="eager" decoding="async">
+			</picture>
 		<?php endif; ?>
 		<div class="absolute inset-0 bg-gradient-to-r from-background/90 via-background/40 to-background/10"></div>
 		<div class="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent"></div>

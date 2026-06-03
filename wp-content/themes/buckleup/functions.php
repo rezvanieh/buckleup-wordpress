@@ -17,6 +17,12 @@ require_once __DIR__ . '/inc/components-interactive.php';
 // Site chrome helpers (logo, nav, locations) + header/footer/section pattern
 // registration. Loaded after components so patterns can call those helpers.
 require_once __DIR__ . '/inc/site.php';
+// Front-end WebP <picture> wrapping for content images (post featured + body).
+// EWWW's webp_for_cdn/picture_webp rewrite is INERT on this nginx+FPM+Cache-Enabler
+// stack (confirmed by the content engineer; option reverted), so the theme owns
+// content-image WebP delivery deterministically. The hero LCP <picture>/preload is
+// separate (home-hero.php + the wp_head preload below).
+require_once __DIR__ . '/inc/webp.php';
 
 add_action( 'after_setup_theme', function () {
 	add_theme_support( 'wp-block-styles' );
@@ -64,12 +70,17 @@ add_action( 'wp_head', function () {
 
 	// Preload the hero background — it's the front page's LCP element (QA PERF-1).
 	// Front page only; the <img> itself is fetchpriority=high + loading=eager.
+	// Prefer the optimized WebP (~60KB) and tag the preload with type=image/webp so
+	// non-WebP browsers ignore it and fall back to the <picture> JPG (no double
+	// download). If no WebP exists, preload the (already resized) JPG.
 	if ( is_front_page() && function_exists( 'buckleup_asset_url' ) ) {
-		$hero = buckleup_asset_url( 'image2.png' );
+		$hero_webp = function_exists( 'buckleup_asset_webp_url' ) ? buckleup_asset_webp_url( 'image2.png' ) : '';
+		$hero      = $hero_webp ?: buckleup_asset_url( 'image2.png' );
 		if ( $hero ) {
 			printf(
-				'<link rel="preload" href="%s" as="image" fetchpriority="high">' . "\n",
-				esc_url( $hero )
+				'<link rel="preload" href="%s" as="image" fetchpriority="high"%s>' . "\n",
+				esc_url( $hero ),
+				$hero_webp ? ' type="image/webp"' : ''
 			);
 		}
 	}
