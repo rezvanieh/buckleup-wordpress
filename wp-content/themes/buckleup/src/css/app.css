@@ -1,0 +1,77 @@
+/* BuckleUp theme stylesheet — Tailwind v4 CSS-first entry.
+ * The design-system team ports globals.css here verbatim: the :root / .dark HSL
+ * channel tokens, .glass / .gradient-text / .glow-* utilities, keyframes, and the
+ * @theme inline bridge. This file establishes the pipeline; tokens below are the
+ * minimum so a build succeeds today. */
+
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Self-hosted Geist — woff2 files go in assets/fonts/ (see DEVELOPMENT.md). */
+@font-face {
+  font-family: "Geist";
+  src: url("../fonts/Geist-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Geist Mono";
+  src: url("../fonts/GeistMono-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+:root {
+  --font-geist-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-geist-mono: "Geist Mono", ui-monospace, monospace;
+  --radius: 0.75rem;
+
+  /* LIGHT — full token set is ported from source globals.css */
+  --background: 210 20% 98%;
+  --foreground: 222 47% 11%;
+  --primary: 217 91% 50%;
+  --primary-foreground: 0 0% 100%;
+  --accent: 160 84% 39%;
+  --accent-foreground: 0 0% 100%;
+  --card: 0 0% 100%;
+  --border: 214 32% 85%;
+  /* ... remaining light tokens ported by design team ... */
+}
+
+.dark {
+  /* DARK — note accent hue shifts 160 -> 142 (emerald -> lime) */
+  --background: 222 47% 6%;
+  --foreground: 210 40% 98%;
+  --primary: 217 91% 60%;
+  --primary-foreground: 222 47% 4%;
+  --accent: 142 71% 45%;
+  --accent-foreground: 222 47% 4%;
+  --card: 222 47% 9%;
+  --border: 217 33% 20%;
+  /* ... remaining dark tokens ported by design team ... */
+}
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-card: hsl(var(--card));
+  --color-border: hsl(var(--border));
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-geist-sans);
+  -webkit-font-smoothing: antialiased;
+}

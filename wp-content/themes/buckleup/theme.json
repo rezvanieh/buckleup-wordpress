@@ -1,0 +1,32 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "settings": {
+    "appearanceTools": true,
+    "useRootPaddingAwareAlignments": true,
+    "layout": { "contentSize": "768px", "wideSize": "1280px" },
+    "color": {
+      "custom": true,
+      "defaultPalette": false,
+      "palette": [
+        { "slug": "primary", "name": "Primary", "color": "hsl(217 91% 50%)" },
+        { "slug": "accent", "name": "Accent", "color": "hsl(160 84% 39%)" },
+        { "slug": "background", "name": "Background", "color": "hsl(210 20% 98%)" },
+        { "slug": "foreground", "name": "Foreground", "color": "hsl(222 47% 11%)" },
+        { "slug": "card", "name": "Card", "color": "hsl(0 0% 100%)" },
+        { "slug": "border", "name": "Border", "color": "hsl(214 32% 85%)" }
+      ]
+    },
+    "typography": {
+      "fluid": true,
+      "fontFamilies": [
+        { "slug": "geist", "name": "Geist", "fontFamily": "Geist, ui-sans-serif, system-ui, sans-serif" },
+        { "slug": "geist-mono", "name": "Geist Mono", "fontFamily": "\"Geist Mono\", ui-monospace, monospace" }
+      ]
+    }
+  },
+  "styles": {
+    "color": { "background": "hsl(210 20% 98%)", "text": "hsl(222 47% 11%)" },
+    "typography": { "fontFamily": "Geist, ui-sans-serif, system-ui, sans-serif" }
+  }
+}

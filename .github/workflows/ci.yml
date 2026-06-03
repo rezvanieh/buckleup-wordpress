@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  php-lint:
+    name: PHP lint (theme + plugin)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer
+      - name: Lint PHP files for syntax errors
+        run: |
+          find wp-content/themes/buckleup wp-content/plugins/buckleup-core scripts docker/wordpress/mu-plugins \
+            -name '*.php' -print0 | xargs -0 -n1 -P4 php -l
+
+  theme-build:
+    name: Build theme assets
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: wp-content/themes/buckleup
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: wp-content/themes/buckleup/package-lock.json
+      - run: npm ci || npm install
+      - run: npm run build
+      - name: Upload built assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: theme-build
+          path: wp-content/themes/buckleup/build
+
+  compose-validate:
+    name: Validate docker-compose
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Render & validate compose config
+        run: |
+          cp .env.example .env
+          docker compose config -q
+          echo "compose config OK"

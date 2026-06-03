@@ -1,0 +1,33 @@
+# Secrets & local config
+.env
+.env.local
+*.local
+
+# Built theme assets (rebuilt by Vite / CI)
+wp-content/themes/buckleup/build/
+wp-content/themes/buckleup/node_modules/
+
+# WordPress core + uploads are NOT versioned — only our theme & plugin are.
+# (WP core lives in the wp-core Docker volume; uploads are runtime data.)
+wp-content/uploads/
+wp-content/upgrade/
+wp-content/cache/
+wp-content/object-cache.php
+wp-content/advanced-cache.php
+wp-content/db.php
+
+# DB / data dumps
+wp-data/*.sql
+wp-data/media-import/
+*.sqlite
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Logs
+*.log
+debug.log
