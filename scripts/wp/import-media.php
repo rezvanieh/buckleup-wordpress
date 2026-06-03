@@ -117,4 +117,13 @@ if ( ! empty( $ids['farhad-instructor.jpg'] ) && post_type_exists( 'instructor' 
 	}
 }
 
+/* owner_withcar is the /about Mission section image (theme adds the <img> and
+ * resolves it via buckleup_asset_url('owner_withcar.png') -> slug
+ * 'buckleup-owner-with-car'). Keep the short title (stable slug) but give it a
+ * descriptive, Mission-appropriate alt for a11y/SEO. */
+if ( ! empty( $ids['owner_withcar.png'] ) ) {
+	update_post_meta( $ids['owner_withcar.png'], '_wp_attachment_image_alt',
+		'BuckleUp Driving School instructor with a training vehicle in Metro Vancouver' );
+}
+
 WP_CLI::success( 'Brand media imported (logos, hero, icons) + Site Icon + logo theme mods set.' );

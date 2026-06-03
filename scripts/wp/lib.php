@@ -113,4 +113,22 @@ if ( ! function_exists( 'bu_find_post' ) ) {
 	function bu_strip_leading_h1( $html ) {
 		return preg_replace( '/^\s*<h1\b[^>]*>.*?<\/h1>\s*/is', '', $html, 1 );
 	}
+
+	/**
+	 * Resolve the blog-post byline author (the admin user), and ensure its display
+	 * name is "Admin User" to match the live site's byline. Idempotent. Returns the
+	 * user ID (falls back to the first admin, then 1, so import never fails on this).
+	 */
+	function bu_post_author_id() {
+		$user = get_user_by( 'login', defined( 'WP_ADMIN_USER' ) ? WP_ADMIN_USER : 'admin' );
+		if ( ! $user ) {
+			$admins = get_users( array( 'role' => 'administrator', 'number' => 1 ) );
+			$user   = $admins ? $admins[0] : null;
+		}
+		if ( ! $user ) { return 1; }
+		if ( 'Admin User' !== $user->display_name ) {
+			wp_update_user( array( 'ID' => $user->ID, 'display_name' => 'Admin User' ) );
+		}
+		return (int) $user->ID;
+	}
 }

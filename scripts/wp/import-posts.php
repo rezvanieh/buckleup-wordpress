@@ -15,8 +15,6 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 require_once __DIR__ . '/lib.php';
 
-$now = current_time( 'timestamp' );
-
 $posts = array(
 	array(
 		'title'    => 'How to Pass Your ICBC Class 5 Road Test in Vancouver',
@@ -24,7 +22,7 @@ $posts = array(
 		'excerpt'  => 'A comprehensive guide on what examiners look for during the ICBC Class 5 road test in Greater Vancouver, complete with tips and common mistakes.',
 		'category' => 'Tips',
 		'tags'     => array( 'ICBC', 'Class 5', 'Vancouver', 'Road Test' ),
-		'offset'   => 0,
+		'date'     => '2026-02-24',
 		'content'  => '<h1>How to Pass Your ICBC Class 5 Road Test in Vancouver</h1>
 <p>The Class 5 road test is the final hurdle to getting your full privilege driver\'s licence in British Columbia. Unlike the Class 7 (N) test which focuses heavily on basic vehicle control, the Class 5 test evaluates how you handle complex traffic situations, hazard perception, and overall driving maturity.</p>
 <h2>Top 3 Reasons People Fail in Vancouver</h2>
@@ -44,7 +42,7 @@ $posts = array(
 		'excerpt'  => 'Struggling with parallel parking? Follow our step-by-step mathematical approach to perfectly parallel park every single time.',
 		'category' => 'Tutorials',
 		'tags'     => array( 'Parking', 'Driving Skills', 'Tutorial' ),
-		'offset'   => 0,
+		'date'     => '2026-02-24',
 		'content'  => '<h1>Mastering Parallel Parking: The Ultimate Guide</h1>
 <p>Parallel parking is often the most dreaded maneuver for new drivers. However, taking the guesswork out of it and relying on reference points makes it simple.</p>
 <h2>The 4-Step Formula</h2>
@@ -67,7 +65,7 @@ $posts = array(
 		'excerpt'  => 'Don\'t let black ice or heavy rain surprise you. Learn how to navigate British Columbia\'s unpredictable winter roads safely with these expert tips.',
 		'category' => 'Safety',
 		'tags'     => array( 'Winter Driving', 'Safety', 'Weather' ),
-		'offset'   => 1,
+		'date'     => '2026-02-23',
 		'content'  => '<h1>Winter Driving in BC: Essential Safety Tips</h1>
 <p>Winter in Greater Vancouver might not mean constant snow, but it does mean heavy rain, fog, and the dreaded black ice. Driving conditions change rapidly, and your driving habits need to adjust accordingly.</p>
 <h2>1. Tires are Everything</h2>
@@ -84,7 +82,7 @@ $posts = array(
 		'excerpt'  => 'Discover why Port Moody offers the perfect mix of residential calmness and complex traffic scenarios for beginner drivers.',
 		'category' => 'Local',
 		'tags'     => array( 'Port Moody', 'Locations', 'Learning' ),
-		'offset'   => 2,
+		'date'     => '2026-02-22',
 		'content'  => '<h1>Why Port Moody is the Best Place to Learn to Drive</h1>
 <p>We\'ve found that learning to drive in Port Moody gives students a strategic advantage. It combines quiet, forgiving environments with complex, real-world challenges.</p>
 <h2>The Ideal Progression</h2>
@@ -101,7 +99,7 @@ $posts = array(
 		'excerpt'  => 'Merging onto Highway 1 in rush hour can be terrifying. Use our simple checklist to merge safely, quickly, and confidently.',
 		'category' => 'Tutorials',
 		'tags'     => array( 'Highway', 'Merging', 'Tutorial' ),
-		'offset'   => 3,
+		'date'     => '2026-02-21',
 		'content'  => '<h1>The Ultimate Highway Merging Checklist</h1>
 <p>Merging onto a highway is all about matching speed and communicating intent. Many new drivers slow down at the end of the merge lane out of fear, which actually makes merging more dangerous.</p>
 <h2>The Merging Blueprint</h2>
@@ -115,10 +113,13 @@ $posts = array(
 	),
 );
 
-$day = DAY_IN_SECONDS;
+// Byline author: the admin user (production shows "Admin User" on single posts).
+$author_id = bu_post_author_id();
+
 foreach ( $posts as $p ) {
-	$ts   = $now - ( $p['offset'] * $day );
-	$date = gmdate( 'Y-m-d H:i:s', $ts );
+	// Fixed publish date matching production (the live site's originals), kept in
+	// local time so the blog ordering + displayed dates match exactly.
+	$date_local = $p['date'] . ' 09:00:00';
 
 	$existing = bu_find_post( 'post', $p['slug'], $p['title'] );
 	$data = array(
@@ -129,8 +130,9 @@ foreach ( $posts as $p ) {
 		'post_excerpt' => $p['excerpt'],
 		// Strip the leading <h1> (duplicates the title; theme renders title as H1).
 		'post_content' => bu_strip_leading_h1( $p['content'] ),
-		'post_date'    => get_date_from_gmt( $date ),
-		'post_date_gmt'=> $date,
+		'post_author'  => $author_id,
+		'post_date'    => $date_local,
+		'post_date_gmt'=> get_gmt_from_date( $date_local ),
 	);
 	if ( $existing ) { $data['ID'] = $existing; }
 

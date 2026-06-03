@@ -50,9 +50,10 @@ if ( ! is_array( $entries ) ) {
 
 // bu_strip_leading_h1() is defined in lib.php (shared with import-posts.php).
 
-$now   = current_time( 'timestamp' );
-$day   = DAY_IN_SECONDS;
-$count = 0;
+$now    = current_time( 'timestamp' );
+$day    = DAY_IN_SECONDS;
+$count  = 0;
+$author = bu_post_author_id(); // byline author ("Admin User"), same as the migrated posts
 
 foreach ( $entries as $i => $e ) {
 	$slug = isset( $e['slug'] ) ? sanitize_title( $e['slug'] ) : '';
@@ -78,6 +79,7 @@ foreach ( $entries as $i => $e ) {
 		'post_title'   => isset( $e['title'] ) ? $e['title'] : $slug,
 		'post_excerpt' => isset( $e['excerpt'] ) ? $e['excerpt'] : '',
 		'post_content' => $body,
+		'post_author'  => $author,
 		'post_date'    => get_date_from_gmt( $gmt ),
 		'post_date_gmt'=> $gmt,
 	);
