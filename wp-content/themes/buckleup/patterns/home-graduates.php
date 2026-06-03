@@ -27,6 +27,7 @@ $graduates = function_exists( 'buckleup_get_graduates' ) ? buckleup_get_graduate
 			<h2 data-reveal class="text-4xl md:text-6xl font-black tracking-tight">
 				<span class="text-foreground"><?php esc_html_e( 'The Hall of ', 'buckleup' ); ?></span><span class="gradient-text"><?php esc_html_e( 'Fame', 'buckleup' ); ?></span>
 			</h2>
+			<p data-reveal class="text-muted-foreground max-w-2xl mx-auto mt-4 text-pretty"><?php esc_html_e( 'Join the legacy of confident drivers. Our graduates from North Vancouver, Coquitlam, and Port Moody reflect our commitment to safe driving, expert training, and ICBC road test success.', 'buckleup' ); ?></p>
 		</div>
 
 		<?php if ( empty( $graduates ) ) : ?>
@@ -67,13 +68,10 @@ $graduates = function_exists( 'buckleup_get_graduates' ) ? buckleup_get_graduate
 							);
 						}
 						?>
-						<div class="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent"></div>
-						<div class="absolute bottom-0 left-0 right-0 p-5 text-left">
-							<div class="text-lg font-bold text-foreground"><?php echo esc_html( $g['title'] ); ?></div>
-							<?php if ( ! empty( $g['description'] ) ) : ?>
-								<div class="text-sm text-muted-foreground line-clamp-2"><?php echo esc_html( $g['description'] ); ?></div>
-							<?php endif; ?>
-						</div>
+						<!-- Production has NO visible caption on the tiles; title/desc still
+						     feed the lightbox via data-title/data-desc above. A subtle hover
+						     overlay only. -->
+						<div class="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
 					</button>
 				<?php endforeach; ?>
 			</div>

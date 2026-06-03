@@ -69,12 +69,40 @@ $values = array(
 				</div>
 			</div>
 
+			<?php
+			// Mission photo: owner_withcar (content task #28 → slug buckleup-owner-with-car,
+			// mapped in buckleup_asset_url's slug_map). Falls back to other brand photos,
+			// then a glass placeholder, so it degrades gracefully while media is importing.
+			$mission_img = buckleup_asset_url( 'owner_withcar.png' );
+			if ( '' === $mission_img ) {
+				$mission_img = buckleup_asset_url( 'hero_card_image.png' );
+			}
+			if ( '' === $mission_img ) {
+				$mission_img = buckleup_asset_url( 'image2.png' );
+			}
+			$mission_alt = __( 'BuckleUp Driving School instructor with a training vehicle in Metro Vancouver', 'buckleup' );
+			?>
 			<div data-reveal class="order-1 lg:order-2">
-				<div class="relative h-[400px] rounded-3xl overflow-hidden border border-border shadow-xl glass flex items-center justify-center">
-					<div class="text-center p-8">
-						<div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4"><?php echo buckleup_icon( 'shield-check', 'w-8 h-8 text-primary' ); // phpcs:ignore ?></div>
-						<div class="text-xl font-bold text-foreground"><?php esc_html_e( 'Modern Fleet', 'buckleup' ); ?></div>
-						<div class="text-sm text-muted-foreground mt-1"><?php esc_html_e( 'Well-maintained, safety-focused vehicles', 'buckleup' ); ?></div>
+				<div class="relative h-[400px] rounded-3xl overflow-hidden border border-border shadow-xl">
+					<?php if ( $mission_img ) : ?>
+						<img src="<?php echo esc_url( $mission_img ); ?>" alt="<?php echo esc_attr( $mission_alt ); ?>" class="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async">
+						<div class="absolute inset-0 bg-gradient-to-t from-background/70 via-transparent to-transparent"></div>
+					<?php else : ?>
+						<div class="absolute inset-0 glass flex items-center justify-center">
+							<div class="text-center p-8">
+								<div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4"><?php echo buckleup_icon( 'shield-check', 'w-8 h-8 text-primary' ); // phpcs:ignore ?></div>
+								<div class="text-xl font-bold text-foreground"><?php esc_html_e( 'Modern Fleet', 'buckleup' ); ?></div>
+							</div>
+						</div>
+					<?php endif; ?>
+
+					<!-- "Modern Fleet" corner badge -->
+					<div class="absolute bottom-4 left-4 glass px-4 py-3 rounded-2xl shadow-lg flex items-center gap-3">
+						<div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 shrink-0"><?php echo buckleup_icon( 'shield-check', 'w-5 h-5 text-primary' ); // phpcs:ignore ?></div>
+						<div>
+							<div class="text-sm font-bold text-foreground"><?php esc_html_e( 'Modern Fleet', 'buckleup' ); ?></div>
+							<div class="text-xs text-muted-foreground"><?php esc_html_e( 'Well-maintained, safety-focused vehicles', 'buckleup' ); ?></div>
+						</div>
 					</div>
 				</div>
 			</div>

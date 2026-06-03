@@ -28,10 +28,12 @@ $wa         = preg_replace( '/\D/', '', $get( 'whatsapp', '16044413677' ) );
 $wa_link    = 'https://wa.me/' . $wa;
 $map_q      = '136+Maple+Dr,+Port+Moody,+BC+V3H+0A8,+Canada';
 
+// 4 info cards matching production: Phone / Email / Office / Hours.
 $methods = array(
-	array( 'icon' => 'phone',          'label' => __( 'Call Us', 'buckleup' ),        'value' => $phone, 'href' => 'tel:' . $phone_e164 ),
-	array( 'icon' => 'mail',           'label' => __( 'Email Us', 'buckleup' ),       'value' => $email, 'href' => 'mailto:' . $email ),
-	array( 'icon' => 'message-circle', 'label' => __( 'WhatsApp', 'buckleup' ),       'value' => __( 'Chat with us', 'buckleup' ), 'href' => $wa_link ),
+	array( 'icon' => 'phone',   'label' => __( 'Phone', 'buckleup' ),  'value' => $phone,                          'desc' => __( 'Mon–Sun, 9am–6pm PST', 'buckleup' ),      'href' => 'tel:' . $phone_e164 ),
+	array( 'icon' => 'mail',    'label' => __( 'Email', 'buckleup' ),  'value' => $email,                          'desc' => __( 'We reply within 24 hours', 'buckleup' ),  'href' => 'mailto:' . $email ),
+	array( 'icon' => 'map-pin', 'label' => __( 'Office', 'buckleup' ), 'value' => $get( 'street_address', '136 Maple Dr' ), 'desc' => __( 'Port Moody, BC V3H 0A8, Canada', 'buckleup' ), 'href' => 'https://maps.google.com/maps?q=136+Maple+Dr,+Port+Moody,+BC+V3H+0A8,+Canada' ),
+	array( 'icon' => 'clock',   'label' => __( 'Hours', 'buckleup' ),  'value' => __( 'Mon – Sun', 'buckleup' ),   'desc' => __( '9:00 AM – 6:00 PM', 'buckleup' ),         'href' => null ),
 );
 
 $quick = array(
@@ -50,28 +52,42 @@ $quick = array(
 				<span class="text-sm font-medium text-primary"><?php esc_html_e( 'Get in Touch', 'buckleup' ); ?></span>
 			</div>
 			<h1 data-reveal class="text-4xl md:text-5xl font-bold tracking-tight">
-				<span class="text-foreground"><?php esc_html_e( "Let's Get You ", 'buckleup' ); ?></span><span class="gradient-text"><?php esc_html_e( 'On the Road', 'buckleup' ); ?></span>
+				<span class="text-foreground"><?php esc_html_e( "We'd Love to ", 'buckleup' ); ?></span><span class="gradient-text"><?php esc_html_e( 'Hear From You', 'buckleup' ); ?></span>
 			</h1>
-			<p data-reveal class="text-muted-foreground mt-4"><?php esc_html_e( 'Questions about lessons, packages, or scheduling? Reach out — we usually reply within a few hours.', 'buckleup' ); ?></p>
+			<p data-reveal class="text-muted-foreground mt-4"><?php esc_html_e( 'Have questions about our driving lessons? Ready to start your journey?', 'buckleup' ); ?></p>
 		</div>
 
-		<!-- Contact-method cards -->
-		<div data-reveal-stagger="0.05" class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-12">
-			<?php foreach ( $methods as $m ) : ?>
-				<a data-reveal href="<?php echo esc_url( $m['href'] ); ?>"<?php echo 'message-circle' === $m['icon'] ? ' target="_blank" rel="noopener"' : ''; ?>
+		<!-- Contact-info cards: Phone / Email / Office / Hours -->
+		<div data-reveal-stagger="0.05" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto mb-12">
+			<?php foreach ( $methods as $m ) :
+				$tag   = $m['href'] ? 'a' : 'div';
+				$attrs = $m['href'] ? ' href="' . esc_url( $m['href'] ) . '"' . ( false !== strpos( (string) $m['href'], 'maps.google' ) ? ' target="_blank" rel="noopener"' : '' ) : '';
+				?>
+				<<?php echo esc_html( $tag ); ?><?php echo $attrs; // phpcs:ignore WordPress.Security.EscapeOutput — built from esc_url above ?> data-reveal
 					class="<?php echo esc_attr( buckleup_card_class( 'p-6 items-center text-center hover-lift card-highlight' ) ); ?>">
 					<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-3"><?php echo buckleup_icon( $m['icon'], 'h-5 w-5 text-primary' ); // phpcs:ignore ?></div>
 					<div class="font-semibold text-foreground"><?php echo esc_html( $m['label'] ); ?></div>
-					<div class="text-sm text-muted-foreground mt-1"><?php echo esc_html( $m['value'] ); ?></div>
-				</a>
+					<div class="text-sm text-foreground mt-1"><?php echo esc_html( $m['value'] ); ?></div>
+					<div class="text-xs text-muted-foreground mt-0.5"><?php echo esc_html( $m['desc'] ); ?></div>
+				</<?php echo esc_html( $tag ); ?>>
 			<?php endforeach; ?>
 		</div>
 
 		<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-			<!-- Form (WPForms embed lives in the page body / a child block) + quick questions -->
+			<!-- Send us a Message: quick-question chips at TOP, then the form -->
 			<div data-reveal class="<?php echo esc_attr( buckleup_card_class( 'p-6 md:p-8' ) ); ?>">
-				<h2 class="text-xl font-bold text-foreground mb-1"><?php esc_html_e( 'Send us a message', 'buckleup' ); ?></h2>
-				<p class="text-sm text-muted-foreground mb-6"><?php esc_html_e( 'Prefer chat? Tap a question below to message us on WhatsApp.', 'buckleup' ); ?></p>
+				<h2 class="text-2xl font-bold text-foreground mb-1"><?php esc_html_e( 'Send us a Message', 'buckleup' ); ?></h2>
+				<p class="text-sm text-muted-foreground mb-5"><?php esc_html_e( 'Have a quick question? Tap one to message us on WhatsApp, or fill out the form below.', 'buckleup' ); ?></p>
+
+				<!-- Quick-question chips (top of the form) -->
+				<div class="flex flex-wrap gap-2 mb-6 pb-6 border-b border-border">
+					<?php foreach ( $quick as $q ) : ?>
+						<a href="<?php echo esc_url( $wa_link . '?text=' . rawurlencode( $q ) ); ?>" target="_blank" rel="noopener"
+							class="<?php echo esc_attr( buckleup_pill_class( 'muted', 'hover:text-primary hover:border-primary/30 transition-colors' ) ); ?>">
+							<?php echo esc_html( $q ); ?>
+						</a>
+					<?php endforeach; ?>
+				</div>
 
 				<!-- Contact form. Works without JS (posts to admin-post.php → redirect with
 				     ?contact=success|error); main.js enhances it to a fetch (FormData) →
@@ -139,30 +155,43 @@ $quick = array(
 						?>
 					</form>
 				</div>
-
-				<div class="border-t border-border pt-5">
-					<h3 class="font-semibold text-foreground mb-3"><?php esc_html_e( 'Looking for quick answers?', 'buckleup' ); ?></h3>
-					<div class="flex flex-wrap gap-2">
-						<?php foreach ( $quick as $q ) : ?>
-							<a href="<?php echo esc_url( $wa_link . '?text=' . rawurlencode( $q ) ); ?>" target="_blank" rel="noopener"
-								class="<?php echo esc_attr( buckleup_pill_class( 'muted', 'hover:text-primary hover:border-primary/30 transition-colors' ) ); ?>">
-								<?php echo esc_html( $q ); ?>
-							</a>
-						<?php endforeach; ?>
-					</div>
-				</div>
 			</div>
 
-			<!-- Map -->
-			<div data-reveal class="<?php echo esc_attr( buckleup_card_class( 'overflow-hidden p-0' ) ); ?>">
-				<iframe title="<?php esc_attr_e( 'BuckleUp Driving School location map', 'buckleup' ); ?>" class="w-full h-[400px] border-0"
-					src="https://maps.google.com/maps?q=<?php echo esc_attr( $map_q ); ?>&t=&z=15&ie=UTF8&iwloc=&output=embed"
-					loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-				<a href="https://maps.google.com/maps?q=<?php echo esc_attr( $map_q ); ?>" target="_blank" rel="noopener"
-					class="flex items-center justify-center gap-2 p-4 text-sm font-medium text-primary hover:underline">
-					<?php echo buckleup_icon( 'map-pin', 'h-4 w-4' ); // phpcs:ignore ?>
-					<?php esc_html_e( '136 Maple Dr, Port Moody, BC V3H 0A8', 'buckleup' ); ?>
+			<!-- Right column: map + Visit FAQ + Fast Response -->
+			<div class="space-y-6">
+				<!-- Map -->
+				<div data-reveal class="<?php echo esc_attr( buckleup_card_class( 'overflow-hidden p-0' ) ); ?>">
+					<iframe title="<?php esc_attr_e( 'BuckleUp Driving School location map', 'buckleup' ); ?>" class="w-full h-[320px] border-0"
+						src="https://maps.google.com/maps?q=<?php echo esc_attr( $map_q ); ?>&t=&z=15&ie=UTF8&iwloc=&output=embed"
+						loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+					<a href="https://maps.google.com/maps?q=<?php echo esc_attr( $map_q ); ?>" target="_blank" rel="noopener"
+						class="flex items-center justify-center gap-2 p-4 text-sm font-medium text-primary hover:underline">
+						<?php echo buckleup_icon( 'map-pin', 'h-4 w-4' ); // phpcs:ignore ?>
+						<?php esc_html_e( 'Get directions', 'buckleup' ); ?>
+					</a>
+				</div>
+
+				<!-- Visit FAQ card -->
+				<a data-reveal href="<?php echo esc_url( home_url( '/#faq' ) ); ?>" class="<?php echo esc_attr( buckleup_card_class( 'p-6 hover-lift card-highlight' ) ); ?>">
+					<div class="flex items-start gap-4">
+						<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0"><?php echo buckleup_icon( 'message-circle', 'w-5 h-5 text-primary' ); // phpcs:ignore ?></div>
+						<div>
+							<h3 class="font-semibold text-foreground mb-1 inline-flex items-center gap-1"><?php esc_html_e( 'Visit FAQ', 'buckleup' ); ?><?php echo buckleup_icon( 'arrow-right', 'w-4 h-4' ); // phpcs:ignore ?></h3>
+							<p class="text-sm text-muted-foreground"><?php esc_html_e( 'Find quick answers to the most common questions about lessons, pricing, and road tests.', 'buckleup' ); ?></p>
+						</div>
+					</div>
 				</a>
+
+				<!-- Fast Response Time card -->
+				<div data-reveal class="<?php echo esc_attr( buckleup_card_class( 'p-6' ) ); ?>">
+					<div class="flex items-start gap-4">
+						<div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center shrink-0"><?php echo buckleup_icon( 'clock', 'w-5 h-5 text-accent' ); // phpcs:ignore ?></div>
+						<div>
+							<h3 class="font-semibold text-foreground mb-1"><?php esc_html_e( 'Fast Response Time', 'buckleup' ); ?></h3>
+							<p class="text-sm text-muted-foreground"><?php esc_html_e( 'We typically respond to all inquiries within 2–4 hours during business hours.', 'buckleup' ); ?></p>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

@@ -42,6 +42,7 @@ $initials = static function ( $name ) {
 			<h2 data-reveal class="text-4xl md:text-5xl font-bold mb-4">
 				<span class="text-foreground"><?php esc_html_e( 'Loved by ', 'buckleup' ); ?></span><span class="gradient-text"><?php esc_html_e( 'Thousands', 'buckleup' ); ?></span>
 			</h2>
+			<p data-reveal class="text-muted-foreground max-w-2xl mx-auto"><?php esc_html_e( 'Join over 10,000 happy students who are now safe, confident drivers on the road.', 'buckleup' ); ?></p>
 		</div>
 
 		<div data-reveal-stagger="0.05" class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
@@ -72,6 +73,25 @@ $initials = static function ( $name ) {
 					</div>
 				</div>
 			<?php endforeach; ?>
+		</div>
+
+		<!-- Trust row -->
+		<div data-reveal class="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 mt-12 text-center">
+			<div class="flex items-center gap-2">
+				<?php echo buckleup_icon( 'star', 'w-5 h-5 fill-yellow-500 text-yellow-500' ); // phpcs:ignore ?>
+				<span class="font-bold text-foreground">4.9</span>
+				<span class="text-sm text-muted-foreground"><?php esc_html_e( 'Google Reviews', 'buckleup' ); ?></span>
+			</div>
+			<div class="hidden sm:block w-px h-6 bg-border"></div>
+			<div class="flex items-center gap-2">
+				<span class="font-bold text-foreground">A+</span>
+				<span class="text-sm text-muted-foreground"><?php esc_html_e( 'BBB Rating', 'buckleup' ); ?></span>
+			</div>
+			<div class="hidden sm:block w-px h-6 bg-border"></div>
+			<div class="flex items-center gap-2">
+				<span class="font-bold text-foreground">#1</span>
+				<span class="text-sm text-muted-foreground"><?php esc_html_e( 'Rated in Vancouver', 'buckleup' ); ?></span>
+			</div>
 		</div>
 	</div>
 </section>

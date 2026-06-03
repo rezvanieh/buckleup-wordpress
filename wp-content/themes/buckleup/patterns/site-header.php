@@ -19,7 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 $nav        = buckleup_nav_items();
 $locations  = buckleup_location_items();
 $wa         = function_exists( 'buckleup_get_setting' ) ? buckleup_get_setting( 'whatsapp', '16044413677' ) : '16044413677';
-$wa_link    = 'https://wa.me/' . preg_replace( '/\D/', '', $wa );
+// Generic CTAs carry a prefilled message (production parity).
+$wa_link    = 'https://wa.me/' . preg_replace( '/\D/', '', $wa ) . '?text=' . rawurlencode( "Hi, I'm interested in driving lessons." );
 ?>
 <!-- wp:html -->
 <header data-navbar data-scrolled="false"
@@ -74,7 +75,7 @@ $wa_link    = 'https://wa.me/' . preg_replace( '/\D/', '', $wa );
 				<div class="hidden min-[1100px]:block">
 					<?php
 					buckleup_button( array(
-						'label'   => __( 'Book Now', 'buckleup' ),
+						'label'   => __( 'Book a Lesson', 'buckleup' ),
 						'href'    => $wa_link,
 						'size'    => 'lg',
 						'class'   => 'rounded-full shine glow-primary',
@@ -112,7 +113,7 @@ $wa_link    = 'https://wa.me/' . preg_replace( '/\D/', '', $wa );
 			<div class="px-2 pt-3">
 				<?php
 				buckleup_button( array(
-					'label' => __( 'Book Now', 'buckleup' ),
+					'label' => __( 'Book a Lesson', 'buckleup' ),
 					'href'  => $wa_link,
 					'size'  => 'lg',
 					'class' => 'w-full rounded-xl shine glow-primary',

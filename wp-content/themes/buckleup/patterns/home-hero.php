@@ -20,14 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 $bg      = buckleup_asset_url( 'image2.png' );
 $bg_webp = buckleup_asset_webp_url( 'image2.png' ); // optimized next-gen LCP source
-$card    = buckleup_asset_url( 'hero_card_image.png' );
-$farhad  = buckleup_asset_url( 'farhad-instructor.jpg' );
-
-$badges = array(
-	array( 'icon' => 'shield-check', 'text' => __( 'ICBC Certified', 'buckleup' ) ),
-	array( 'icon' => 'shield-check', 'text' => __( 'Fully Insured', 'buckleup' ) ),
-	array( 'icon' => 'check',        'text' => __( '100% Pass Guarantee', 'buckleup' ) ),
-);
 ?>
 <!-- wp:html -->
 <section class="relative min-h-screen w-full overflow-hidden flex items-center justify-center bg-background">
@@ -61,12 +53,7 @@ $badges = array(
 			<!-- Left: typography -->
 			<div class="text-left space-y-8 lg:col-span-1 xl:pr-8">
 				<div data-reveal class="flex flex-wrap gap-3">
-					<?php foreach ( $badges as $b ) : ?>
-						<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass border border-border/50">
-							<?php echo buckleup_icon( $b['icon'], 'w-4 h-4 text-accent' ); // phpcs:ignore ?>
-							<span class="text-xs font-medium text-muted-foreground"><?php echo esc_html( $b['text'] ); ?></span>
-						</div>
-					<?php endforeach; ?>
+					<?php echo buckleup_hero_trust_badges(); // phpcs:ignore WordPress.Security.EscapeOutput — escaped within helper ?>
 				</div>
 
 				<h1 data-reveal data-reveal-y="30" class="text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] xl:text-[6.5rem] font-bold tracking-tighter text-foreground leading-[0.95]">
@@ -91,62 +78,8 @@ $badges = array(
 				</div>
 			</div>
 
-			<!-- Right: 3D mouse-tilt image card (lg only) -->
-			<div data-tilt class="relative hidden lg:block">
-				<div data-tilt-card class="relative w-full max-w-[500px] mx-auto">
-					<div class="relative rounded-3xl overflow-hidden shadow-2xl glow-primary">
-						<?php if ( $card ) : ?>
-							<img src="<?php echo esc_url( $card ); ?>" alt="<?php esc_attr_e( 'Farhad Sanaeifar with BuckleUp Driving School car', 'buckleup' ); ?>" class="w-full h-[400px] object-cover" decoding="async">
-						<?php endif; ?>
-						<div class="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent"></div>
-					</div>
-
-					<!-- Instructor chip -->
-					<div class="-mt-6 glass p-4 rounded-2xl relative z-10 mx-4 md:mx-0 shadow-lg">
-						<div class="flex items-center gap-3">
-							<div class="relative">
-								<?php if ( $farhad ) : ?>
-									<img src="<?php echo esc_url( $farhad ); ?>" alt="Farhad Sanaeifar" class="w-12 h-12 rounded-full object-cover border-2 border-accent" decoding="async">
-								<?php else : ?>
-									<span class="w-12 h-12 rounded-full bg-muted border-2 border-accent flex items-center justify-center text-sm font-bold">FS</span>
-								<?php endif; ?>
-								<div class="absolute -bottom-1 -right-1 w-4 h-4 bg-accent rounded-full border-2 border-background flex items-center justify-center">
-									<?php echo buckleup_icon( 'check', 'w-3 h-3 text-background' ); // phpcs:ignore ?>
-								</div>
-							</div>
-							<div class="flex-1">
-								<div class="text-sm font-semibold text-foreground">Farhad Sanaeifar</div>
-								<div class="text-xs text-muted-foreground"><?php esc_html_e( 'Senior Instructor • ICBC Certified', 'buckleup' ); ?></div>
-							</div>
-							<div class="flex items-center gap-1 px-2 py-1 bg-yellow-500/20 rounded-full">
-								<?php echo buckleup_icon( 'star', 'w-3 h-3 fill-yellow-500 text-yellow-500' ); // phpcs:ignore ?>
-								<span class="text-xs font-bold text-yellow-500">4.9</span>
-							</div>
-						</div>
-					</div>
-
-					<!-- Floating rating card -->
-					<div class="absolute -top-4 -right-8 glass p-4 rounded-2xl shadow-xl animate-float" style="animation-delay:2s;">
-						<div class="flex items-center gap-2 mb-2">
-							<span class="text-3xl font-bold text-foreground">4.98</span>
-							<div class="flex">
-								<?php for ( $i = 0; $i < 5; $i++ ) : ?>
-									<?php echo buckleup_icon( 'star', 'w-4 h-4 fill-yellow-500 text-yellow-500' ); // phpcs:ignore ?>
-								<?php endfor; ?>
-							</div>
-						</div>
-						<div class="text-[10px] text-muted-foreground"><?php esc_html_e( 'Based on 200+ reviews', 'buckleup' ); ?></div>
-					</div>
-
-					<!-- Toyota badge -->
-					<div class="absolute top-4 left-4 glass px-3 py-2 rounded-xl">
-						<div class="flex items-center gap-2">
-							<div class="w-2 h-2 bg-accent rounded-full animate-pulse"></div>
-							<span class="text-xs font-medium text-foreground"><?php esc_html_e( 'Toyota', 'buckleup' ); ?></span>
-						</div>
-					</div>
-				</div>
-			</div>
+			<!-- Right: hero card + overlay cards (shared with location-hero) -->
+			<?php echo buckleup_hero_visual(); // phpcs:ignore WordPress.Security.EscapeOutput — escaped within helper ?>
 		</div>
 	</div>
 </section>

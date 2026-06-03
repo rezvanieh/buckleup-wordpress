@@ -103,9 +103,7 @@ if ( $icbc ) {
 							<span class="text-xs text-muted-foreground"><?php echo esc_html( $a['read'] ); ?></span>
 						</div>
 						<h3 class="text-xl font-bold text-foreground leading-snug"><?php echo esc_html( $a['title'] ); ?></h3>
-						<?php if ( $a['href'] ) : ?>
-							<span class="text-sm font-medium text-primary inline-flex items-center gap-1"><?php esc_html_e( 'Read the guide', 'buckleup' ); ?><?php echo buckleup_icon( 'arrow-right', 'w-4 h-4' ); // phpcs:ignore ?></span>
-						<?php endif; ?>
+						<span class="mt-auto text-sm font-medium text-primary inline-flex items-center gap-1"><?php esc_html_e( 'Read more', 'buckleup' ); ?><?php echo buckleup_icon( 'arrow-right', 'w-4 h-4' ); // phpcs:ignore ?></span>
 					</<?php echo esc_html( $tag ); ?>>
 				<?php endforeach; ?>
 			</div>
@@ -122,7 +120,7 @@ if ( $icbc ) {
 					buckleup_button( array(
 						'label' => __( 'Get Notified', 'buckleup' ),
 						'href'  => home_url( '/contact' ),
-						'class' => 'rounded-lg',
+						'class' => 'rounded-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground shine',
 					) );
 					?>
 				</div>
