@@ -83,15 +83,30 @@ function bu_upsert_booking( $wpdb, $t_book, $row ) {
 	return (int) $wpdb->insert_id;
 }
 
+// Snap a day-offset to a weekday at a fixed in-window hour so seeded bookings sit
+// inside the instructor's Mon–Fri 09:00–17:00 availability (the slot engine reads
+// availability live, so out-of-window bookings would look inconsistent). Steps
+// off weekends in the offset's direction (future→forward, past→backward).
+function bu_weekday_slot( $now, $day_offset, $hour ) {
+	$ts  = $now + $day_offset * DAY_IN_SECONDS;
+	$dir = $day_offset < 0 ? -1 : 1;
+	for ( $i = 0; $i < 3; $i++ ) {
+		$dow = (int) gmdate( 'w', $ts ); // 0=Sun..6=Sat
+		if ( $dow >= 1 && $dow <= 5 ) { break; }
+		$ts += $dir * DAY_IN_SECONDS;
+	}
+	return gmdate( 'Y-m-d', $ts ) . sprintf( ' %02d:00:00', $hour );
+}
+
 $bookings = array(
 	// COMPLETED (past) — 2
-	array( 'datetime' => gmdate( $fmt, $now - 14 * DAY_IN_SECONDS ), 'status' => 'COMPLETED', 'pickup_addr' => '136 Maple Dr, Port Moody', 'notes' => 'First lesson — vehicle controls.' ),
-	array( 'datetime' => gmdate( $fmt, $now - 7 * DAY_IN_SECONDS ),  'status' => 'COMPLETED', 'pickup_addr' => '136 Maple Dr, Port Moody', 'notes' => 'Parking + lane changes.' ),
+	array( 'datetime' => bu_weekday_slot( $now, -14, 10 ), 'status' => 'COMPLETED', 'pickup_addr' => '136 Maple Dr, Port Moody', 'notes' => 'First lesson — vehicle controls.' ),
+	array( 'datetime' => bu_weekday_slot( $now,  -7, 14 ), 'status' => 'COMPLETED', 'pickup_addr' => '136 Maple Dr, Port Moody', 'notes' => 'Parking + lane changes.' ),
 	// CONFIRMED (future) — 2
-	array( 'datetime' => gmdate( $fmt, $now + 2 * DAY_IN_SECONDS ),  'status' => 'CONFIRMED', 'pickup_addr' => 'Coquitlam Centre', 'notes' => 'Highway merging practice.' ),
-	array( 'datetime' => gmdate( $fmt, $now + 5 * DAY_IN_SECONDS ),  'status' => 'CONFIRMED', 'pickup_addr' => 'Lougheed SkyTrain', 'notes' => 'Road-test route rehearsal.' ),
+	array( 'datetime' => bu_weekday_slot( $now,   2, 10 ), 'status' => 'CONFIRMED', 'pickup_addr' => 'Coquitlam Centre', 'notes' => 'Highway merging practice.' ),
+	array( 'datetime' => bu_weekday_slot( $now,   5, 13 ), 'status' => 'CONFIRMED', 'pickup_addr' => 'Lougheed SkyTrain', 'notes' => 'Road-test route rehearsal.' ),
 	// PENDING (future) — 1
-	array( 'datetime' => gmdate( $fmt, $now + 9 * DAY_IN_SECONDS ),  'status' => 'PENDING',   'pickup_addr' => 'Port Moody Rec Centre', 'notes' => 'Mock road test.' ),
+	array( 'datetime' => bu_weekday_slot( $now,   9, 15 ), 'status' => 'PENDING',   'pickup_addr' => 'Port Moody Rec Centre', 'notes' => 'Mock road test.' ),
 );
 $booking_ids = array();
 foreach ( $bookings as $b ) {
