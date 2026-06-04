@@ -6,9 +6,11 @@
  *
  * Branded login card matching src/app/auth/login/LoginForm.tsx (social login
  * OMITTED — deferred). Posts to NATIVE wp-login.php with log/pwd/rememberme/
- * redirect_to (frozen contract); the plugin's login_redirect routes to the role
- * dashboard and bounces failures to /login/?login=failed. Reads ?registered=true
- * and ?login=failed for the banners and ?callbackUrl for the hidden redirect_to.
+ * redirect_to (frozen contract) PLUS a hidden bu_branded=1 marker — the plugin
+ * keys the failure bounce (→ /login/?login=failed) off it so only this branded
+ * form is redirected here, not wp-login itself. The plugin's login_redirect
+ * routes to the role dashboard. Reads ?registered=true and ?login=failed for the
+ * banners and ?callbackUrl for the hidden redirect_to.
  *
  * @package BuckleUp
  */
@@ -48,6 +50,7 @@ $logo        = buckleup_asset_url( 'logo.png' );
 		<div class="<?php echo esc_attr( buckleup_card_class( 'p-6 md:p-8' ) ); ?>">
 			<form method="post" action="<?php echo esc_url( wp_login_url() ); ?>" class="space-y-5">
 				<input type="hidden" name="redirect_to" value="<?php echo esc_attr( $callback ); ?>">
+					<input type="hidden" name="bu_branded" value="1">
 
 				<div>
 					<label for="bu-login-email" class="<?php echo esc_attr( buckleup_label_class( 'mb-1.5 block' ) ); ?>"><?php esc_html_e( 'Email', 'buckleup' ); ?></label>
