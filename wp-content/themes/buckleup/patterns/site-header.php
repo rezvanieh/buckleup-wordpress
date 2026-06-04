@@ -47,21 +47,36 @@ $logout_url     = wp_logout_url( home_url() );
 			<!-- Desktop nav pill (min-[1100px]) -->
 			<nav aria-label="<?php esc_attr_e( 'Primary', 'buckleup' ); ?>" class="hidden min-[1100px]:flex items-center">
 				<div class="flex items-center gap-0.5 px-1.5 py-1 rounded-2xl bg-muted/60 backdrop-blur-sm border border-border/50">
-					<?php foreach ( $nav as $item ) : ?>
+					<?php
+					foreach ( $nav as $item ) :
+						$is_active  = ! empty( $item['active'] );
+						// Active = the white rounded "box" (source Navbar.tsx); icon turns blue.
+						$item_class = $is_active
+							? 'text-foreground bg-background shadow-sm border border-border/50'
+							: 'text-muted-foreground hover:text-foreground hover:bg-background/50';
+						$icon_class = 'w-3.5 h-3.5' . ( $is_active ? ' text-primary' : '' );
+						?>
 						<a href="<?php echo esc_url( $item['href'] ); ?>"
-							class="relative flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-background/60 transition-all">
-							<?php if ( ! empty( $item['icon'] ) ) { echo buckleup_icon( $item['icon'], 'w-3.5 h-3.5' ); } // phpcs:ignore WordPress.Security.EscapeOutput ?>
+							class="relative flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 <?php echo esc_attr( $item_class ); ?>"
+							<?php echo $is_active ? 'aria-current="page"' : ''; ?>>
+							<?php if ( ! empty( $item['icon'] ) ) { echo buckleup_icon( $item['icon'], $icon_class ); } // phpcs:ignore WordPress.Security.EscapeOutput ?>
 							<span><?php echo esc_html( $item['name'] ); ?></span>
 						</a>
 					<?php endforeach; ?>
 
 					<!-- Locations dropdown -->
+					<?php
+					$loc_active     = function_exists( 'buckleup_path_is' ) && buckleup_path_is( 'locations', true );
+					$loc_trig_class = $loc_active
+						? 'text-foreground bg-background shadow-sm border border-border/50'
+						: 'text-muted-foreground hover:text-foreground hover:bg-background/50';
+					?>
 					<div data-dropdown data-dropdown-hover class="relative">
 						<button type="button" data-dropdown-trigger aria-expanded="false" aria-haspopup="true"
-							class="relative flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-background/60 transition-all">
-							<?php echo buckleup_icon( 'map-pin', 'size-4' ); // phpcs:ignore ?>
+							class="relative flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 <?php echo esc_attr( $loc_trig_class ); ?>">
+							<?php echo buckleup_icon( 'map-pin', 'w-3.5 h-3.5' . ( $loc_active ? ' text-primary' : '' ) ); // phpcs:ignore ?>
 							<?php esc_html_e( 'Locations', 'buckleup' ); ?>
-							<?php echo buckleup_icon( 'chevron-down', 'size-4' ); // phpcs:ignore ?>
+							<?php echo buckleup_icon( 'chevron-down', 'w-3.5 h-3.5' ); // phpcs:ignore ?>
 						</button>
 						<div data-dropdown-content data-state="closed" data-side="bottom" hidden
 							class="absolute top-full left-0 mt-2 w-48 bg-card/98 backdrop-blur-2xl border border-border rounded-xl shadow-xl shadow-black/10 py-1 overflow-hidden z-50 <?php echo esc_attr( buckleup_dropdown_content_class() ); ?>">
@@ -136,10 +151,15 @@ $logout_url     = wp_logout_url( home_url() );
 	<div data-nav-mobile data-state="closed" hidden
 		class="min-[1100px]:hidden bg-background/98 backdrop-blur-2xl border-b border-border overflow-hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-top-2">
 		<nav aria-label="<?php esc_attr_e( 'Mobile', 'buckleup' ); ?>" class="container mx-auto px-4 py-4 flex flex-col gap-1">
-			<?php foreach ( $nav as $item ) : ?>
+			<?php
+			foreach ( $nav as $item ) :
+				$m_active = ! empty( $item['active'] );
+				$m_class  = $m_active ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground hover:bg-muted';
+				?>
 				<a href="<?php echo esc_url( $item['href'] ); ?>"
-					class="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
-					<?php if ( ! empty( $item['icon'] ) ) { echo buckleup_icon( $item['icon'], 'w-5 h-5' ); } // phpcs:ignore WordPress.Security.EscapeOutput ?>
+					class="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-colors <?php echo esc_attr( $m_class ); ?>"
+					<?php echo $m_active ? 'aria-current="page"' : ''; ?>>
+					<?php if ( ! empty( $item['icon'] ) ) { echo buckleup_icon( $item['icon'], 'w-5 h-5' . ( $m_active ? ' text-primary' : '' ) ); } // phpcs:ignore WordPress.Security.EscapeOutput ?>
 					<span><?php echo esc_html( $item['name'] ); ?></span>
 				</a>
 			<?php endforeach; ?>

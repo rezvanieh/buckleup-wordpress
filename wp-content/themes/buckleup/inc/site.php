@@ -221,18 +221,39 @@ function buckleup_hero_visual(): string {
  * built from the location CPT so it stays in sync with content.
  */
 function buckleup_nav_items(): array {
-	// Per-item lucide icons mirror the source Navbar.tsx (Home/ImageIcon/HelpCircle/
-	// Phone/BookOpen/Info); rendered before the label at gap-1.5 in site-header.php.
+	// Per-item lucide icons mirror the source Navbar.tsx (Home/Briefcase/ImageIcon/
+	// HelpCircle/Phone/BookOpen/Info); rendered before the label at gap-1.5 in
+	// site-header.php. `active` drives the white rounded "box" highlight (+ blue
+	// icon) per item, mirroring the source's pathname===href / startsWith logic.
 	$items = array(
-		array( 'name' => 'Home', 'href' => home_url( '/' ), 'icon' => 'home' ),
-		array( 'name' => 'Services', 'href' => home_url( '/services' ), 'icon' => 'briefcase' ),
-		array( 'name' => 'Graduates', 'href' => home_url( '/#graduates' ), 'icon' => 'image' ),
-		array( 'name' => 'FAQ', 'href' => home_url( '/#faq' ), 'icon' => 'help-circle' ),
-		array( 'name' => 'Contact', 'href' => home_url( '/contact' ), 'icon' => 'phone' ),
-		array( 'name' => 'Blog', 'href' => home_url( '/blog' ), 'icon' => 'book-open' ),
-		array( 'name' => 'About', 'href' => home_url( '/about' ), 'icon' => 'info' ),
+		array( 'name' => 'Home', 'href' => home_url( '/' ), 'icon' => 'home', 'active' => is_front_page() ),
+		array( 'name' => 'Services', 'href' => home_url( '/services' ), 'icon' => 'briefcase', 'active' => buckleup_path_is( 'services' ) ),
+		// Graduates + FAQ are #anchors to home sections — never their own active box
+		// (Home carries the highlight on the front page).
+		array( 'name' => 'Graduates', 'href' => home_url( '/#graduates' ), 'icon' => 'image', 'active' => false ),
+		array( 'name' => 'FAQ', 'href' => home_url( '/#faq' ), 'icon' => 'help-circle', 'active' => false ),
+		array( 'name' => 'Contact', 'href' => home_url( '/contact' ), 'icon' => 'phone', 'active' => buckleup_path_is( 'contact' ) ),
+		array( 'name' => 'Blog', 'href' => home_url( '/blog' ), 'icon' => 'book-open', 'active' => buckleup_path_is( 'blog', true ) ),
+		array( 'name' => 'About', 'href' => home_url( '/about' ), 'icon' => 'info', 'active' => buckleup_path_is( 'about' ) ),
 	);
 	return $items;
+}
+
+/**
+ * Whether the current request path matches a top-level page slug — mirrors the
+ * source's `pathname === href` (exact) / `pathname.startsWith(href)` (prefix, for
+ * Blog so posts count). Compares the request path, not WP conditionals, so it
+ * works whether the page is a real WP page or a CPT route.
+ *
+ * @param string $slug          Top-level slug, e.g. 'services', 'blog'.
+ * @param bool   $starts_with   Prefix match (true) vs exact segment (false).
+ * @return bool
+ */
+function buckleup_path_is( string $slug, bool $starts_with = false ): bool {
+	$path = isset( $_SERVER['REQUEST_URI'] ) ? wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ) : '';
+	$path = trim( (string) $path, '/' );             // e.g. "blog/my-post" or "services".
+	$first = explode( '/', $path )[0];               // first segment.
+	return $starts_with ? ( $slug === $first ) : ( $slug === $path );
 }
 
 /**
