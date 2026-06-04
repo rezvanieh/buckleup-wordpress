@@ -390,6 +390,61 @@ function click(el) {
   ok('Admin students delete dialog cancels', dialog.getAttribute('data-state') === 'closed' && dialog.classList.contains('hidden') === true);
 }
 
+// --- admin Graduates: file preview + delete dialog ------------------------
+{
+  const win = setupDom(`
+    <form data-graduate-form>
+      <input type="file" data-graduate-file>
+      <input type="text" data-graduate-title>
+      <div data-graduate-placeholder></div>
+      <div data-graduate-preview class="hidden"><img data-graduate-preview-img><button data-graduate-clear></button></div>
+      <button type="submit" data-graduate-submit disabled></button>
+      <span data-graduate-status hidden></span>
+    </form>
+    <span data-graduate-count>2</span>
+    <div data-graduate-grid>
+      <div data-graduate="3"><button data-graduate-delete="3">×</button></div>
+      <div data-graduate="4"><button data-graduate-delete="4">×</button></div>
+    </div>
+    <div data-graduate-empty class="hidden"></div>
+    <div data-graduate-del-dialog data-state="closed" class="hidden" hidden>
+      <div data-graduate-del-overlay></div>
+      <button data-graduate-del-confirm></button>
+      <button data-graduate-del-cancel></button>
+    </div>`);
+  // jsdom lacks URL.createObjectURL — stub it for the preview path.
+  win.URL.createObjectURL = global.URL.createObjectURL = () => 'blob:preview';
+  win.URL.revokeObjectURL = global.URL.revokeObjectURL = () => {};
+  if (!global.CSS) global.CSS = win.CSS = { escape: (s) => String(s) };
+  let threw = false;
+  try {
+    const { initConsoleGraduates } = await import('../src/js/modules/console-graduates.js');
+    initConsoleGraduates(win.document);
+  } catch (e) {
+    threw = true;
+    console.error(e);
+  }
+  ok('Graduates inits without throwing in jsdom', !threw);
+
+  // Selecting a file shows the preview + enables submit.
+  const fileInput = win.document.querySelector('[data-graduate-file]');
+  Object.defineProperty(fileInput, 'files', { value: [{ name: 'g.jpg', type: 'image/jpeg' }], configurable: true });
+  fileInput.dispatchEvent(new win.Event('change', { bubbles: true }));
+  ok('Graduates file select shows preview + enables submit',
+    win.document.querySelector('[data-graduate-preview]').classList.contains('hidden') === false &&
+    win.document.querySelector('[data-graduate-submit]').disabled === false);
+
+  // Hover-delete opens the confirm dialog.
+  const dialog = win.document.querySelector('[data-graduate-del-dialog]');
+  win.document.querySelector('[data-graduate-delete="3"]').dispatchEvent(new win.Event('click', { bubbles: true }));
+  ok('Graduates delete opens confirm dialog', dialog.getAttribute('data-state') === 'open');
+
+  // Cancel closes it without removing the tile.
+  win.document.querySelector('[data-graduate-del-cancel]').dispatchEvent(new win.Event('click', { bubbles: true }));
+  ok('Graduates delete cancel keeps tile',
+    dialog.getAttribute('data-state') === 'closed' && win.document.querySelector('[data-graduate="3"]') !== null);
+}
+
 // Contact form: intentionally NO JS test — the v1 form is a plain server-rendered
 // admin-post POST (no AJAX module). Its data path (validation, nonce, ?contact=
 // success|error redirect, wp_mail → Mailpit) is owned + tested by the plugin
