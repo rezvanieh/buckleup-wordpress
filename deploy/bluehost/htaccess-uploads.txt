@@ -1,0 +1,11 @@
+# =============================================================================
+# Install as:  wp-content/uploads/.htaccess
+# Denies direct PHP execution from the uploads dir (defense vs uploaded shells).
+# Mirrors nginx:  location ~* ^/wp-content/uploads/.*\.php$ { deny all; }
+#
+# Use FilesMatch + "Require all denied" (Apache 2.4). Do NOT use
+# "php_flag engine off" — it 500s under Bluehost's suPHP/lsphp/php-fpm handler.
+# =============================================================================
+<FilesMatch "(?i)\.(php|phtml|php3|php4|php5|php7|php8|pht|phar)$">
+  Require all denied
+</FilesMatch>

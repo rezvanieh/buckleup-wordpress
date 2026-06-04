@@ -1,0 +1,111 @@
+# =============================================================================
+# BuckleUp — PRODUCTION root .htaccess for Bluehost (Apache 2.4, shared hosting)
+# -----------------------------------------------------------------------------
+# Ported from docker/nginx/default.conf (nginx config is NOT read on Bluehost).
+# Install at the WordPress web root (the domain's docroot, e.g. public_html).
+#
+# CRITICAL placement rules (learned from the compatibility review):
+#  - Keep every BuckleUp block OUTSIDE the "# BEGIN WordPress" markers. WordPress
+#    rewrites the BEGIN/END WordPress block on every permalink save, and the
+#    Bluehost cache plugin injects its own "# BEGIN EPC" block — anything inside
+#    those markers can be clobbered or shadowed. Our hardening lives ABOVE them.
+#  - Use "Header always set" (not "Header set") so headers also apply to 4xx/5xx
+#    (nginx used `always`). Wrap in <IfModule mod_headers.c> so a missing module
+#    is ignored instead of 500-ing every page.
+#  - PHP-in-uploads/wp-includes denial lives in per-folder .htaccess files
+#    (htaccess-uploads.txt, htaccess-wp-includes.txt) — NOT here.
+#  - Do NOT use "php_flag engine off" anywhere — it 500s under Bluehost's PHP
+#    handler. Use <FilesMatch ...> Require all denied.
+#
+# VERIFY after deploy (don't trust the config — the failure mode is silent):
+#   curl -I https://www.buckleupdriving.ca/          # expect the 3 sec headers
+#   curl -I https://www.buckleupdriving.ca/nope-404  # headers present on 404 too
+#   curl -I https://www.buckleupdriving.ca/xmlrpc.php # 403
+#   curl -I https://buckleupdriving.ca/              # 301 -> https://www....
+# =============================================================================
+
+# --- Canonical host + HTTPS (apex -> www, http -> https) ---------------------
+# CHANGE the domain in BOTH RewriteRule targets if the final domain differs.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Force HTTPS (honor a CDN/Cloudflare-forwarded proto too).
+  RewriteCond %{HTTPS} off [OR]
+  RewriteCond %{HTTP:X-Forwarded-Proto} =http
+  RewriteRule ^ https://www.buckleupdriving.ca%{REQUEST_URI} [L,R=301]
+
+  # apex -> www.
+  RewriteCond %{HTTP_HOST} ^buckleupdriving\.ca$ [NC]
+  RewriteRule ^ https://www.buckleupdriving.ca%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# --- Security response headers (every response, incl. errors) ----------------
+<IfModule mod_headers.c>
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  # HSTS — enable ONLY after HTTPS is confirmed working site-wide (it's sticky).
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+</IfModule>
+
+# --- Block sensitive files (mirrors nginx deny wp-config/readme/license/*.log) -
+<FilesMatch "(?i)^(wp-config\.php|readme\.html|license\.txt)$">
+  Require all denied
+</FilesMatch>
+<FilesMatch "(?i)\.log$">
+  Require all denied
+</FilesMatch>
+
+# --- Block the XML-RPC endpoint (the plugin also 403s it in PHP; belt+braces) -
+<FilesMatch "(?i)^xmlrpc\.php$">
+  Require all denied
+</FilesMatch>
+
+# --- Block hidden/dotfiles except ACME (/.well-known/ must stay open for SSL) -
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule "(^|/)\.(?!well-known/)" - [F]
+</IfModule>
+
+# --- Long-cache static assets (mirrors the nginx `expires 7d` block) ----------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css               "access plus 7 days"
+  ExpiresByType application/javascript "access plus 7 days"
+  ExpiresByType font/woff2             "access plus 7 days"
+  ExpiresByType font/woff              "access plus 7 days"
+  ExpiresByType font/ttf               "access plus 7 days"
+  ExpiresByType image/png              "access plus 7 days"
+  ExpiresByType image/jpeg             "access plus 7 days"
+  ExpiresByType image/gif              "access plus 7 days"
+  ExpiresByType image/webp             "access plus 7 days"
+  ExpiresByType image/avif             "access plus 7 days"
+  ExpiresByType image/svg+xml          "access plus 7 days"
+  ExpiresByType image/x-icon           "access plus 7 days"
+</IfModule>
+<IfModule mod_mime.c>
+  AddType image/webp .webp
+  AddType image/avif .avif
+</IfModule>
+
+# --- WebP delivery note (DO NOT add an Accept-header WebP rewrite here) -------
+# WebP is delivered by the theme's PHP <picture> markup
+# (wp-content/themes/buckleup/inc/webp.php) which serves the pre-generated
+# <file>.webp siblings shipped in wp-content/uploads. A mod_rewrite jpg->webp
+# swap would double-serve, break the non-WebP fallback, and get cached under the
+# .jpg URL without Vary:Accept. The <picture> path is server-agnostic — leave it.
+
+# =============================================================================
+# BEGIN WordPress
+# (Standard front controller. WordPress manages this block; safe to let it
+#  regenerate on permalink save. Our hardening above is intentionally outside.)
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+# END WordPress
