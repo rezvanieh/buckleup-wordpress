@@ -30,6 +30,7 @@ import { initConsoleTags } from './modules/console-tags.js';
 import { initConsoleSchedule } from './modules/console-schedule.js';
 import { initConsoleAvailability } from './modules/console-availability.js';
 import { initConsoleStudents } from './modules/console-students.js';
+import { initConsoleAdminStudents } from './modules/console-admin-students.js';
 
 function boot() {
   // Theme first so the resolved class/logo are correct before anything paints
@@ -49,6 +50,7 @@ function boot() {
   initConsoleSchedule();
   initConsoleAvailability();
   initConsoleStudents();
+  initConsoleAdminStudents();
   initReveals();
 }
 

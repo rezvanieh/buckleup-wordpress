@@ -342,6 +342,54 @@ function click(el) {
     visible().length === 0 && win.document.querySelector('[data-students-noresults]').classList.contains('hidden') === false);
 }
 
+// --- admin Students: init + delete-confirm dialog -------------------------
+{
+  const win = setupDom(`
+    <div data-admin-students-toolbar>
+      <input data-admin-students-search>
+      <select data-admin-students-status-filter><option value=""></option><option value="ACTIVE"></option></select>
+      <select data-admin-students-license><option value=""></option></select>
+    </div>
+    <table><tbody data-admin-students-rows>
+      <tr data-admin-student="7"><td><button data-admin-student-delete="7" data-admin-student-name="Alice">Delete</button></td></tr>
+    </tbody></table>
+    <div data-admin-students-pager class="hidden">
+      <span data-admin-students-count></span>
+      <button data-admin-students-prev></button>
+      <span data-admin-students-pageinfo></span>
+      <button data-admin-students-next></button>
+    </div>
+    <div data-stat-total></div><div data-stat-active></div><span data-stat-active-pct></span>
+    <div data-stat-license></div><div data-stat-status></div>
+    <div data-admin-students-status hidden></div>
+    <div data-admin-del-dialog data-state="closed" class="hidden" hidden>
+      <div data-admin-del-overlay></div>
+      <button data-admin-del-cancel></button>
+      <button data-admin-del-confirm></button>
+    </div>`);
+  // No initial load fetch needed (page 1 is server-rendered); stub fetch anyway
+  // so a stray call can't throw.
+  win.fetch = global.fetch = () => Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ students: [], stats: {}, pagination: { page: 1, pages: 1, total: 0 } }) });
+  let threw = false;
+  try {
+    const { initConsoleAdminStudents } = await import('../src/js/modules/console-admin-students.js');
+    initConsoleAdminStudents(win.document);
+  } catch (e) {
+    threw = true;
+    console.error(e);
+  }
+  ok('Admin students inits without throwing in jsdom', !threw);
+
+  const dialog = win.document.querySelector('[data-admin-del-dialog]');
+  // Clicking a row delete button opens the confirm dialog.
+  win.document.querySelector('[data-admin-student-delete="7"]').dispatchEvent(new win.Event('click', { bubbles: true }));
+  ok('Admin students delete opens confirm dialog', dialog.getAttribute('data-state') === 'open' && dialog.classList.contains('hidden') === false);
+
+  // Cancel closes it.
+  win.document.querySelector('[data-admin-del-cancel]').dispatchEvent(new win.Event('click', { bubbles: true }));
+  ok('Admin students delete dialog cancels', dialog.getAttribute('data-state') === 'closed' && dialog.classList.contains('hidden') === true);
+}
+
 // Contact form: intentionally NO JS test — the v1 form is a plain server-rendered
 // admin-post POST (no AJAX module). Its data path (validation, nonce, ?contact=
 // success|error redirect, wp_mail → Mailpit) is owned + tested by the plugin
