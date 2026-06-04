@@ -75,21 +75,105 @@ function buckleup_rest_admin_stats() {
 
 /** ---- Students ------------------------------------------------------- */
 
-function buckleup_rest_admin_students() {
-	$students = array();
-	foreach ( get_users( array( 'role' => 'buckleup_student', 'orderby' => 'display_name' ) ) as $u ) {
-		$students[] = array(
-			'id'          => $u->ID,
-			'userId'      => $u->ID,
-			'name'        => $u->display_name,
-			'email'       => $u->user_email,
-			'phone'       => buckleup_profile_get( $u->ID, 'bu_phone', '' ),
-			'licenseType' => buckleup_profile_get( $u->ID, 'bu_license_type', '' ),
-			'status'      => buckleup_profile_get( $u->ID, 'bu_status', 'ACTIVE' ),
-			'createdAt'   => buckleup_iso8601( $u->user_registered ),
-		);
+/**
+ * GET /admin/students — paginated + filtered + enriched, with stats wrappers.
+ *
+ * Query params: search, status, licenseType, page (1-based), limit.
+ * Response: { students, stats{total,active,byStatus,byLicenseType}, pagination{total,pages,page,limit} }.
+ */
+function buckleup_rest_admin_students( WP_REST_Request $request ) {
+	global $wpdb;
+
+	$search       = sanitize_text_field( (string) $request->get_param( 'search' ) );
+	$status_f     = sanitize_text_field( (string) $request->get_param( 'status' ) );
+	$license_f    = sanitize_text_field( (string) $request->get_param( 'licenseType' ) );
+	$page         = max( 1, (int) ( $request->get_param( 'page' ) ?: 1 ) );
+	$limit        = min( 100, max( 1, (int) ( $request->get_param( 'limit' ) ?: 20 ) ) );
+
+	// Pull all students once (the dataset is small for a driving school); filter
+	// + paginate in PHP for clarity, computing stats over the FULL set.
+	$all = get_users( array( 'role' => 'buckleup_student', 'orderby' => 'display_name', 'order' => 'ASC' ) );
+
+	$stats = array( 'total' => 0, 'active' => 0, 'byStatus' => array(), 'byLicenseType' => array() );
+	$rows  = array();
+	foreach ( $all as $u ) {
+		$status  = buckleup_profile_get( $u->ID, 'bu_status', 'ACTIVE' );
+		$license = buckleup_profile_get( $u->ID, 'bu_license_type', '' );
+
+		// Stats over the unfiltered set.
+		$stats['total']++;
+		if ( 'ACTIVE' === $status ) {
+			$stats['active']++;
+		}
+		$stats['byStatus'][ $status ]            = ( $stats['byStatus'][ $status ] ?? 0 ) + 1;
+		$lk                                      = $license ?: 'Unspecified';
+		$stats['byLicenseType'][ $lk ]           = ( $stats['byLicenseType'][ $lk ] ?? 0 ) + 1;
+
+		// Filters.
+		if ( '' !== $search ) {
+			$hay = strtolower( $u->display_name . ' ' . $u->user_email );
+			if ( false === strpos( $hay, strtolower( $search ) ) ) {
+				continue;
+			}
+		}
+		if ( '' !== $status_f && $status_f !== $status ) {
+			continue;
+		}
+		if ( '' !== $license_f && $license_f !== $license ) {
+			continue;
+		}
+
+		$rows[] = buckleup_admin_student_row( $u, $status, $license );
 	}
-	return new WP_REST_Response( array( 'students' => $students ), 200 );
+
+	$matched = count( $rows );
+	$pages   = (int) ceil( $matched / $limit );
+	$offset  = ( $page - 1 ) * $limit;
+	$paged   = array_slice( $rows, $offset, $limit );
+
+	return new WP_REST_Response( array(
+		'students'   => $paged,
+		'stats'      => $stats,
+		'pagination' => array(
+			'total' => $matched,
+			'pages' => $pages,
+			'page'  => $page,
+			'limit' => $limit,
+		),
+	), 200 );
+}
+
+/**
+ * Enriched admin student row (booking count, last booking, emergency + profile).
+ *
+ * @param WP_User $u
+ * @param string  $status
+ * @param string  $license
+ * @return array<string,mixed>
+ */
+function buckleup_admin_student_row( $u, $status, $license ) {
+	global $wpdb;
+	$bk = buckleup_app_table( 'bookings' );
+
+	$booking_count = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$bk} WHERE student_id=%d", $u->ID ) );
+	$last_booking  = $wpdb->get_var( $wpdb->prepare( "SELECT datetime FROM {$bk} WHERE student_id=%d ORDER BY datetime DESC LIMIT 1", $u->ID ) );
+
+	return array(
+		'id'               => $u->ID,
+		'userId'           => $u->ID,
+		'name'             => $u->display_name,
+		'email'            => $u->user_email,
+		'phone'            => buckleup_profile_get( $u->ID, 'bu_phone', '' ),
+		'image'            => buckleup_user_public( $u->ID )['avatar'] ?? '',
+		'licenseType'      => $license,
+		'status'           => $status,
+		'bookingCount'     => $booking_count,
+		'lastBooking'      => $last_booking ? buckleup_iso8601( $last_booking ) : null,
+		'emergencyContact' => buckleup_profile_get( $u->ID, 'bu_emergency_contact', '' ),
+		'emergencyPhone'   => buckleup_profile_get( $u->ID, 'bu_emergency_phone', '' ),
+		'preferredLang'    => buckleup_profile_get( $u->ID, 'bu_preferred_lang', 'en' ),
+		'userCreatedAt'    => buckleup_iso8601( $u->user_registered ),
+	);
 }
 
 /**
@@ -156,6 +240,8 @@ function buckleup_admin_review_shape( $row ) {
 	return array(
 		'id'             => (int) $row['id'],
 		'studentName'    => get_the_author_meta( 'display_name', $sid ),
+		'studentEmail'   => get_the_author_meta( 'user_email', $sid ),
+		'studentImage'   => buckleup_user_public( $sid )['avatar'] ?? '',
 		'instructorName' => $row['instructor_id'] ? get_the_author_meta( 'display_name', (int) $row['instructor_id'] ) : null,
 		'rating'         => (int) $row['rating'],
 		'comment'        => $row['comment'],
@@ -165,11 +251,15 @@ function buckleup_admin_review_shape( $row ) {
 	);
 }
 
+/**
+ * GET /admin/reviews — BARE array (not wrapped) to match the source shape the
+ * admin reviews page reads.
+ */
 function buckleup_rest_admin_reviews() {
 	global $wpdb;
 	$t    = buckleup_app_table( 'reviews' );
 	$rows = $wpdb->get_results( "SELECT * FROM {$t} ORDER BY created_at DESC", ARRAY_A );
-	return new WP_REST_Response( array( 'reviews' => array_map( 'buckleup_admin_review_shape', (array) $rows ) ), 200 );
+	return new WP_REST_Response( array_map( 'buckleup_admin_review_shape', (array) $rows ), 200 );
 }
 
 function buckleup_rest_admin_review_patch( WP_REST_Request $request ) {

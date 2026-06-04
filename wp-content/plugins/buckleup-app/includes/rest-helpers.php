@@ -77,10 +77,13 @@ function buckleup_booking_shape( $row ) {
 	$service_id = (int) $row['service_id'];
 	$service    = $service_id ? get_post( $service_id ) : null;
 
+	$student_id    = (int) $row['student_id'];
+	$instructor_id = (int) $row['instructor_id'];
+
 	return array(
 		'id'           => (int) $row['id'],
-		'studentId'    => (int) $row['student_id'],
-		'instructorId' => (int) $row['instructor_id'],
+		'studentId'    => $student_id,
+		'instructorId' => $instructor_id,
 		'serviceId'    => $service_id,
 		'datetime'     => buckleup_iso8601( $row['datetime'] ),
 		'duration'     => (int) $row['duration'],
@@ -89,17 +92,24 @@ function buckleup_booking_shape( $row ) {
 		'notes'        => $row['notes'],
 		'createdAt'    => buckleup_iso8601( $row['created_at'] ),
 		'student'      => array(
-			'id'   => (int) $row['student_id'],
-			'user' => array( 'name' => get_the_author_meta( 'display_name', (int) $row['student_id'] ) ),
+			'id'   => $student_id,
+			'user' => array(
+				'name'  => get_the_author_meta( 'display_name', $student_id ),
+				'email' => get_the_author_meta( 'user_email', $student_id ),
+				'phone' => buckleup_profile_get( $student_id, 'bu_phone', '' ),
+			),
 		),
 		'instructor'   => array(
-			'id'   => (int) $row['instructor_id'],
-			'user' => array( 'name' => get_the_author_meta( 'display_name', (int) $row['instructor_id'] ) ),
+			'id'   => $instructor_id,
+			'user' => array( 'name' => get_the_author_meta( 'display_name', $instructor_id ) ),
 		),
 		'service'      => $service ? array(
-			'id'    => $service->ID,
-			'name'  => $service->post_title,
-			'price' => (float) get_post_meta( $service->ID, 'bu_price', true ),
+			'id'       => $service->ID,
+			'name'     => $service->post_title,
+			'price'    => (float) get_post_meta( $service->ID, 'bu_price', true ),
+			// service.duration: the booking's stored (authoritative) duration,
+			// falling back to the service's bu_duration meta.
+			'duration' => (int) $row['duration'] ?: (int) get_post_meta( $service->ID, 'bu_duration', true ),
 		) : null,
 	);
 }

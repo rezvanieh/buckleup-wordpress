@@ -31,6 +31,11 @@ add_action( 'rest_api_init', function () {
 
 	register_rest_route( 'buckleup/v1', '/user/avatar', array(
 		array(
+			'methods'             => 'GET',
+			'callback'            => 'buckleup_rest_avatar_get',
+			'permission_callback' => 'buckleup_perm_logged_in',
+		),
+		array(
 			'methods'             => 'POST',
 			'callback'            => 'buckleup_rest_avatar_post',
 			'permission_callback' => 'buckleup_perm_logged_in',
@@ -78,6 +83,22 @@ function buckleup_rest_theme_put( WP_REST_Request $request ) {
 }
 
 /** ---- Avatar (Media Library) ----------------------------------------- */
+
+/**
+ * GET /user/avatar — current user's avatar URL + identity (admin Settings card).
+ * Returns { avatar, image, name, email } (avatar === image for compatibility).
+ */
+function buckleup_rest_avatar_get() {
+	$uid    = get_current_user_id();
+	$pub    = buckleup_user_public( $uid );
+	$avatar = $pub['avatar'] ?? '';
+	return new WP_REST_Response( array(
+		'avatar' => $avatar,
+		'image'  => $avatar,
+		'name'   => $pub['name'] ?? '',
+		'email'  => $pub['email'] ?? '',
+	), 200 );
+}
 
 function buckleup_rest_avatar_post( WP_REST_Request $request ) {
 	$check = buckleup_check_nonce( $request );

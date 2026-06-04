@@ -31,7 +31,10 @@ add_action( 'rest_api_init', function () {
 
 	register_rest_route( 'buckleup/v1', '/instructors/availability', array(
 		array( 'methods' => 'GET', 'callback' => 'buckleup_rest_instr_avail_get' ) + $inst,
+		// POST and PUT both save a single day's hours (the weekly-save client
+		// uses PUT; keep POST for parity).
 		array( 'methods' => 'POST', 'callback' => 'buckleup_rest_instr_avail_post' ) + $inst,
+		array( 'methods' => 'PUT', 'callback' => 'buckleup_rest_instr_avail_post' ) + $inst,
 		array( 'methods' => 'DELETE', 'callback' => 'buckleup_rest_instr_avail_delete' ) + $inst,
 	) );
 
@@ -257,9 +260,19 @@ function buckleup_rest_instr_exc_delete( WP_REST_Request $request ) {
 
 function buckleup_rest_instr_bookings() {
 	global $wpdb;
-	$iid  = get_current_user_id();
-	$t    = buckleup_app_table( 'bookings' );
-	$rows = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$t} WHERE instructor_id=%d ORDER BY datetime DESC", $iid ), ARRAY_A );
+	$iid = get_current_user_id();
+	$t   = buckleup_app_table( 'bookings' );
+	$now = current_time( 'mysql', true );
+	// Active, upcoming bookings only, soonest first (drives the schedule + the
+	// dashboard's upcoming counts; cancelled/past are excluded).
+	$rows = $wpdb->get_results(
+		$wpdb->prepare(
+			"SELECT * FROM {$t} WHERE instructor_id=%d AND status <> 'CANCELLED' AND datetime >= %s ORDER BY datetime ASC",
+			$iid,
+			$now
+		),
+		ARRAY_A
+	);
 	return new WP_REST_Response( array( 'bookings' => array_map( 'buckleup_booking_shape', (array) $rows ) ), 200 );
 }
 
@@ -398,19 +411,45 @@ function buckleup_latest_progress_skills( $student_id ) {
 /** ---- Instructor profile --------------------------------------------- */
 
 function buckleup_instructor_profile_shape( $iid ) {
-	$user = get_user_by( 'id', $iid );
+	$user   = get_user_by( 'id', $iid );
+	$avatar = buckleup_user_public( $iid )['avatar'] ?? '';
+	$agg    = buckleup_instructor_rating_agg( $iid );
 	return array(
 		'id'             => $iid,
 		'name'           => $user ? $user->display_name : '',
 		'email'          => $user ? $user->user_email : '',
 		'phone'          => buckleup_profile_get( $iid, 'bu_phone', '' ),
-		'image'          => buckleup_user_public( $iid )['avatar'] ?? '',
+		'avatar'         => $avatar,
+		'image'          => $avatar, // kept for back-compat.
 		'bio'            => buckleup_profile_get( $iid, 'bu_bio', '' ),
 		'certifications' => buckleup_profile_get_list( $iid, 'bu_certifications' ),
 		'languages'      => buckleup_profile_get_list( $iid, 'bu_languages' ),
 		'hourlyRate'     => (float) buckleup_profile_get( $iid, 'bu_hourly_rate', 0 ),
 		'isActive'       => (bool) buckleup_profile_get( $iid, 'bu_is_active', 1 ),
-		'rating'         => (float) buckleup_profile_get( $iid, 'bu_rating', 0 ),
+		// avgRating + totalReviews computed from APPROVED reviews (live), not the
+		// stored bu_rating meta.
+		'avgRating'      => $agg['avg'],
+		'totalReviews'   => $agg['count'],
+		'createdAt'      => buckleup_iso8601( $user ? $user->user_registered : null ),
+	);
+}
+
+/**
+ * Aggregate APPROVED review rating for an instructor.
+ *
+ * @param int $iid
+ * @return array{avg:float,count:int}
+ */
+function buckleup_instructor_rating_agg( $iid ) {
+	global $wpdb;
+	$t   = buckleup_app_table( 'reviews' );
+	$row = $wpdb->get_row(
+		$wpdb->prepare( "SELECT AVG(rating) AS avg_rating, COUNT(*) AS cnt FROM {$t} WHERE instructor_id=%d AND is_approved=1", $iid ),
+		ARRAY_A
+	);
+	return array(
+		'avg'   => $row && $row['cnt'] ? round( (float) $row['avg_rating'], 2 ) : 0.0,
+		'count' => $row ? (int) $row['cnt'] : 0,
 	);
 }
 

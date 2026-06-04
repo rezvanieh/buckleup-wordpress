@@ -43,6 +43,7 @@ $buckleup_app_includes = array(
 	'includes/rest-admin.php',      // buckleup/v1/admin/*
 	'includes/rest-booking.php',    // buckleup/v1/bookings, /bookings/slots
 	'includes/rest-user.php',       // buckleup/v1/user/theme, /user/avatar
+	'includes/rest-graduates.php',  // buckleup/v1/graduates (shares the graduate CPT)
 );
 foreach ( $buckleup_app_includes as $buckleup_app_rel ) {
 	$buckleup_app_path = BUCKLEUP_APP_PATH . $buckleup_app_rel;
