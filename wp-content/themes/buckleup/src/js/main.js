@@ -24,6 +24,7 @@ import { initOverlays } from './modules/overlays.js';
 import { initForms } from './modules/forms.js';
 import { initAuth } from './modules/auth.js';
 import { initConsole } from './modules/console.js';
+import { initConsoleReviews } from './modules/console-reviews.js';
 
 function boot() {
   // Theme first so the resolved class/logo are correct before anything paints
@@ -37,6 +38,7 @@ function boot() {
   initForms();
   initAuth();
   initConsole();
+  initConsoleReviews();
   initReveals();
 }
 

@@ -159,6 +159,42 @@ function buckleup_console_shell( string $role, string $active, string $content )
 }
 
 /**
+ * Resolve the console role for the current page from its top-level ancestor slug
+ * (student/instructor/admin), or '' if the page isn't a console page.
+ */
+function buckleup_console_role_for_page( $post = null ): string {
+	$post = get_post( $post );
+	if ( ! $post || 'page' !== $post->post_type ) {
+		return '';
+	}
+	$ancestors = get_post_ancestors( $post->ID );
+	$top_id    = $ancestors ? (int) end( $ancestors ) : $post->ID;
+	$top_slug  = get_post_field( 'post_name', $top_id );
+	return in_array( $top_slug, array( 'student', 'instructor', 'admin' ), true ) ? $top_slug : '';
+}
+
+/**
+ * Bind console CHILD pages (e.g. /student/reviews/) to the role-root no-chrome
+ * console template via the FSE template_hierarchy: prepend page-{role} so a child
+ * page resolves to templates/page-student|instructor|admin.html (no marketing
+ * chrome). The role-root pages already match page-{role}.html by slug. This means
+ * the content engineer only creates child pages with leaf slugs — no per-page
+ * template handoff.
+ */
+add_filter( 'template_hierarchy', function ( $templates ) {
+	if ( ! is_page() ) {
+		return $templates;
+	}
+	$role = buckleup_console_role_for_page( get_queried_object() );
+	if ( '' === $role ) {
+		return $templates;
+	}
+	// Prepend the role-root template so it wins over generic page templates.
+	array_unshift( $templates, "page-$role" );
+	return $templates;
+}, 20 );
+
+/**
  * Console page heading block (title + optional subline) — used at the top of each
  * console page's content for consistent typography.
  */
