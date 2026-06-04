@@ -94,14 +94,37 @@ function buckleup_console_shell( string $role, string $active, string $content )
 	$group   = 'console-' . $role;
 	$nav_d   = buckleup_console_nav_html( $cfg['nav'], $active, $group );
 
+	// Brand "profile icon": the user's uploaded avatar (bu_avatar_id) if set, else
+	// their initials — mirrors the source layout (user image or initials), not a
+	// fixed logo. object-fit is inline so no extra Tailwind class is required.
+	$avatar_id  = $user && $user->exists() ? (int) get_user_meta( $user->ID, 'bu_avatar_id', true ) : 0;
+	$avatar_url = $avatar_id ? wp_get_attachment_image_url( $avatar_id, 'thumbnail' ) : '';
+	if ( $avatar_url ) {
+		$tile = sprintf(
+			'<img src="%s" alt="" width="40" height="40" class="w-10 h-10 rounded-xl shadow-md shrink-0" style="object-fit:cover">',
+			esc_url( $avatar_url )
+		);
+	} else {
+		$initials = '';
+		foreach ( preg_split( '/\s+/', trim( (string) $name ) ) as $part ) {
+			if ( '' !== $part ) {
+				$initials .= mb_strtoupper( mb_substr( $part, 0, 1 ) );
+			}
+			if ( mb_strlen( $initials ) >= 2 ) {
+				break;
+			}
+		}
+		$tile = '<span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent text-primary-foreground font-bold shadow-md shrink-0">' . esc_html( '' !== $initials ? $initials : 'B' ) . '</span>';
+	}
+
 	$brand = sprintf(
-		'<a href="%1$s" class="flex items-center gap-3">'
-			. '<span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent text-primary-foreground font-bold shadow-md shrink-0">B</span>'
+		'<a href="%1$s" class="flex items-center gap-3">%4$s'
 			. '<span class="min-w-0"><span class="font-bold text-foreground text-lg block leading-tight">%2$s</span>'
 			. '<span class="text-xs text-muted-foreground truncate max-w-[140px] block">%3$s</span></span></a>',
 		esc_url( home_url( '/' ) ),
 		esc_html( $cfg['label'] ),
-		esc_html( $name )
+		esc_html( $name ),
+		$tile
 	);
 
 	$signout = sprintf(
