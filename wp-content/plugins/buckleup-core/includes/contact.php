@@ -65,7 +65,110 @@ function buckleup_contact_validate( $raw ) {
 }
 
 /**
- * Build and send the notification email via wp_mail().
+ * Resolve the brand logo URL for emails: the theme's light logo attachment, then
+ * a 'logo' attachment, then the theme custom logo, then the site icon.
+ *
+ * @return string Absolute URL (or '' if nothing resolves).
+ */
+function buckleup_contact_logo_url() {
+	foreach ( array( 'buckleup-driving-school-logo-light', 'logo' ) as $slug ) {
+		$ids = get_posts(
+			array(
+				'name'        => $slug,
+				'post_type'   => 'attachment',
+				'post_status' => 'inherit',
+				'numberposts' => 1,
+				'fields'      => 'ids',
+			)
+		);
+		if ( $ids ) {
+			$url = wp_get_attachment_image_url( $ids[0], 'full' );
+			if ( $url ) {
+				return $url;
+			}
+		}
+	}
+	$custom = get_theme_mod( 'custom_logo' );
+	if ( $custom ) {
+		$url = wp_get_attachment_image_url( $custom, 'full' );
+		if ( $url ) {
+			return $url;
+		}
+	}
+	return (string) get_site_icon_url( 192 );
+}
+
+/**
+ * Render the branded HTML email body for a contact submission. Table + inline
+ * styles for broad email-client support; all submitter data is escaped.
+ *
+ * @param array<string,string> $data      Validated submission.
+ * @param string               $full_name Submitter display name.
+ * @return string HTML document.
+ */
+function buckleup_contact_email_html( $data, $full_name ) {
+	$logo   = esc_url( buckleup_contact_logo_url() );
+	$site   = esc_html( get_bloginfo( 'name' ) );
+	$home   = esc_url( home_url( '/' ) );
+	$accent = '#dc2626';
+	$ink    = '#111827';
+	$muted  = '#6b7280';
+	$border = '#e5e7eb';
+	$panel  = '#f9fafb';
+	$page   = '#f3f4f6';
+
+	$name_e    = esc_html( $full_name );
+	$email_e   = esc_html( $data['email'] );
+	$phone_e   = '' !== $data['phone'] ? esc_html( $data['phone'] ) : '&mdash;';
+	$subject_e = esc_html( $data['subject'] );
+	$message_e = nl2br( esc_html( $data['message'] ) );
+	$first_e   = esc_html( $data['first_name'] );
+	$sent_e    = esc_html( wp_date( 'F j, Y \a\t g:i a' ) );
+	$reply     = esc_url( 'mailto:' . $data['email'] . '?subject=' . rawurlencode( 'Re: ' . $data['subject'] ) );
+
+	$row = function ( $label, $value ) use ( $muted, $ink, $border ) {
+		return sprintf(
+			'<tr><td style="padding:10px 0;border-bottom:1px solid %4$s;width:110px;vertical-align:top;font:600 12px/1.4 Arial,Helvetica,sans-serif;color:%1$s;text-transform:uppercase;letter-spacing:.04em;">%2$s</td>'
+			. '<td style="padding:10px 0;border-bottom:1px solid %4$s;font:400 15px/1.5 Arial,Helvetica,sans-serif;color:%3$s;">%5$s</td></tr>',
+			$muted,
+			$label,
+			$ink,
+			$border,
+			$value
+		);
+	};
+
+	$logo_html = $logo
+		? sprintf( '<a href="%1$s"><img src="%2$s" alt="%3$s" height="44" style="height:44px;width:auto;display:block;border:0;"></a>', $home, $logo, $site )
+		: sprintf( '<a href="%1$s" style="font:700 22px/1 Arial,Helvetica,sans-serif;color:%2$s;text-decoration:none;">%3$s</a>', $home, $ink, $site );
+
+	$rows  = $row( 'Name', $name_e );
+	$rows .= $row( 'Email', sprintf( '<a href="mailto:%1$s" style="color:%2$s;text-decoration:none;">%1$s</a>', $email_e, $accent ) );
+	$rows .= $row( 'Phone', $phone_e );
+	$rows .= $row( 'Subject', $subject_e );
+
+	return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
+		. '<meta name="viewport" content="width=device-width,initial-scale=1"><title>' . $subject_e . '</title></head>'
+		. '<body style="margin:0;padding:0;background:' . $page . ';">'
+		. '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:' . $page . ';padding:24px 12px;"><tr><td align="center">'
+		. '<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border:1px solid ' . $border . ';border-radius:12px;overflow:hidden;">'
+		. '<tr><td align="center" style="padding:28px 24px 22px;border-bottom:3px solid ' . $accent . ';">' . $logo_html . '</td></tr>'
+		. '<tr><td style="padding:30px 32px 8px;">'
+		. '<h1 style="margin:0 0 6px;font:700 20px/1.3 Arial,Helvetica,sans-serif;color:' . $ink . ';">New contact form submission</h1>'
+		. '<p style="margin:0 0 22px;font:400 14px/1.5 Arial,Helvetica,sans-serif;color:' . $muted . ';">You&rsquo;ve received a new message from the website.</p>'
+		. '<table role="presentation" width="100%" cellpadding="0" cellspacing="0">' . $rows . '</table></td></tr>'
+		. '<tr><td style="padding:18px 32px 4px;">'
+		. '<div style="font:600 12px/1.4 Arial,Helvetica,sans-serif;color:' . $muted . ';text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px;">Message</div>'
+		. '<div style="background:' . $panel . ';border-left:3px solid ' . $accent . ';border-radius:6px;padding:16px 18px;font:400 15px/1.6 Arial,Helvetica,sans-serif;color:' . $ink . ';">' . $message_e . '</div></td></tr>'
+		. '<tr><td style="padding:24px 32px 32px;">'
+		. '<a href="' . $reply . '" style="display:inline-block;background:' . $ink . ';color:#ffffff;text-decoration:none;font:600 14px/1 Arial,Helvetica,sans-serif;padding:13px 22px;border-radius:8px;">Reply to ' . $first_e . '</a></td></tr>'
+		. '<tr><td style="padding:18px 32px;background:' . $panel . ';border-top:1px solid ' . $border . ';">'
+		. '<p style="margin:0;font:400 12px/1.5 Arial,Helvetica,sans-serif;color:' . $muted . ';">Sent from the contact form at <a href="' . $home . '" style="color:' . $muted . ';">buckleupdriving.ca</a> on ' . $sent_e . '.</p>'
+		. '</td></tr></table></td></tr></table></body></html>';
+}
+
+/**
+ * Build and send the notification email via wp_mail() as branded HTML.
  *
  * @param array<string,string> $data Validated submission.
  * @return bool wp_mail() result.
@@ -78,23 +181,13 @@ function buckleup_contact_send_email( $data ) {
 
 	$full_name = trim( $data['first_name'] . ' ' . $data['last_name'] );
 
-	$lines = array(
-		__( 'New contact form submission from the website:', 'buckleup-core' ),
-		'',
-		sprintf( '%s: %s', __( 'Name', 'buckleup-core' ), $full_name ),
-		sprintf( '%s: %s', __( 'Email', 'buckleup-core' ), $data['email'] ),
-		sprintf( '%s: %s', __( 'Phone', 'buckleup-core' ), '' !== $data['phone'] ? $data['phone'] : __( '(not provided)', 'buckleup-core' ) ),
-		sprintf( '%s: %s', __( 'Subject', 'buckleup-core' ), $data['subject'] ),
-		'',
-		__( 'Message:', 'buckleup-core' ),
-		$data['message'],
-	);
-	$body = implode( "\n", $lines );
+	$body = buckleup_contact_email_html( $data, $full_name );
 
-	// Reply-To the submitter so the team can respond directly. From: stays the
-	// site default (set by the SMTP/Mailpit mu-plugin) for deliverability.
+	// HTML body; Reply-To the submitter so the team can respond directly. From:
+	// stays the authenticated site mailbox (set by the SMTP mu-plugin) for
+	// deliverability (Zoho requires it).
 	$headers = array(
-		'Content-Type: text/plain; charset=UTF-8',
+		'Content-Type: text/html; charset=UTF-8',
 		sprintf( 'Reply-To: %s <%s>', $full_name, $data['email'] ),
 	);
 

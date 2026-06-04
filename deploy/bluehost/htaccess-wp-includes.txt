@@ -1,0 +1,17 @@
+# =============================================================================
+# Install as:  wp-includes/.htaccess
+# Denies direct PHP execution under wp-includes (it's only loaded via the front
+# controller, never hit directly in normal use, so this is safe).
+# Mirrors the wp-includes half of nginx:
+#   location ~* /(?:wp-content|wp-includes)/.*\.php$ { deny all; }
+#
+# NOTE on wp-content: the nginx rule also denied direct PHP under wp-content.
+# That is safe for THIS stack (our plugins expose endpoints via the REST API /
+# admin-post / admin-ajax which route through index.php and wp-admin, never via
+# direct wp-content PHP). If you want the stricter parity, drop the same block
+# into wp-content/.htaccess too — but test the site afterward, since some
+# third-party plugins do serve PHP directly from wp-content.
+# =============================================================================
+<FilesMatch "(?i)\.(php|phtml|php3|php4|php5|php7|php8|pht|phar)$">
+  Require all denied
+</FilesMatch>

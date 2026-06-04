@@ -23,6 +23,12 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
+// Bump when buckleup_app_role_caps() changes so caps re-apply to existing roles
+// on the next request (see the init hook below). v2: admin gains blog caps.
+if ( ! defined( 'BUCKLEUP_APP_ROLES_VERSION' ) ) {
+	define( 'BUCKLEUP_APP_ROLES_VERSION', '2' );
+}
+
 /**
  * Capability sets per role.
  *
@@ -43,6 +49,22 @@ function buckleup_app_role_caps() {
 		'read'                          => true,
 		'buckleup_access_admin_console' => true,
 		'buckleup_manage_app'           => true,
+		// Blog management via wp-admin (the console "Blogs" link → edit.php).
+		// Post + media + category + comment caps only — NOT page caps, so the
+		// admin can't edit the marketing/console pages.
+		'edit_posts'                    => true,
+		'edit_others_posts'             => true,
+		'edit_published_posts'          => true,
+		'edit_private_posts'            => true,
+		'publish_posts'                 => true,
+		'delete_posts'                  => true,
+		'delete_others_posts'           => true,
+		'delete_published_posts'        => true,
+		'delete_private_posts'          => true,
+		'read_private_posts'            => true,
+		'upload_files'                  => true,
+		'manage_categories'             => true,
+		'moderate_comments'             => true,
 	);
 
 	return array(
@@ -88,8 +110,10 @@ function buckleup_app_register_roles() {
 // Register on init too (cheap; ensures roles exist even if the activation hook
 // was missed, e.g. plugin dropped in via bind-mount without re-activation).
 add_action( 'init', function () {
-	if ( null === get_role( 'buckleup_student' ) ) {
+	if ( null === get_role( 'buckleup_student' )
+		|| get_option( 'buckleup_app_roles_version' ) !== BUCKLEUP_APP_ROLES_VERSION ) {
 		buckleup_app_register_roles();
+		update_option( 'buckleup_app_roles_version', BUCKLEUP_APP_ROLES_VERSION );
 	}
 } );
 

@@ -23,6 +23,9 @@ wp-data/blog-seo/
 wp-data/graduates/
 *.sqlite
 
+# Generated deployment bundle (rebuilt by scripts/package-bluehost.sh)
+dist/
+
 # Generated blog-card SVG intermediates (the rasterized PNGs are committed).
 content/blog-cards/*.svg
 
@@ -47,3 +50,6 @@ Thumbs.db
 # Logs
 *.log
 debug.log
+
+# Claude Code runtime (not project source)
+.claude/scheduled_tasks.lock
