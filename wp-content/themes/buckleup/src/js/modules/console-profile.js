@@ -44,12 +44,21 @@ export function initConsoleProfile(root = document) {
     refresh();
   });
 
+  // Fields whose value is a JSON array string (tag inputs) → parse before PUT.
+  const jsonFields = (form.getAttribute('data-profile-json') || '').split(',').map((s) => s.trim()).filter(Boolean);
+
   // Save (PUT).
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     if (!isDirty()) return;
     const payload = {};
-    fields.forEach((f) => { payload[f.name] = f.value; });
+    fields.forEach((f) => {
+      if (jsonFields.includes(f.name)) {
+        try { payload[f.name] = JSON.parse(f.value || '[]'); } catch (_) { payload[f.name] = []; }
+      } else {
+        payload[f.name] = f.value;
+      }
+    });
     if (save) save.disabled = true;
 
     fetch((cfg.restUrl || '/wp-json/buckleup/v1/') + endpoint, {
