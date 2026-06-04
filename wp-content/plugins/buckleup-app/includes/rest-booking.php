@@ -95,7 +95,6 @@ function buckleup_rest_bookings_post( WP_REST_Request $request ) {
 	$service_id    = isset( $p['serviceId'] ) ? (int) $p['serviceId'] : 0;
 	$instructor_id = isset( $p['instructorId'] ) ? (int) $p['instructorId'] : 0;
 	$datetime_raw  = isset( $p['datetime'] ) ? sanitize_text_field( $p['datetime'] ) : '';
-	$duration      = isset( $p['duration'] ) ? (int) $p['duration'] : 0;
 	$pickup        = isset( $p['pickupAddr'] ) ? sanitize_text_field( $p['pickupAddr'] ) : '';
 	$notes         = isset( $p['notes'] ) ? sanitize_textarea_field( $p['notes'] ) : '';
 
@@ -110,10 +109,16 @@ function buckleup_rest_bookings_post( WP_REST_Request $request ) {
 	if ( false === $ts ) {
 		return buckleup_rest_error( __( 'Invalid datetime', 'buckleup-app' ), 400 );
 	}
+
+	// Duration is AUTHORITATIVE from the service, never from the client. This
+	// keeps the booking length matched to the service and prevents a malicious
+	// client from POSTing a huge duration to blanket-block an instructor's day
+	// (calendar-DoS). Fall back to 60 and hard-cap at a sane max.
+	$duration = (int) get_post_meta( $service_id, 'bu_duration', true );
 	if ( $duration < 1 ) {
-		// Default to the service duration meta if available.
-		$duration = (int) get_post_meta( $service_id, 'bu_duration', true ) ?: 60;
+		$duration = 60;
 	}
+	$duration = min( $duration, (int) apply_filters( 'buckleup_max_booking_minutes', 480 ) );
 
 	// RE-VALIDATE the slot against the live availability engine (no trust in the
 	// client). The candidate start must currently be free.

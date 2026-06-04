@@ -51,32 +51,45 @@ function buckleup_login_redirect( $redirect_to, $requested, $user ) {
 	if ( ! ( $user instanceof WP_User ) ) {
 		return $redirect_to;
 	}
-	// Honor an explicit, safe in-site callbackUrl if present.
-	if ( $redirect_to && false === strpos( $redirect_to, '/wp-admin' ) ) {
-		$home = wp_parse_url( home_url(), PHP_URL_HOST );
-		$dest = wp_parse_url( $redirect_to, PHP_URL_HOST );
-		if ( ! $dest || $dest === $home ) {
+	$home = wp_parse_url( home_url(), PHP_URL_HOST );
+	$dest = $redirect_to ? wp_parse_url( $redirect_to, PHP_URL_HOST ) : '';
+
+	// Honor an explicit wp-admin destination ONLY for users who can actually use
+	// it (manage_options) — e.g. an admin who clicked a wp-admin link. Everyone
+	// else's wp-admin redirect is ignored (they have no dashboard access).
+	if ( $redirect_to && false !== strpos( $redirect_to, '/wp-admin' ) ) {
+		if ( user_can( $user, 'manage_options' ) && ( ! $dest || $dest === $home ) ) {
 			return $redirect_to;
 		}
+		return buckleup_dashboard_url( $user );
 	}
-	// Administrators with no explicit destination keep going to wp-admin only if
-	// they requested it; otherwise send WP admins to the custom /admin console.
+
+	// Honor any other explicit, safe in-site callbackUrl.
+	if ( $redirect_to && ( ! $dest || $dest === $home ) ) {
+		return $redirect_to;
+	}
+
+	// No explicit destination → the user's role dashboard.
 	return buckleup_dashboard_url( $user );
 }
 add_filter( 'login_redirect', 'buckleup_login_redirect', 10, 3 );
 
 /**
- * Did this wp-login request originate from our branded /login page? Checks the
- * HTTP referer against home_url('/login').
+ * Did this wp-login request originate from our branded /login page?
+ *
+ * Primary signal: a hidden `bu_branded=1` field the branded form POSTs (robust;
+ * not dependent on the Referer, which can be stripped/spoofed). Falls back to a
+ * Referer check for resilience if the field is ever missing.
  *
  * @return bool
  */
 function buckleup_login_from_branded_page() {
-	$referer = wp_get_referer();
-	if ( ! $referer ) {
-		return false;
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing
+	if ( isset( $_POST['bu_branded'] ) && '1' === sanitize_text_field( wp_unslash( $_POST['bu_branded'] ) ) ) {
+		return true;
 	}
-	return false !== strpos( $referer, '/login' );
+	$referer = wp_get_referer();
+	return $referer && false !== strpos( $referer, '/login' );
 }
 
 /**
@@ -235,22 +248,59 @@ add_action( 'rest_api_init', function () {
 	register_rest_route( 'buckleup/v1', '/auth/register', array(
 		'methods'             => 'POST',
 		'callback'            => 'buckleup_rest_register',
-		'permission_callback' => '__return_true', // public; nonce-checked below.
+		'permission_callback' => '__return_true', // public sign-up (source parity).
 	) );
 } );
 
 /**
+ * Per-IP + per-email transient rate limit for public registration.
+ * Abuse control in lieu of a nonce (a nonce can't gate a not-yet-logged-in
+ * visitor meaningfully, and the source had none). Mirrors the buckleup-core
+ * contact-form limiter.
+ *
+ * @param string $email
+ * @return bool True if allowed.
+ */
+function buckleup_register_rate_ok( $email ) {
+	$max    = (int) apply_filters( 'buckleup_register_rate_max', 5 );
+	$window = (int) apply_filters( 'buckleup_register_rate_window', 3600 ); // 1h.
+	$ip     = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : 'unknown';
+
+	$buckets = array( 'buckleup_reg_rl_ip_' . md5( $ip ) );
+	if ( $email ) {
+		$buckets[] = 'buckleup_reg_rl_em_' . md5( strtolower( $email ) );
+	}
+	$allowed = true;
+	foreach ( $buckets as $key ) {
+		$count = (int) get_transient( $key );
+		if ( $count >= $max ) {
+			$allowed = false;
+		}
+		set_transient( $key, $count + 1, $window );
+	}
+	return $allowed;
+}
+
+/**
  * POST /auth/register — create a student account (mirrors /api/auth/register).
+ *
+ * Public (no nonce, matching the source). Abuse-controlled by a honeypot
+ * (`website` hidden field) + a per-IP/email transient rate limit.
  *
  * @param WP_REST_Request $request
  */
 function buckleup_rest_register( WP_REST_Request $request ) {
-	$check = buckleup_check_nonce( $request );
-	if ( is_wp_error( $check ) ) {
-		return $check;
+	$p = (array) $request->get_json_params();
+
+	// Honeypot: a bot that fills the hidden `website` field is silently accepted
+	// as "success" without creating anything.
+	if ( ! empty( $p['website'] ) ) {
+		return new WP_REST_Response( array(
+			'message' => __( 'User created successfully', 'buckleup-app' ),
+			'user'    => array( 'role' => 'STUDENT' ),
+		), 201 );
 	}
 
-	$p        = (array) $request->get_json_params();
 	$name     = isset( $p['name'] ) ? sanitize_text_field( $p['name'] ) : '';
 	$email    = isset( $p['email'] ) ? sanitize_email( $p['email'] ) : '';
 	$phone    = isset( $p['phone'] ) ? sanitize_text_field( $p['phone'] ) : '';
@@ -267,6 +317,11 @@ function buckleup_rest_register( WP_REST_Request $request ) {
 	}
 	if ( email_exists( $email ) ) {
 		return buckleup_rest_error( __( 'User with this email already exists', 'buckleup-app' ), 400 );
+	}
+
+	// Abuse control: per-IP/email rate limit (over the cap → 429).
+	if ( ! buckleup_register_rate_ok( $email ) ) {
+		return buckleup_rest_error( __( 'Too many sign-up attempts. Please try again later.', 'buckleup-app' ), 429 );
 	}
 
 	$username = buckleup_unique_username_from_email( $email );
