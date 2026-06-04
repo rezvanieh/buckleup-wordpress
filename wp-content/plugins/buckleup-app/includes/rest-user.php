@@ -184,7 +184,7 @@ function buckleup_query_public_reviews( $limit = -1 ) {
  * first. Same data as GET /reviews; compact shape for direct theme rendering.
  *
  * @param int $limit Max reviews (default 12).
- * @return array<int,array{id:int,name:string,rating:int,comment:string,date:string|null}>
+ * @return array<int,array{id:int,name:string,rating:int,comment:string,date:string|null,avatar:string}>
  */
 function buckleup_get_public_reviews( $limit = 12 ) {
 	$out = array();
@@ -196,9 +196,22 @@ function buckleup_get_public_reviews( $limit = 12 ) {
 			'rating'  => (int) $row['rating'],
 			'comment' => $row['comment'] ? $row['comment'] : '',
 			'date'    => buckleup_iso8601( $row['created_at'] ),
+			'avatar'  => buckleup_review_avatar( $sid ),
 		);
 	}
 	return $out;
+}
+
+/**
+ * Student avatar URL for a review (thumbnail), or '' when none is set. The theme
+ * falls back to initials on an empty string.
+ *
+ * @param int $student_id
+ * @return string
+ */
+function buckleup_review_avatar( $student_id ) {
+	$attach_id = (int) get_user_meta( $student_id, 'bu_avatar_id', true );
+	return $attach_id ? ( wp_get_attachment_image_url( $attach_id, 'thumbnail' ) ?: '' ) : '';
 }
 
 /**
@@ -209,11 +222,13 @@ function buckleup_get_public_reviews( $limit = 12 ) {
 function buckleup_rest_reviews_public_get() {
 	$out = array();
 	foreach ( buckleup_query_public_reviews( -1 ) as $row ) {
-		$sid   = (int) $row['student_id'];
-		$out[] = array(
+		$sid    = (int) $row['student_id'];
+		$avatar = buckleup_review_avatar( $sid );
+		$out[]  = array(
 			'id'             => (int) $row['id'],
 			'name'           => get_the_author_meta( 'display_name', $sid ),
-			'image'          => buckleup_user_public( $sid )['avatar'] ?? '',
+			'image'          => $avatar,
+			'avatar'         => $avatar, // alias so the JS path matches the PHP helper.
 			'role'           => buckleup_profile_get( $sid, 'bu_license_type', '' ) ?: 'Student',
 			'content'        => $row['comment'] ? $row['comment'] : '',
 			'rating'         => (int) $row['rating'],
