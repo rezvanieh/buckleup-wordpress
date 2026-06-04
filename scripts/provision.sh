@@ -159,6 +159,15 @@ wp_eval /scripts/wp/seed-catalog.php
 echo "==> Seeding content (testimonials, FAQ, instructors, locations, pages)..."
 wp_eval /scripts/wp/seed-content.php
 
+echo "==> Seeding consoles auth (3 demo users + 5 console pages)..."
+# Needs buckleup-app's roles (activated above). Idempotent; known demo creds.
+wp_eval /scripts/wp/seed-console-users-pages.php
+
+echo "==> Seeding consoles demo data (bookings, availability, progress, reviews)..."
+# Populates the bu_* tables so every console page shows real content. Needs the
+# demo users (above) + a `service` CPT (seed-catalog). Idempotent.
+wp_eval /scripts/wp/seed-console-data.php
+
 echo "==> Importing the 5 blog posts (slugs/categories/tags/HTML preserved)..."
 wp_eval /scripts/wp/import-posts.php
 
@@ -422,6 +431,37 @@ verify_out="$(wp eval '
     }
     if ( $missing_role ) { echo "MISMATCH consoles roles: missing " . implode( ", ", $missing_role ) . "\n"; $fail = 1; }
     else { echo "ok consoles roles: student/instructor/admin present\n"; }
+
+    // 3 demo users exist with the right console role.
+    $demo_users = array(
+      "student@buckleup.test"    => "buckleup_student",
+      "instructor@buckleup.test" => "buckleup_instructor",
+      "appadmin@buckleup.test"   => "buckleup_admin",
+    );
+    $bad_user = array();
+    foreach ( $demo_users as $email => $role ) {
+      $u = get_user_by( "email", $email );
+      if ( ! $u || ! in_array( $role, (array) $u->roles, true ) ) { $bad_user[] = $email; }
+    }
+    if ( $bad_user ) { echo "MISMATCH consoles users: missing/role-wrong " . implode( ", ", $bad_user ) . "\n"; $fail = 1; }
+    else { echo "ok consoles users: 3 demo users with roles\n"; }
+
+    // 5 console/auth pages exist + publish.
+    $missing_page = array();
+    foreach ( array( "login", "register", "student", "instructor", "admin" ) as $slug ) {
+      $pg = get_page_by_path( $slug );
+      if ( ! $pg || "publish" !== $pg->post_status ) { $missing_page[] = $slug; }
+    }
+    if ( $missing_page ) { echo "MISMATCH consoles pages: missing/unpublished " . implode( ", ", $missing_page ) . "\n"; $fail = 1; }
+    else { echo "ok consoles pages: 5 console pages published\n"; }
+
+    // Demo data present (counts > 0) per table.
+    $empty_tbl = array();
+    foreach ( array( "bu_bookings", "bu_availability", "bu_lesson_progress", "bu_reviews" ) as $t ) {
+      if ( (int) $wpdb->get_var( "SELECT COUNT(*) FROM " . $wpdb->prefix . $t ) < 1 ) { $empty_tbl[] = $t; }
+    }
+    if ( $empty_tbl ) { echo "MISMATCH consoles demo data: empty " . implode( ", ", $empty_tbl ) . "\n"; $fail = 1; }
+    else { echo "ok consoles demo data: bookings/availability/progress/reviews populated\n"; }
   } else {
     echo "ok consoles: buckleup-app not active (skipped)\n";
   }
