@@ -102,6 +102,7 @@ $console_pages = array(
 	'instructor' => array( 'Instructor Dashboard','buckleup/page-instructor' ),
 	'admin'      => array( 'Admin Console',        'buckleup/page-admin' ),
 );
+$parent_ids = array();
 foreach ( $console_pages as $slug => $info ) {
 	list( $title, $pattern ) = $info;
 	$existing = bu_find_post( 'page', $slug );
@@ -115,7 +116,51 @@ foreach ( $console_pages as $slug => $info ) {
 	if ( $existing ) { $data['ID'] = $existing; }
 	$pid = wp_insert_post( wp_slash( $data ), true );
 	if ( is_wp_error( $pid ) ) { WP_CLI::warning( "  page {$slug}: " . $pid->get_error_message() ); continue; }
+	$parent_ids[ $slug ] = (int) $pid;
 	WP_CLI::log( "  page ok: /{$slug}/ (#{$pid})" );
 }
 
-WP_CLI::success( 'Console auth seeded: 3 demo users + 5 console pages.' );
+/* ---------------------------------------------------------------------------
+ * Console SUB-PAGES — child pages under the role dashboards, so they resolve at
+ * /student/reviews/, /instructor/schedule/, /admin/graduates/, etc. Each child's
+ * content is the role-specific pattern ref console-{role}-{leaf}; the theme's
+ * template_include filter renders any page under these parents with the console
+ * template (so NO page_template meta). Pages render empty until the matching
+ * pattern lands — that's expected; they auto-fill. Idempotent (upsert by path).
+ * ------------------------------------------------------------------------- */
+$child_map = array(
+	'student'    => array( 'reviews', 'profile', 'settings' ),
+	'instructor' => array( 'schedule', 'availability', 'students', 'profile', 'settings' ),
+	'admin'      => array( 'students', 'graduates', 'reviews', 'settings' ),
+);
+$child_n = 0;
+foreach ( $child_map as $role => $leaves ) {
+	$parent_id = isset( $parent_ids[ $role ] ) ? $parent_ids[ $role ] : bu_find_post( 'page', $role );
+	if ( ! $parent_id ) { WP_CLI::warning( "  parent /{$role}/ missing — skipping its children." ); continue; }
+	foreach ( $leaves as $leaf ) {
+		// Resolve existing by full hierarchical path (child pages need the full path).
+		$existing = get_page_by_path( "{$role}/{$leaf}", OBJECT, 'page' );
+		$pattern  = "buckleup/console-{$role}-{$leaf}";
+		$data = array(
+			'post_type'    => 'page',
+			'post_status'  => 'publish',
+			'post_parent'  => $parent_id,
+			'post_name'    => $leaf,
+			'post_title'   => ucwords( str_replace( '-', ' ', $leaf ) ),
+			'post_content' => '<!-- wp:pattern {"slug":"' . $pattern . '"} /-->',
+		);
+		if ( $existing ) { $data['ID'] = $existing->ID; }
+		$cid = wp_insert_post( wp_slash( $data ), true );
+		if ( is_wp_error( $cid ) ) { WP_CLI::warning( "  child /{$role}/{$leaf}/: " . $cid->get_error_message() ); continue; }
+		WP_CLI::log( "  child ok: /{$role}/{$leaf}/ (#{$cid})" );
+		$child_n++;
+	}
+}
+
+// Flush rewrites + clear the version-keyed pattern cache so the new pages +
+// patterns resolve on a running instance (a fresh reset builds it once anyway).
+flush_rewrite_rules( false );
+$theme = wp_get_theme();
+if ( method_exists( $theme, 'delete_pattern_cache' ) ) { $theme->delete_pattern_cache(); }
+
+WP_CLI::success( "Console auth seeded: 3 demo users + 5 console pages + {$child_n} sub-pages." );

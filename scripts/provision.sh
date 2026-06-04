@@ -446,14 +446,20 @@ verify_out="$(wp eval '
     if ( $bad_user ) { echo "MISMATCH consoles users: missing/role-wrong " . implode( ", ", $bad_user ) . "\n"; $fail = 1; }
     else { echo "ok consoles users: 3 demo users with roles\n"; }
 
-    // 5 console/auth pages exist + publish.
+    // 5 top-level + 12 child console/auth pages exist + publish.
+    $page_paths = array(
+      "login", "register", "student", "instructor", "admin",
+      "student/reviews", "student/profile", "student/settings",
+      "instructor/schedule", "instructor/availability", "instructor/students", "instructor/profile", "instructor/settings",
+      "admin/students", "admin/graduates", "admin/reviews", "admin/settings",
+    );
     $missing_page = array();
-    foreach ( array( "login", "register", "student", "instructor", "admin" ) as $slug ) {
-      $pg = get_page_by_path( $slug );
-      if ( ! $pg || "publish" !== $pg->post_status ) { $missing_page[] = $slug; }
+    foreach ( $page_paths as $path ) {
+      $pg = get_page_by_path( $path, OBJECT, "page" );
+      if ( ! $pg || "publish" !== $pg->post_status ) { $missing_page[] = $path; }
     }
     if ( $missing_page ) { echo "MISMATCH consoles pages: missing/unpublished " . implode( ", ", $missing_page ) . "\n"; $fail = 1; }
-    else { echo "ok consoles pages: 5 console pages published\n"; }
+    else { echo "ok consoles pages: 17 console pages published (5 top + 12 child)\n"; }
 
     // Demo data present (counts > 0) per table.
     $empty_tbl = array();
