@@ -153,21 +153,63 @@ function buckleup_rest_avatar_delete( WP_REST_Request $request ) {
 /** ---- Reviews (public GET + student POST) ---------------------------- */
 
 /**
- * GET /reviews — approved + public reviews, transformed for the landing page.
- * Mirrors the source /api/reviews shape so the theme's Testimonials can read it.
+ * Fetch approved + public review rows, newest first. Single source of truth for
+ * both the public REST endpoint and the server-side homepage helper.
+ *
+ * @param int $limit -1 for all, else cap the row count.
+ * @return array<int,array<string,mixed>> Raw bu_reviews rows (ARRAY_A).
  */
-function buckleup_rest_reviews_public_get() {
+function buckleup_query_public_reviews( $limit = -1 ) {
 	global $wpdb;
 	$reviews = buckleup_app_table( 'reviews' );
 
-	$rows = $wpdb->get_results(
+	if ( $limit > 0 ) {
+		return (array) $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM {$reviews} WHERE is_public = 1 AND is_approved = 1 ORDER BY created_at DESC LIMIT %d",
+				$limit
+			),
+			ARRAY_A
+		);
+	}
+	return (array) $wpdb->get_results(
 		"SELECT * FROM {$reviews} WHERE is_public = 1 AND is_approved = 1 ORDER BY created_at DESC",
 		ARRAY_A
 	);
+}
 
+/**
+ * PUBLIC server-side helper: approved + public reviews for the homepage
+ * testimonials (the homepage is server-rendered PHP, not a JS fetch). Newest
+ * first. Same data as GET /reviews; compact shape for direct theme rendering.
+ *
+ * @param int $limit Max reviews (default 12).
+ * @return array<int,array{id:int,name:string,rating:int,comment:string,date:string|null}>
+ */
+function buckleup_get_public_reviews( $limit = 12 ) {
 	$out = array();
-	foreach ( (array) $rows as $row ) {
-		$sid = (int) $row['student_id'];
+	foreach ( buckleup_query_public_reviews( (int) $limit ) as $row ) {
+		$sid   = (int) $row['student_id'];
+		$out[] = array(
+			'id'      => (int) $row['id'],
+			'name'    => get_the_author_meta( 'display_name', $sid ),
+			'rating'  => (int) $row['rating'],
+			'comment' => $row['comment'] ? $row['comment'] : '',
+			'date'    => buckleup_iso8601( $row['created_at'] ),
+		);
+	}
+	return $out;
+}
+
+/**
+ * GET /reviews — approved + public reviews, transformed for the landing page.
+ * Mirrors the source /api/reviews shape so the theme's Testimonials can read it.
+ * Shares the row query with buckleup_get_public_reviews() (single source).
+ */
+function buckleup_rest_reviews_public_get() {
+	$out = array();
+	foreach ( buckleup_query_public_reviews( -1 ) as $row ) {
+		$sid   = (int) $row['student_id'];
 		$out[] = array(
 			'id'             => (int) $row['id'],
 			'name'           => get_the_author_meta( 'display_name', $sid ),
