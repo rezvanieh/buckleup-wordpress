@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 $graduates = function_exists( 'buckleup_get_graduates' ) ? buckleup_get_graduates() : array();
 ?>
 <!-- wp:html -->
-<section id="graduates" class="py-20 md:py-28 relative overflow-hidden">
+<section id="graduates" class="py-12 md:py-16 relative overflow-hidden">
 	<div class="container mx-auto px-4">
 		<div class="text-center mb-12">
 			<div data-reveal class="inline-flex items-center gap-2 mb-4">

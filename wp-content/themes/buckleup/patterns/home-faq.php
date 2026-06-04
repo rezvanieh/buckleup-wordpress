@@ -25,7 +25,7 @@ $items = array_map( static function ( $f ) {
 }, $faqs );
 ?>
 <!-- wp:html -->
-<section id="faq" class="py-20 md:py-28 relative">
+<section id="faq" class="py-12 md:py-16 relative">
 	<div class="container mx-auto px-4">
 		<div class="max-w-3xl mx-auto">
 			<div class="text-center mb-12">

@@ -32,7 +32,7 @@ $initials = static function ( $name ) {
 };
 ?>
 <!-- wp:html -->
-<section id="testimonials" data-testimonials class="py-20 md:py-28 relative">
+<section id="testimonials" data-testimonials class="py-12 md:py-16 relative">
 	<div class="container mx-auto px-4">
 		<div class="text-center mb-12">
 			<div data-reveal class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass border border-border/50 mb-4">
