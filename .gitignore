@@ -19,7 +19,23 @@ wp-content/db.php
 # DB / data dumps
 wp-data/*.sql
 wp-data/media-import/
+wp-data/blog-seo/
+wp-data/graduates/
 *.sqlite
+
+# Generated blog-card SVG intermediates (the rasterized PNGs are committed).
+content/blog-cards/*.svg
+
+# QA harness (tests/) — commit the SOURCE only (bin, specs, config, lib,
+# playwright.config.js, package.json, parity-matrix.csv, README). The heavy,
+# regenerable artifacts are NOT versioned:
+#   node_modules   -> `npm install`
+#   baseline/      -> `node bin/capture-baseline.js` (pinned live golden master)
+#   results/       -> produced by a suite run (diffs, lighthouse json)
+tests/node_modules/
+tests/baseline/
+tests/results/
+tests/playwright-report/
 
 # OS / editor noise
 .DS_Store

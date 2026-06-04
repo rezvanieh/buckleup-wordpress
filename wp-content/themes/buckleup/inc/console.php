@@ -1,0 +1,242 @@
+<?php
+/**
+ * Shared console (portal) shell — the per-role sidebar layout used by every
+ * Student / Instructor / Admin console page (docs/CONSOLES-BUILD-PLAN.md).
+ *
+ * Matches the source `{role}/layout.tsx`: a fixed w-64 glass sidebar (brand block
+ * → "{Role} Portal" + the user's name, linking to /), the role nav with the active
+ * item highlighted, Sign out at the bottom, a mobile hamburger → slide-in drawer,
+ * and the page content in a glass main panel. Each console page renders its inner
+ * markup and passes it to buckleup_console_shell().
+ *
+ * @package BuckleUp
+ */
+
+if ( ! defined( 'ABSPATH' ) ) { exit; }
+
+/**
+ * Role config: portal label + the exact sidebar nav (order from the build plan,
+ * linked items only). Each item: slug (for active state), name, href, icon.
+ */
+function buckleup_console_config( string $role ): array {
+	$configs = array(
+		'student' => array(
+			'label' => __( 'Student Portal', 'buckleup' ),
+			'nav'   => array(
+				array( 'slug' => 'home',      'name' => __( 'Home Page', 'buckleup' ),      'href' => home_url( '/' ),                 'icon' => 'map-pin' ),
+				array( 'slug' => 'dashboard', 'name' => __( 'Dashboard', 'buckleup' ),      'href' => home_url( '/student/' ),          'icon' => 'layout-dashboard' ),
+				array( 'slug' => 'reviews',   'name' => __( 'Leave a Review', 'buckleup' ), 'href' => home_url( '/student/reviews/' ),  'icon' => 'star' ),
+				array( 'slug' => 'profile',   'name' => __( 'Profile', 'buckleup' ),        'href' => home_url( '/student/profile/' ),  'icon' => 'user' ),
+				array( 'slug' => 'settings',  'name' => __( 'Settings', 'buckleup' ),       'href' => home_url( '/student/settings/' ), 'icon' => 'monitor' ),
+			),
+		),
+		'instructor' => array(
+			'label' => __( 'Instructor Portal', 'buckleup' ),
+			'nav'   => array(
+				array( 'slug' => 'dashboard',    'name' => __( 'Dashboard', 'buckleup' ),     'href' => home_url( '/instructor/' ),             'icon' => 'layout-dashboard' ),
+				array( 'slug' => 'schedule',     'name' => __( 'My Schedule', 'buckleup' ),   'href' => home_url( '/instructor/schedule/' ),     'icon' => 'clock' ),
+				array( 'slug' => 'availability', 'name' => __( 'Availability', 'buckleup' ),  'href' => home_url( '/instructor/availability/' ), 'icon' => 'check' ),
+				array( 'slug' => 'students',     'name' => __( 'My Students', 'buckleup' ),   'href' => home_url( '/instructor/students/' ),     'icon' => 'user' ),
+				array( 'slug' => 'profile',      'name' => __( 'Profile', 'buckleup' ),       'href' => home_url( '/instructor/profile/' ),      'icon' => 'shield-check' ),
+				array( 'slug' => 'settings',     'name' => __( 'Settings', 'buckleup' ),      'href' => home_url( '/instructor/settings/' ),     'icon' => 'monitor' ),
+			),
+		),
+		'admin' => array(
+			'label' => __( 'Admin Portal', 'buckleup' ),
+			'nav'   => array(
+				array( 'slug' => 'overview',  'name' => __( 'Overview', 'buckleup' ),  'href' => home_url( '/admin/' ),           'icon' => 'layout-dashboard' ),
+				array( 'slug' => 'blogs',     'name' => __( 'Blogs', 'buckleup' ),     'href' => admin_url( 'edit.php' ),          'icon' => 'message-circle' ),
+				array( 'slug' => 'students',  'name' => __( 'Students', 'buckleup' ),  'href' => home_url( '/admin/students/' ),   'icon' => 'user' ),
+				array( 'slug' => 'graduates', 'name' => __( 'Graduates', 'buckleup' ), 'href' => home_url( '/admin/graduates/' ),  'icon' => 'star' ),
+				array( 'slug' => 'reviews',   'name' => __( 'Reviews', 'buckleup' ),   'href' => home_url( '/admin/reviews/' ),    'icon' => 'check' ),
+				array( 'slug' => 'settings',  'name' => __( 'Settings', 'buckleup' ),  'href' => home_url( '/admin/settings/' ),   'icon' => 'monitor' ),
+			),
+		),
+	);
+	return $configs[ $role ] ?? $configs['student'];
+}
+
+/**
+ * Render one sidebar nav (shared by desktop sidebar + mobile drawer).
+ *
+ * @param array  $nav    Nav items from buckleup_console_config().
+ * @param string $active Active item slug.
+ * @param string $group  Magic-move group id (e.g. "console-student").
+ */
+function buckleup_console_nav_html( array $nav, string $active, string $group ): string {
+	$out = '';
+	foreach ( $nav as $item ) {
+		$is_active = ( $item['slug'] === $active );
+		$out .= sprintf(
+			'<a href="%1$s" class="relative flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors %2$s">%3$s%4$s<span class="relative z-10 font-medium">%5$s</span></a>',
+			esc_url( $item['href'] ),
+			$is_active ? 'text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50',
+			$is_active ? '<span class="absolute inset-0 bg-primary/10 border border-primary/20 rounded-xl"></span>' : '',
+			'<span class="relative z-10">' . buckleup_icon( $item['icon'], 'w-5 h-5' ) . '</span>',
+			esc_html( $item['name'] )
+		);
+	}
+	return $out;
+}
+
+/**
+ * Render the full console shell with the page content inside the glass main panel.
+ *
+ * @param string $role     student|instructor|admin.
+ * @param string $active   Active nav slug.
+ * @param string $content  Inner page HTML (already escaped by the caller).
+ */
+function buckleup_console_shell( string $role, string $active, string $content ): string {
+	$cfg     = buckleup_console_config( $role );
+	$user    = wp_get_current_user();
+	$name    = $user && $user->exists() ? ( $user->display_name ?: $user->user_login ) : '';
+	$logout  = wp_logout_url( home_url() );
+	$group   = 'console-' . $role;
+	$nav_d   = buckleup_console_nav_html( $cfg['nav'], $active, $group );
+
+	// Brand "profile icon": the user's uploaded avatar (bu_avatar_id) if set, else
+	// their initials — mirrors the source layout (user image or initials), not a
+	// fixed logo. object-fit is inline so no extra Tailwind class is required.
+	$avatar_id  = $user && $user->exists() ? (int) get_user_meta( $user->ID, 'bu_avatar_id', true ) : 0;
+	$avatar_url = $avatar_id ? wp_get_attachment_image_url( $avatar_id, 'thumbnail' ) : '';
+	if ( $avatar_url ) {
+		$tile = sprintf(
+			'<img src="%s" alt="" width="40" height="40" class="w-10 h-10 rounded-xl shadow-md shrink-0" style="object-fit:cover">',
+			esc_url( $avatar_url )
+		);
+	} else {
+		$initials = '';
+		foreach ( preg_split( '/\s+/', trim( (string) $name ) ) as $part ) {
+			if ( '' !== $part ) {
+				$initials .= mb_strtoupper( mb_substr( $part, 0, 1 ) );
+			}
+			if ( mb_strlen( $initials ) >= 2 ) {
+				break;
+			}
+		}
+		$tile = '<span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent text-primary-foreground font-bold shadow-md shrink-0">' . esc_html( '' !== $initials ? $initials : 'B' ) . '</span>';
+	}
+
+	$brand = sprintf(
+		'<a href="%1$s" class="flex items-center gap-3">%4$s'
+			. '<span class="min-w-0"><span class="font-bold text-foreground text-lg block leading-tight">%2$s</span>'
+			. '<span class="text-xs text-muted-foreground truncate max-w-[140px] block">%3$s</span></span></a>',
+		esc_url( home_url( '/' ) ),
+		esc_html( $cfg['label'] ),
+		esc_html( $name ),
+		$tile
+	);
+
+	$signout = sprintf(
+		'<a href="%1$s" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors">%2$s<span>%3$s</span></a>',
+		esc_url( $logout ),
+		buckleup_icon( 'log-out', 'w-5 h-5' ),
+		esc_html__( 'Sign out', 'buckleup' )
+	);
+
+	ob_start();
+	?>
+	<!-- wp:html -->
+	<div class="min-h-screen bg-background flex" data-console>
+
+		<!-- Desktop sidebar -->
+		<aside class="w-64 border-r border-border glass hidden md:flex flex-col fixed top-0 bottom-0 z-40">
+			<div class="p-6 border-b border-border"><?php echo $brand; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+			<nav data-tabs="<?php echo esc_attr( $group ); ?>" class="flex-1 p-4 space-y-1 overflow-y-auto"><?php echo $nav_d; // phpcs:ignore WordPress.Security.EscapeOutput ?></nav>
+			<div class="px-4 pt-4 pb-6 border-t border-border"><?php echo $signout; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+		</aside>
+
+		<!-- Mobile top bar -->
+		<div class="md:hidden fixed top-0 left-0 right-0 z-40 glass border-b border-border px-4 py-3 flex items-center justify-between">
+			<button type="button" data-console-toggle aria-label="<?php esc_attr_e( 'Open menu', 'buckleup' ); ?>" class="p-2 rounded-lg hover:bg-muted"><?php echo buckleup_icon( 'menu', 'w-6 h-6' ); // phpcs:ignore ?></button>
+			<span class="font-bold text-foreground"><?php echo esc_html( $cfg['label'] ); ?></span>
+			<button type="button" data-theme-toggle aria-label="<?php esc_attr_e( 'Toggle theme', 'buckleup' ); ?>" class="p-2 rounded-lg hover:bg-muted">
+				<span class="hidden dark:inline"><?php echo buckleup_icon( 'sun', 'w-5 h-5' ); // phpcs:ignore ?></span>
+				<span class="inline dark:hidden"><?php echo buckleup_icon( 'moon', 'w-5 h-5' ); // phpcs:ignore ?></span>
+			</button>
+		</div>
+
+		<!-- Mobile drawer -->
+		<div data-console-drawer data-state="closed" hidden>
+			<div data-console-overlay class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] md:hidden"></div>
+			<aside class="fixed top-0 left-0 bottom-0 w-72 bg-card border-r border-border z-[70] md:hidden flex flex-col">
+				<div class="p-6 border-b border-border flex items-center justify-between">
+					<?php echo $brand; // phpcs:ignore WordPress.Security.EscapeOutput ?>
+					<button type="button" data-console-close aria-label="<?php esc_attr_e( 'Close menu', 'buckleup' ); ?>" class="p-2 hover:bg-muted rounded-lg"><?php echo buckleup_icon( 'x', 'w-5 h-5' ); // phpcs:ignore ?></button>
+				</div>
+				<nav class="flex-1 p-4 space-y-1 overflow-y-auto"><?php echo buckleup_console_nav_html( $cfg['nav'], $active, $group . '-m' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></nav>
+				<div class="px-4 pt-4 pb-6 border-t border-border"><?php echo $signout; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+			</aside>
+		</div>
+
+		<!-- Main -->
+		<main class="flex-1 md:ml-64 pt-16 md:pt-0 min-w-0">
+			<div class="p-4 md:p-8 max-w-6xl mx-auto">
+				<?php echo $content; // phpcs:ignore WordPress.Security.EscapeOutput — caller-escaped page markup ?>
+			</div>
+		</main>
+	</div>
+	<!-- /wp:html -->
+	<?php
+	return (string) ob_get_clean();
+}
+
+/**
+ * Resolve the console role for the current page from its top-level ancestor slug
+ * (student/instructor/admin), or '' if the page isn't a console page.
+ */
+function buckleup_console_role_for_page( $post = null ): string {
+	$post = get_post( $post );
+	if ( ! $post || 'page' !== $post->post_type ) {
+		return '';
+	}
+	$ancestors = get_post_ancestors( $post->ID );
+	$top_id    = $ancestors ? (int) end( $ancestors ) : $post->ID;
+	$top_slug  = get_post_field( 'post_name', $top_id );
+	return in_array( $top_slug, array( 'student', 'instructor', 'admin' ), true ) ? $top_slug : '';
+}
+
+/**
+ * Bind console CHILD pages (e.g. /student/reviews/) to the role-root no-chrome
+ * console template: prepend page-{role} so a child page resolves to
+ * templates/page-student|instructor|admin.html (no marketing chrome, full-width).
+ * The role-root pages already match page-{role}.html by their own slug; child
+ * pages (leaf slugs like "reviews") otherwise fall through to page.html — which
+ * carries the header/footer parts + an is-layout-constrained wrapper + a
+ * wp:post-title, squishing the shell and showing a stray page title.
+ *
+ * IMPORTANT: core's get_query_template() applies the TYPE-SPECIFIC filter
+ * (`page_template_hierarchy`), not the generic `template_hierarchy`, on the page
+ * render path — so we must hook `page_template_hierarchy`. We keep the generic
+ * `template_hierarchy` too as a belt-and-suspenders for any code path that uses
+ * it. This means the content engineer only creates child pages with leaf slugs —
+ * no per-page template handoff.
+ */
+function buckleup_console_template_hierarchy( $templates ) {
+	if ( ! is_page() ) {
+		return $templates;
+	}
+	$role = buckleup_console_role_for_page( get_queried_object() );
+	if ( '' === $role ) {
+		return $templates;
+	}
+	// Prepend the role-root template so it wins over generic page templates.
+	if ( ! in_array( "page-$role", $templates, true ) ) {
+		array_unshift( $templates, "page-$role" );
+	}
+	return $templates;
+}
+add_filter( 'page_template_hierarchy', 'buckleup_console_template_hierarchy', 20 );
+add_filter( 'template_hierarchy', 'buckleup_console_template_hierarchy', 20 );
+
+/**
+ * Console page heading block (title + optional subline) — used at the top of each
+ * console page's content for consistent typography.
+ */
+function buckleup_console_heading( string $title, string $subline = '' ): string {
+	$out = '<div class="mb-8"><h1 class="text-2xl md:text-3xl font-bold text-foreground">' . esc_html( $title ) . '</h1>';
+	if ( '' !== $subline ) {
+		$out .= '<p class="text-muted-foreground mt-1">' . esc_html( $subline ) . '</p>';
+	}
+	return $out . '</div>';
+}

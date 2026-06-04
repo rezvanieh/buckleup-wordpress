@@ -9,6 +9,23 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 define( 'BUCKLEUP_VERSION', '0.1.0' );
 
+// Component library + icons (server-side shadcn reproductions emitting the exact
+// class strings; behavioral components emit the data-state attrs the JS targets).
+require_once __DIR__ . '/inc/icons.php';
+require_once __DIR__ . '/inc/components.php';
+require_once __DIR__ . '/inc/components-interactive.php';
+// Site chrome helpers (logo, nav, locations) + header/footer/section pattern
+// registration. Loaded after components so patterns can call those helpers.
+require_once __DIR__ . '/inc/site.php';
+// Front-end WebP <picture> wrapping for content images (post featured + body).
+// EWWW's webp_for_cdn/picture_webp rewrite is INERT on this nginx+FPM+Cache-Enabler
+// stack (confirmed by the content engineer; option reverted), so the theme owns
+// content-image WebP delivery deterministically. The hero LCP <picture>/preload is
+// separate (home-hero.php + the wp_head preload below).
+require_once __DIR__ . '/inc/webp.php';
+// Console (portal) shell + per-role sidebar nav for Student/Instructor/Admin pages.
+require_once __DIR__ . '/inc/console.php';
+
 add_action( 'after_setup_theme', function () {
 	add_theme_support( 'wp-block-styles' );
 	add_theme_support( 'editor-styles' );
@@ -41,6 +58,36 @@ function buckleup_vite_asset( string $entry ): ?string {
 	return get_theme_file_uri( 'build/' . $manifest[ $entry ]['file'] );
 }
 
+// Preload the self-hosted Geist Sans woff2 (the body face, used above the fold) so
+// it's fetched in parallel with the stylesheet and text paints without a swap jump.
+// Resolved through the manifest so the hashed filename stays correct after rebuilds.
+add_action( 'wp_head', function () {
+	$font = buckleup_vite_asset( 'src/fonts/Geist-Variable.woff2' );
+	if ( $font ) {
+		printf(
+			'<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n",
+			esc_url( $font )
+		);
+	}
+
+	// Preload the hero background — it's the front page's LCP element (QA PERF-1).
+	// Front page only; the <img> itself is fetchpriority=high + loading=eager.
+	// Prefer the optimized WebP (~60KB) and tag the preload with type=image/webp so
+	// non-WebP browsers ignore it and fall back to the <picture> JPG (no double
+	// download). If no WebP exists, preload the (already resized) JPG.
+	if ( is_front_page() && function_exists( 'buckleup_asset_url' ) ) {
+		$hero_webp = function_exists( 'buckleup_asset_webp_url' ) ? buckleup_asset_webp_url( 'image2.png' ) : '';
+		$hero      = $hero_webp ?: buckleup_asset_url( 'image2.png' );
+		if ( $hero ) {
+			printf(
+				'<link rel="preload" href="%s" as="image" fetchpriority="high"%s>' . "\n",
+				esc_url( $hero ),
+				$hero_webp ? ' type="image/webp"' : ''
+			);
+		}
+	}
+}, 2 );
+
 add_action( 'wp_enqueue_scripts', function () {
 	$css = buckleup_vite_asset( 'src/css/app.css' );
 	$js  = buckleup_vite_asset( 'src/js/main.js' );
@@ -54,6 +101,13 @@ add_action( 'wp_enqueue_scripts', function () {
 
 	if ( $js ) {
 		wp_enqueue_script( 'buckleup-main', $js, array(), BUCKLEUP_VERSION, true );
+		// Auth: the register form (src/js/modules/auth.js) fetches the buckleup/v1
+		// REST endpoint with the wp_rest nonce. (Harmless if the plugin later drops
+		// the register nonce requirement — the header is simply ignored.)
+		wp_localize_script( 'buckleup-main', 'buckleupAuth', array(
+			'nonce'   => wp_create_nonce( 'wp_rest' ),
+			'restUrl' => esc_url_raw( rest_url( 'buckleup/v1/' ) ),
+		) );
 	}
 } );
 
@@ -65,7 +119,11 @@ add_filter( 'script_loader_tag', function ( $tag, $handle, $src ) {
 	return $tag;
 }, 10, 3 );
 
-// Prevent a flash of wrong theme: set .dark before paint based on localStorage.
+// Prevent a flash of wrong theme: resolve and apply .dark BEFORE first paint from
+// the stored preference (cookie/localStorage, "system" honored). Also add the
+// .no-transitions guard so the 150ms global color transition doesn't animate the
+// initial light->dark swap; src/js/main.js removes it on load. Priority 1 keeps
+// this ahead of any enqueued <head> CSS/JS.
 add_action( 'wp_head', function () {
-	echo "<script>(function(){try{var s=localStorage.getItem('buckleup-theme')||'system';var d=s==='dark'||(s==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);if(d){document.documentElement.classList.add('dark');document.documentElement.style.colorScheme='dark';}}catch(e){}})();</script>\n";
+	echo "<script>(function(){var e=document.documentElement;e.classList.add('no-transitions');try{var s=localStorage.getItem('buckleup-theme')||'system';var d=s==='dark'||(s==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);if(d){e.classList.add('dark');e.style.colorScheme='dark';}}catch(err){}})();</script>\n";
 }, 1 );

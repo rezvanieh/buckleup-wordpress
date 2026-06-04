@@ -1,0 +1,34 @@
+{
+  "_comment": "Canonical inventory of every public URL in v1 scope. `key` is a filesystem-safe slug used to name baseline artifacts; `path` is the live/candidate path (identical on both sites — URL parity is a hard requirement). `dynamic` lists CSS selectors whose content legitimately differs between the live site and the WP build (graduates gallery, testimonials, recent-blogs rail, rendered dates) and must be MASKED in visual diffs. `expectedDivergence`, when present, marks a page whose content INTENTIONALLY differs from the live golden master — its visual diff is recorded but is NOT a parity failure (the visual runner annotates these and excludes them from the pass/fail count). Edit this file to add/remove pages; every runner reads it.",
+  "pages": [
+    { "key": "home",               "path": "/",                                          "title": "Home",                 "dynamic": ["graduates", "testimonials", "recent-blogs"], "expectedDivergence": "graduates-empty-state: home shows 'NO GRADUATES YET' (0 seeded) vs live's populated rail. EXPECTED-pending-content — re-measure once real graduate photos are seeded." },
+    { "key": "about",              "path": "/about",                                     "title": "About",                "dynamic": ["recent-blogs"] },
+    { "key": "contact",            "path": "/contact",                                   "title": "Contact",              "dynamic": ["recent-blogs"] },
+    { "key": "services",           "path": "/services",                                  "title": "Services",             "dynamic": ["recent-blogs"], "expectedDivergence": "real-page-vs-dead-baseline: live /services is the feature-flagged dead surface (redirects to home content); the WP build correctly ships the REAL services page (Choose Your Path + 4 license-class tabs 7L/7N/5/4, real $100-$620 pricing). Per PLAN.md §1 + source-gotchas. Validate the real page structurally; the diff vs the live home-mirror is intended." },
+    { "key": "instructors",        "path": "/instructors",                               "title": "Instructors",          "dynamic": ["recent-blogs"], "expectedDivergence": "real-page-vs-dead-baseline: live /instructors is the feature-flagged dead surface (renders home content); the WP build correctly ships the REAL instructors page (Meet Your Instructors + Why Choose Our Instructors + shared rail). Per PLAN.md §1 + source-gotchas." },
+    { "key": "blog-index",         "path": "/blog",                                      "title": "Blog Index",           "dynamic": ["dates"], "expectedDivergence": "net-new-content: 15 posts (5 live-matching originals + 10 new SEO articles) vs live's 5. Taller index + more pagination is intended additive content." },
+    { "key": "blog-post",          "path": "/blog/winter-driving-bc-essential-safety-tips","title": "Blog Post (winter-driving)", "dynamic": ["dates", "recent-blogs"] },
+    { "key": "resources",          "path": "/resources",                                 "title": "Resources Index",      "dynamic": ["recent-blogs"] },
+    { "key": "resources-icbc",     "path": "/resources/icbc-road-test-failures",         "title": "ICBC Road-Test Article", "dynamic": ["dates", "recent-blogs"] },
+    { "key": "loc-coquitlam",      "path": "/locations/coquitlam",                       "title": "Location: Coquitlam",   "dynamic": ["graduates", "testimonials", "recent-blogs"], "expectedDivergence": "graduates-empty-state: the shared lower rail shows 'NO GRADUATES YET' (0 seeded) vs live's populated rail. EXPECTED-pending-content — re-measure once graduate photos are seeded." },
+    { "key": "loc-north-vancouver","path": "/locations/north-vancouver",                 "title": "Location: North Vancouver", "dynamic": ["graduates", "testimonials", "recent-blogs"], "expectedDivergence": "graduates-empty-state (shared rail). EXPECTED-pending-content." },
+    { "key": "loc-port-coquitlam", "path": "/locations/port-coquitlam",                  "title": "Location: Port Coquitlam", "dynamic": ["graduates", "testimonials", "recent-blogs"], "expectedDivergence": "graduates-empty-state (shared rail). EXPECTED-pending-content." },
+    { "key": "loc-port-moody",     "path": "/locations/port-moody",                      "title": "Location: Port Moody",  "dynamic": ["graduates", "testimonials", "recent-blogs"], "expectedDivergence": "graduates-empty-state (shared rail). EXPECTED-pending-content." },
+    { "key": "loc-tri-cities",     "path": "/locations/tri-cities",                      "title": "Location: Tri-Cities",  "dynamic": ["graduates", "testimonials", "recent-blogs"], "expectedDivergence": "graduates-empty-state (shared rail). EXPECTED-pending-content." }
+  ],
+  "allBlogSlugs": [
+    "how-to-pass-icbc-class-5-road-test-vancouver",
+    "mastering-parallel-parking-ultimate-guide",
+    "ultimate-highway-merging-checklist",
+    "why-port-moody-best-place-learn-to-drive",
+    "winter-driving-bc-essential-safety-tips"
+  ],
+  "_newBlogSlugs_comment": "The 10 net-new SEO articles (additive, not on live). Validated separately: 200 + single-H1 + BlogPosting schema. Not part of the live-baseline parity set.",
+  "newBlogSlugs": [
+    "bc-graduated-licensing-program-explained-7l-7n-class-5",
+    "class-7l-learners-licence-bc-step-by-step",
+    "driving-lessons-cost-vancouver-2026-price-guide",
+    "how-many-driving-lessons-do-you-need",
+    "icbc-knowledge-test-practice-pass-first-try"
+  ]
+}

@@ -1,0 +1,213 @@
+<?php
+/**
+ * Contact form submission handler.
+ *
+ * Faithful to the source `/api/contact`, implemented as a simple no-JS POST so
+ * the form works without JavaScript and matches the theme markup the theme
+ * engineer builds against the same contract.
+ *
+ * Flow:
+ *   - The theme renders a <form method="post" action="{admin-post.php}"> with a
+ *     hidden `action=buckleup_contact` and the nonce field
+ *     `buckleup_contact_nonce` (action `buckleup_contact`).
+ *   - This handler verifies the nonce, validates + sanitizes the fields, emails
+ *     the business inbox via wp_mail(), then wp_safe_redirect()s back to the
+ *     referring /contact page with `?contact=success` (or `?contact=error`).
+ *   - The theme reads `$_GET['contact']` to show the success/error state.
+ *
+ * Fields (snake_case, matching the theme form):
+ *   first_name (required), last_name (optional), email (required),
+ *   phone (optional), subject (required), message (required).
+ *
+ * In dev, wp_mail() is routed to Mailpit by the docker mu-plugin.
+ *
+ * @package BuckleUp_Core
+ */
+
+if ( ! defined( 'ABSPATH' ) ) { exit; }
+
+/**
+ * Required field keys (last_name + phone are optional), mirroring the source.
+ *
+ * @return string[]
+ */
+function buckleup_contact_required_fields() {
+	return array( 'first_name', 'email', 'subject', 'message' );
+}
+
+/**
+ * Validate + sanitize a raw submission into clean values, or return a WP_Error.
+ *
+ * @param array<string,mixed> $raw Raw $_POST (already unslashed).
+ * @return array<string,string>|WP_Error
+ */
+function buckleup_contact_validate( $raw ) {
+	$clean = array(
+		'first_name' => isset( $raw['first_name'] ) ? sanitize_text_field( $raw['first_name'] ) : '',
+		'last_name'  => isset( $raw['last_name'] ) ? sanitize_text_field( $raw['last_name'] ) : '',
+		'email'      => isset( $raw['email'] ) ? sanitize_email( $raw['email'] ) : '',
+		'phone'      => isset( $raw['phone'] ) ? sanitize_text_field( $raw['phone'] ) : '',
+		'subject'    => isset( $raw['subject'] ) ? sanitize_text_field( $raw['subject'] ) : '',
+		'message'    => isset( $raw['message'] ) ? sanitize_textarea_field( $raw['message'] ) : '',
+	);
+
+	foreach ( buckleup_contact_required_fields() as $field ) {
+		if ( '' === $clean[ $field ] ) {
+			return new WP_Error( 'missing_fields', __( 'Missing required fields', 'buckleup-core' ) );
+		}
+	}
+
+	if ( ! is_email( $clean['email'] ) ) {
+		return new WP_Error( 'invalid_email', __( 'Please provide a valid email address', 'buckleup-core' ) );
+	}
+
+	return $clean;
+}
+
+/**
+ * Build and send the notification email via wp_mail().
+ *
+ * @param array<string,string> $data Validated submission.
+ * @return bool wp_mail() result.
+ */
+function buckleup_contact_send_email( $data ) {
+	$to = buckleup_get_setting( 'email', get_option( 'admin_email' ) );
+
+	/* translators: %s: the submitter's subject line. */
+	$subject = sprintf( __( 'New contact: %s', 'buckleup-core' ), $data['subject'] );
+
+	$full_name = trim( $data['first_name'] . ' ' . $data['last_name'] );
+
+	$lines = array(
+		__( 'New contact form submission from the website:', 'buckleup-core' ),
+		'',
+		sprintf( '%s: %s', __( 'Name', 'buckleup-core' ), $full_name ),
+		sprintf( '%s: %s', __( 'Email', 'buckleup-core' ), $data['email'] ),
+		sprintf( '%s: %s', __( 'Phone', 'buckleup-core' ), '' !== $data['phone'] ? $data['phone'] : __( '(not provided)', 'buckleup-core' ) ),
+		sprintf( '%s: %s', __( 'Subject', 'buckleup-core' ), $data['subject'] ),
+		'',
+		__( 'Message:', 'buckleup-core' ),
+		$data['message'],
+	);
+	$body = implode( "\n", $lines );
+
+	// Reply-To the submitter so the team can respond directly. From: stays the
+	// site default (set by the SMTP/Mailpit mu-plugin) for deliverability.
+	$headers = array(
+		'Content-Type: text/plain; charset=UTF-8',
+		sprintf( 'Reply-To: %s <%s>', $full_name, $data['email'] ),
+	);
+
+	return wp_mail( $to, $subject, $body, $headers );
+}
+
+/**
+ * Resolve the URL to redirect back to after handling, appending the result
+ * flag. Falls back to the /contact page if there is no usable referer.
+ *
+ * @param string $status 'success' | 'error'.
+ * @return string
+ */
+function buckleup_contact_redirect_url( $status ) {
+	$referer = wp_get_referer();
+	if ( ! $referer ) {
+		$referer = home_url( '/contact/' );
+	}
+	return add_query_arg( 'contact', $status, $referer );
+}
+
+/**
+ * Best-effort client IP for rate-limiting. Not a trust decision — only used to
+ * bucket submissions; spoofing just resets the attacker's own counter.
+ *
+ * @return string
+ */
+function buckleup_contact_client_ip() {
+	$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? wp_unslash( $_SERVER['REMOTE_ADDR'] ) : '';
+	return $ip ? sanitize_text_field( $ip ) : 'unknown';
+}
+
+/**
+ * Lightweight transient rate limit: at most N submissions per window per
+ * bucket (IP and email). Returns true if the submission is allowed.
+ *
+ * @param string $email Submitter email (already sanitized; may be '').
+ * @return bool
+ */
+function buckleup_contact_rate_ok( $email ) {
+	$max    = (int) apply_filters( 'buckleup_contact_rate_max', 3 );      // per window
+	$window = (int) apply_filters( 'buckleup_contact_rate_window', 600 ); // 10 minutes
+
+	$buckets = array( 'buckleup_contact_rl_ip_' . md5( buckleup_contact_client_ip() ) );
+	if ( '' !== $email ) {
+		$buckets[] = 'buckleup_contact_rl_em_' . md5( strtolower( $email ) );
+	}
+
+	$allowed = true;
+	foreach ( $buckets as $key ) {
+		$count = (int) get_transient( $key );
+		if ( $count >= $max ) {
+			$allowed = false;
+		}
+		// Increment regardless so a burst across buckets still counts.
+		set_transient( $key, $count + 1, $window );
+	}
+
+	return $allowed;
+}
+
+/**
+ * admin-post handler (shared for logged-in + logged-out visitors).
+ *
+ * Perimeter order: nonce → honeypot → min-fill-time → validate → rate-limit →
+ * send. Bot/abuse rejections (honeypot, min-fill, rate-limit) silently redirect
+ * to ?contact=success so a scraper can't tell a block from a real send; genuine
+ * validation/mail failures return ?contact=error.
+ */
+function buckleup_admin_post_contact_handler() {
+	$nonce_ok = isset( $_POST['buckleup_contact_nonce'] )
+		&& wp_verify_nonce( sanitize_key( wp_unslash( $_POST['buckleup_contact_nonce'] ) ), 'buckleup_contact' );
+
+	if ( ! $nonce_ok ) {
+		wp_safe_redirect( buckleup_contact_redirect_url( 'error' ) );
+		exit;
+	}
+
+	// Honeypot: the theme renders a hidden `website` field no human fills in.
+	// Non-empty → bot. Silently succeed, send nothing.
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified above.
+	if ( ! empty( $_POST['website'] ) ) {
+		wp_safe_redirect( buckleup_contact_redirect_url( 'success' ) );
+		exit;
+	}
+
+	// Optional min-fill-time: if the form supplies a `bu_ts` (unix seconds set
+	// when the form rendered), reject implausibly fast submits (< ~3s) as bots.
+	// No-op if the field is absent, so it never blocks the current theme form.
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified above.
+	if ( isset( $_POST['bu_ts'] ) && '' !== $_POST['bu_ts'] ) {
+		$started  = (int) wp_unslash( $_POST['bu_ts'] );
+		$min_fill = (int) apply_filters( 'buckleup_contact_min_fill_seconds', 3 );
+		if ( $started > 0 && ( time() - $started ) < $min_fill ) {
+			wp_safe_redirect( buckleup_contact_redirect_url( 'success' ) );
+			exit;
+		}
+	}
+
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified above.
+	$result = buckleup_contact_validate( wp_unslash( $_POST ) );
+
+	// Rate limit (per IP + per email). Over the cap → silently succeed, no send.
+	$email = is_wp_error( $result ) ? '' : $result['email'];
+	if ( ! buckleup_contact_rate_ok( $email ) ) {
+		wp_safe_redirect( buckleup_contact_redirect_url( 'success' ) );
+		exit;
+	}
+
+	$status = ( is_wp_error( $result ) || ! buckleup_contact_send_email( $result ) ) ? 'error' : 'success';
+
+	wp_safe_redirect( buckleup_contact_redirect_url( $status ) );
+	exit;
+}
+add_action( 'admin_post_buckleup_contact', 'buckleup_admin_post_contact_handler' );
+add_action( 'admin_post_nopriv_buckleup_contact', 'buckleup_admin_post_contact_handler' );

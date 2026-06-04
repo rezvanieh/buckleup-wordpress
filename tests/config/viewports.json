@@ -1,0 +1,10 @@
+{
+  "_comment": "The five mandated breakpoints. 1099 and 1100 straddle the custom min-[1100px] desktop-nav breakpoint (Navbar swaps mobile hamburger + bottom tab bar for the full desktop nav, and h-32->h-16 scroll-shrink kicks in) — both are captured so the regression suite catches a one-pixel breakpoint drift. Height is a fixed initial viewport; full-page screenshots expand beyond it.",
+  "viewports": [
+    { "name": "375",  "width": 375,  "height": 812,  "note": "mobile (bottom tab bar + WhatsApp FAB)" },
+    { "name": "768",  "width": 768,  "height": 1024, "note": "tablet" },
+    { "name": "1099", "width": 1099, "height": 900,  "note": "just below the 1100px nav breakpoint -> mobile nav" },
+    { "name": "1100", "width": 1100, "height": 900,  "note": "at the breakpoint -> desktop nav engages" },
+    { "name": "1440", "width": 1440, "height": 900,  "note": "desktop" }
+  ]
+}

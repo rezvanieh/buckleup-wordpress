@@ -1,77 +1,609 @@
 /* BuckleUp theme stylesheet — Tailwind v4 CSS-first entry.
- * The design-system team ports globals.css here verbatim: the :root / .dark HSL
- * channel tokens, .glass / .gradient-text / .glow-* utilities, keyframes, and the
- * @theme inline bridge. This file establishes the pipeline; tokens below are the
- * minimum so a build succeeds today. */
+ *
+ * This is a VERBATIM port of the source Next.js app's `src/app/globals.css`
+ * (BuckleUp at /Users/esfandiyar/Projects/Buckleup). The :root / .dark HSL channel
+ * triplets, the @theme inline bridge, and every bespoke utility (.glass,
+ * .gradient-text, .glow-*, .shine, .hover-lift, animations, skeleton,
+ * card-highlight, scrollbar, ::selection, :focus-visible, the 150ms global
+ * transition, the no-transitions flash guard, and the prefers-reduced-motion
+ * overrides) are reproduced 1:1.
+ *
+ * Two deliberate additions vs. the source (the source consumed Geist via
+ * next/font/google; we self-host the OFL variable woff2 instead):
+ *   1. @font-face for self-hosted Geist / Geist Mono variable fonts.
+ *   2. --font-geist-sans / --font-geist-mono are defined here in :root rather
+ *      than injected by next/font.
+ * Everything else matches the source byte-for-byte in intent.
+ */
 
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Content scanning. Tailwind v4 auto-detects sources next to this CSS file, but the
+ * class strings that drive the UI live in the theme's PHP templates/parts/patterns
+ * (theme root, two levels up) and in our JS. Register them explicitly so arbitrary
+ * classes used only in PHP markup (e.g. lg:text-[5.5rem], blur-[120px], bg-card/98,
+ * ring-[3px], min-[1100px]:h-32) are never purged. Paths are relative to this file. */
+@source "../js/**/*.js";
+@source "../../*.php";
+@source "../../templates/**/*.html";
+@source "../../parts/**/*.html";
+@source "../../patterns/**/*.php";
+@source "../../inc/**/*.php";
+@source "../../tests/**/*.html";
+
 @custom-variant dark (&:is(.dark *));
 
-/* Self-hosted Geist — woff2 files go in assets/fonts/ (see DEVELOPMENT.md). */
+/* Self-hosted Geist + Geist Mono (OFL). The woff2 live in ../fonts (src/fonts/),
+ * which Vite hashes into build/assets/ at build time. Variable fonts so the full
+ * 100..900 weight axis is available — matching next/font's variable behavior. */
 @font-face {
   font-family: "Geist";
   src: url("../fonts/Geist-Variable.woff2") format("woff2");
   font-weight: 100 900;
+  font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Geist Mono";
   src: url("../fonts/GeistMono-Variable.woff2") format("woff2");
   font-weight: 100 900;
+  font-style: normal;
   font-display: swap;
-}
-
-:root {
-  --font-geist-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
-  --font-geist-mono: "Geist Mono", ui-monospace, monospace;
-  --radius: 0.75rem;
-
-  /* LIGHT — full token set is ported from source globals.css */
-  --background: 210 20% 98%;
-  --foreground: 222 47% 11%;
-  --primary: 217 91% 50%;
-  --primary-foreground: 0 0% 100%;
-  --accent: 160 84% 39%;
-  --accent-foreground: 0 0% 100%;
-  --card: 0 0% 100%;
-  --border: 214 32% 85%;
-  /* ... remaining light tokens ported by design team ... */
-}
-
-.dark {
-  /* DARK — note accent hue shifts 160 -> 142 (emerald -> lime) */
-  --background: 222 47% 6%;
-  --foreground: 210 40% 98%;
-  --primary: 217 91% 60%;
-  --primary-foreground: 222 47% 4%;
-  --accent: 142 71% 45%;
-  --accent-foreground: 222 47% 4%;
-  --card: 222 47% 9%;
-  --border: 217 33% 20%;
-  /* ... remaining dark tokens ported by design team ... */
 }
 
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-accent: hsl(var(--accent));
-  --color-card: hsl(var(--card));
-  --color-border: hsl(var(--border));
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar: hsl(var(--sidebar));
+  --color-chart-5: hsl(var(--chart-5));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-1: hsl(var(--chart-1));
+  --color-ring: hsl(var(--ring));
+  --color-input: hsl(var(--input));
+  --color-border: hsl(var(--border));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card: hsl(var(--card));
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-body {
-  background-color: hsl(var(--background));
+/*
+  LIGHT THEME
+  Clean, professional design with excellent contrast
+  - Soft off-white background for comfort
+  - High contrast dark text for readability
+  - Professional blue primary for trust
+  - Vibrant green accent for CTAs
+*/
+:root {
+  /* Self-hosted Geist font stacks (source got these from next/font). */
+  --font-geist-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-geist-mono: "Geist Mono", ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
+
+  --radius: 0.75rem;
+
+  /* Backgrounds - Soft cool gray */
+  --background: 210 20% 98%;
+  --foreground: 222 47% 11%;
+
+  /* Cards - Pure white with subtle shadow */
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+
+  /* Popovers */
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+
+  /* Primary - Professional Blue.
+   * Source was 50% L, but a .text-primary link on the primary/10 tint (chips,
+   * inline links) measured ~4.2:1 — under WCAG AA (QA THEME contrast straggler).
+   * Nudged to 46% L (same hue/sat): 5.0:1 on the primary/10 tint, 5.8:1 on white,
+   * and white-on-primary buttons improve 5.05→5.78. Dark --primary (60% L) is
+   * unaffected (dark surfaces already pass). */
+  --primary: 217 91% 46%;
+  --primary-foreground: 0 0% 100%;
+
+  /* Secondary - Light blue-gray */
+  --secondary: 214 32% 91%;
+  --secondary-foreground: 222 47% 11%;
+
+  /* Muted - Soft backgrounds */
+  --muted: 214 32% 91%;
+  /* Source value was 47% L, but muted-foreground text on the --muted/--secondary
+   * tint (214 32% 91%) only reached 3.79:1 — failing WCAG AA (QA THEME-2). Nudged
+   * to 41% L (same hue/sat) → 4.71:1 on the muted tint, 5.86:1 on card, 5.61:1 on
+   * the page bg. Smallest change that clears AA on every light surface. */
+  --muted-foreground: 215 16% 41%;
+
+  /* Accent - Vibrant Emerald Green */
+  --accent: 160 84% 39%;
+  --accent-foreground: 0 0% 100%;
+
+  /* Destructive */
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+
+  /* Borders - Visible for definition */
+  --border: 214 32% 85%;
+  --input: 214 32% 85%;
+  --ring: 217 91% 50%;
+
+  /* Chart Colors */
+  --chart-1: 217 91% 50%;
+  --chart-2: 160 84% 39%;
+  --chart-3: 280 65% 55%;
+  --chart-4: 30 80% 55%;
+  --chart-5: 340 75% 55%;
+
+  /* Sidebar */
+  --sidebar: 210 20% 96%;
+  --sidebar-foreground: 222 47% 11%;
+  --sidebar-primary: 217 91% 50%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 214 32% 88%;
+  --sidebar-accent-foreground: 222 47% 11%;
+  --sidebar-border: 214 32% 85%;
+  --sidebar-ring: 217 91% 50%;
+}
+
+/*
+  DARK THEME
+  Modern, sophisticated design with deep backgrounds
+  - Deep navy/slate background
+  - Bright text for readability
+  - Electric blue primary
+  - Lime green accent for highlights
+*/
+.dark {
+  /* Deep Space Background */
+  --background: 222 47% 6%;
+  --foreground: 210 40% 98%;
+
+  /* Cards with subtle elevation */
+  --card: 222 47% 9%;
+  --card-foreground: 210 40% 98%;
+
+  /* Popovers */
+  --popover: 222 47% 8%;
+  --popover-foreground: 210 40% 98%;
+
+  /* Primary - Electric Blue */
+  --primary: 217 91% 60%;
+  --primary-foreground: 222 47% 4%;
+
+  /* Secondary - Slate */
+  --secondary: 217 33% 17%;
+  --secondary-foreground: 210 40% 98%;
+
+  /* Muted */
+  --muted: 217 33% 15%;
+  --muted-foreground: 215 20% 65%;
+
+  /* Accent - Lime Green */
+  --accent: 142 71% 45%;
+  --accent-foreground: 222 47% 4%;
+
+  /* Destructive */
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 210 40% 98%;
+
+  /* Borders and Inputs */
+  --border: 217 33% 20%;
+  --input: 217 33% 20%;
+  --ring: 217 91% 60%;
+
+  /* Chart Colors */
+  --chart-1: 217 91% 60%;
+  --chart-2: 142 71% 45%;
+  --chart-3: 280 65% 60%;
+  --chart-4: 30 80% 55%;
+  --chart-5: 340 75% 55%;
+
+  /* Sidebar */
+  --sidebar: 222 47% 7%;
+  --sidebar-foreground: 210 40% 98%;
+  --sidebar-primary: 217 91% 60%;
+  --sidebar-primary-foreground: 222 47% 4%;
+  --sidebar-accent: 217 33% 15%;
+  --sidebar-accent-foreground: 210 40% 98%;
+  --sidebar-border: 217 33% 20%;
+  --sidebar-ring: 217 91% 60%;
+}
+
+/* Color scheme based on theme */
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  /* The `hidden` ATTRIBUTE must always win — equal-specificity utilities like
+     `inline-flex` (e.g. on .wp-element-button / our buttons) otherwise beat the
+     UA `[hidden]{display:none}` and leave the element visible. Used by JS toggles
+     (review approve/pending, password show/hide, dialogs) to hide reliably. */
+  [hidden] {
+    display: none !important;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Smooth theme transition */
+  html,
+  body,
+  * {
+    transition-property: color, background-color, border-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+
+  /* Disable transitions on initial page load */
+  html.no-transitions * {
+    transition: none !important;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
+  }
+}
+
+/* Enhanced gradient text utility */
+.gradient-text {
+  @apply bg-clip-text text-transparent;
+  background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(280 65% 60%), hsl(var(--accent)));
+}
+
+.dark .gradient-text {
+  background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(280 65% 65%), hsl(var(--accent)));
+}
+
+/* Glow effects */
+.glow-primary {
+  box-shadow: 0 0 40px -10px hsl(var(--primary) / 0.5);
+}
+
+.glow-accent {
+  box-shadow: 0 0 40px -10px hsl(var(--accent) / 0.5);
+}
+
+/* Glass effect - works in both themes */
+.glass {
+  @apply backdrop-blur-xl border border-border;
+}
+
+:root .glass {
+  background: hsl(var(--card) / 0.85);
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.05),
+    0 2px 4px -2px rgb(0 0 0 / 0.05),
+    inset 0 1px 0 0 rgb(255 255 255 / 0.5);
+}
+
+.dark .glass {
+  background: hsl(var(--card) / 0.6);
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.3),
+    inset 0 1px 0 0 rgb(255 255 255 / 0.05);
+}
+
+/* Animated gradient background */
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+/* Pulse glow animation */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Float animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+/* Shine effect for buttons */
+.shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.shine::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    transparent 100%
+  );
+  transform: rotate(30deg) translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.shine:hover::after {
+  transform: rotate(30deg) translateX(100%);
+}
+
+/* Hover lift effect for cards */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px -12px hsl(var(--primary) / 0.25);
+}
+
+/* Stagger animation for lists */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease forwards;
+}
+
+/* Text selection styling */
+::selection {
+  background: hsl(var(--primary) / 0.3);
   color: hsl(var(--foreground));
-  font-family: var(--font-geist-sans);
-  -webkit-font-smoothing: antialiased;
+}
+
+/* Focus visible styling for accessibility */
+:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Button press effect */
+.btn-press:active {
+  transform: scale(0.98);
+}
+
+/* Skeleton loading animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 25%,
+    hsl(var(--muted-foreground) / 0.1) 50%,
+    hsl(var(--muted)) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Card highlight border on hover */
+.card-highlight {
+  position: relative;
+}
+
+.card-highlight::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, hsl(var(--primary) / 0.5), hsl(var(--accent) / 0.5));
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card-highlight:hover::before {
+  opacity: 1;
+}
+
+/* Typography enhancements */
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-pretty {
+  text-wrap: pretty;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Long-form content (.prose) — blog single + page bodies. The source app is a
+ * component-driven SPA with no long-form prose, so there's no upstream to port;
+ * this is a compact, token-driven reading style for WordPress block output
+ * (headings/p/lists/links/blockquote/img/code) instead of pulling in
+ * @tailwindcss/typography. Kept on-brand: primary links, card-tinted code/quote. */
+.prose {
+  color: hsl(var(--foreground));
+  line-height: 1.75;
+  max-width: 65ch;
+}
+.prose.max-w-none { max-width: none; }
+.prose > * + * { margin-top: 1.25em; }
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  color: hsl(var(--foreground));
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  margin-top: 2em;
+  margin-bottom: 0.75em;
+}
+.prose h1 { font-size: 2.25rem; }
+.prose h2 { font-size: 1.875rem; }
+.prose h3 { font-size: 1.5rem; }
+.prose h4 { font-size: 1.25rem; }
+.prose p, .prose ul, .prose ol, .prose blockquote, .prose figure, .prose pre { margin-top: 1.25em; margin-bottom: 1.25em; }
+.prose a {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 500;
+}
+.prose a:hover { color: hsl(var(--primary) / 0.85); }
+.prose strong { color: hsl(var(--foreground)); font-weight: 600; }
+.prose ul { list-style: disc; padding-left: 1.5em; }
+.prose ol { list-style: decimal; padding-left: 1.5em; }
+.prose li { margin-top: 0.4em; margin-bottom: 0.4em; }
+.prose li::marker { color: hsl(var(--muted-foreground)); }
+.prose blockquote {
+  border-left: 3px solid hsl(var(--primary) / 0.5);
+  padding-left: 1.25rem;
+  font-style: italic;
+  color: hsl(var(--muted-foreground));
+}
+.prose img, .prose figure { border-radius: var(--radius); }
+.prose figcaption { color: hsl(var(--muted-foreground)); font-size: 0.875rem; text-align: center; margin-top: 0.5rem; }
+.prose code {
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
+  padding: 0.15em 0.4em;
+  border-radius: calc(var(--radius) - 4px);
+  font-family: var(--font-geist-mono);
+  font-size: 0.875em;
+}
+.prose pre {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+}
+.prose pre code { background: transparent; padding: 0; }
+.prose hr { border-color: hsl(var(--border)); margin: 2.5em 0; }
+
+/* Gutenberg button blocks — author-inserted Button blocks (in posts/pages now or
+ * later) otherwise inherit WP core's default colors (~#32373c on blue = 2.37, fails
+ * AA). Map them to the brand primary token so every Button block is AA-safe + on-
+ * brand without per-page fixes. Matches our component Button (rounded-lg, semibold,
+ * 150ms). Flips with dark mode via the token. */
+.wp-element-button,
+.wp-block-button__link {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-radius: var(--radius);
+  padding: 0.625rem 1.5rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.wp-element-button:hover,
+.wp-block-button__link:hover {
+  background-color: hsl(var(--primary) / 0.9);
+}
+/* Outline button-block style stays readable too. */
+.wp-block-button.is-style-outline .wp-block-button__link {
+  background-color: transparent;
+  color: hsl(var(--primary));
+  border: 2px solid hsl(var(--primary));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -7,7 +7,7 @@ SHELL := /bin/bash
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
 
-up: ## Start the core stack (db, redis, wordpress, nginx, adminer, mailpit)
+up: ## Start the core stack (db, wordpress, nginx, adminer, mailpit)
 	docker compose up -d
 	@echo "Site: http://localhost:$${HTTP_PORT:-8080}  |  Mailpit: http://localhost:$${MAILPIT_UI_PORT:-8025}  |  Adminer: http://localhost:$${ADMINER_PORT:-8081}"
 

@@ -9,12 +9,12 @@
       "custom": true,
       "defaultPalette": false,
       "palette": [
-        { "slug": "primary", "name": "Primary", "color": "hsl(217 91% 50%)" },
-        { "slug": "accent", "name": "Accent", "color": "hsl(160 84% 39%)" },
-        { "slug": "background", "name": "Background", "color": "hsl(210 20% 98%)" },
-        { "slug": "foreground", "name": "Foreground", "color": "hsl(222 47% 11%)" },
-        { "slug": "card", "name": "Card", "color": "hsl(0 0% 100%)" },
-        { "slug": "border", "name": "Border", "color": "hsl(214 32% 85%)" }
+        { "slug": "primary", "name": "Primary", "color": "hsl(var(--primary))" },
+        { "slug": "accent", "name": "Accent", "color": "hsl(var(--accent))" },
+        { "slug": "background", "name": "Background", "color": "hsl(var(--background))" },
+        { "slug": "foreground", "name": "Foreground", "color": "hsl(var(--foreground))" },
+        { "slug": "card", "name": "Card", "color": "hsl(var(--card))" },
+        { "slug": "border", "name": "Border", "color": "hsl(var(--border))" }
       ]
     },
     "typography": {
@@ -26,7 +26,11 @@
     }
   },
   "styles": {
-    "color": { "background": "hsl(210 20% 98%)", "text": "hsl(222 47% 11%)" },
+    "color": { "background": "hsl(var(--background))", "text": "hsl(var(--foreground))" },
     "typography": { "fontFamily": "Geist, ui-sans-serif, system-ui, sans-serif" }
-  }
+  },
+  "templateParts": [
+    { "name": "header", "title": "Header", "area": "header" },
+    { "name": "footer", "title": "Footer", "area": "footer" }
+  ]
 }
