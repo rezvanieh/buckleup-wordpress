@@ -33,6 +33,7 @@ import { initConsoleStudents } from './modules/console-students.js';
 import { initConsoleAdminStudents } from './modules/console-admin-students.js';
 import { initConsoleGraduates } from './modules/console-graduates.js';
 import { initConsoleAdminReviews } from './modules/console-admin-reviews.js';
+import { initConsoleAvatar } from './modules/console-avatar.js';
 
 function boot() {
   // Theme first so the resolved class/logo are correct before anything paints
@@ -55,6 +56,7 @@ function boot() {
   initConsoleAdminStudents();
   initConsoleGraduates();
   initConsoleAdminReviews();
+  initConsoleAvatar();
   initReveals();
 }
 

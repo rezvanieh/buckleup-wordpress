@@ -500,6 +500,39 @@ function click(el) {
     win.document.querySelector('[data-reviews-pending-badge]').classList.contains('hidden') === true);
 }
 
+// --- admin Settings avatar card: upload swaps preview ---------------------
+{
+  const win = setupDom(`
+    <div data-avatar-card>
+      <div data-avatar-preview>AB</div>
+      <input type="file" data-avatar-input>
+      <button data-avatar-remove></button>
+      <div data-avatar-status hidden></div>
+    </div>`);
+  win.fetch = global.fetch = () => Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ avatar: 'https://x/test.jpg' }) });
+  let threw = false;
+  try {
+    const { initConsoleAvatar } = await import('../src/js/modules/console-avatar.js');
+    initConsoleAvatar(win.document);
+  } catch (e) {
+    threw = true;
+    console.error(e);
+  }
+  ok('Admin avatar inits without throwing in jsdom', !threw);
+
+  const fileInput = win.document.querySelector('[data-avatar-input]');
+  Object.defineProperty(fileInput, 'files', { value: [{ name: 'a.jpg', type: 'image/jpeg' }], configurable: true });
+  fileInput.dispatchEvent(new win.Event('change', { bubbles: true }));
+  await new Promise((r) => setTimeout(r, 0));
+  ok('Admin avatar upload swaps the preview to the returned image',
+    win.document.querySelector('[data-avatar-preview] img')?.getAttribute('src') === 'https://x/test.jpg');
+
+  // Remove clears the preview.
+  win.document.querySelector('[data-avatar-remove]').dispatchEvent(new win.Event('click', { bubbles: true }));
+  await new Promise((r) => setTimeout(r, 0));
+  ok('Admin avatar remove clears the preview', win.document.querySelector('[data-avatar-preview]').innerHTML === '');
+}
+
 // Contact form: intentionally NO JS test — the v1 form is a plain server-rendered
 // admin-post POST (no AJAX module). Its data path (validation, nonce, ?contact=
 // success|error redirect, wp_mail → Mailpit) is owned + tested by the plugin
