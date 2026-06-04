@@ -1,66 +1,45 @@
 <?php
 /**
- * Title: Page: Admin Console
+ * Title: Page: Admin Overview
  * Slug: buckleup/page-admin
  * Inserter: no
  *
- * Admin console LANDING SHELL (the signed-in role dashboard the login flow
- * redirects to for administrators / buckleup_admin). Minimal-but-branded; the
- * full data-bound screens (Students / Instructors / Bookings / Reviews /
- * Graduates / Notifications / Settings, consuming buckleup/v1/admin/*) replace
- * this in the #31 build-out. Blog stays in native wp-admin. Uses only the
- * existing compiled-Tailwind vocabulary so no asset rebuild is required.
+ * Admin console OVERVIEW (`/admin`) inside the shared console shell. Thin welcome
+ * shell for this milestone; the real KPI tiles (Active Students / Instructors /
+ * Total Bookings / Revenue $0) come from GET /admin/stats in the build-out — and
+ * the source's fake trend strings (+20.1% etc.) are DROPPED. Gated by the plugin.
  *
  * @package BuckleUp
  */
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-$user      = wp_get_current_user();
-$bu_name   = $user && $user->exists() ? ( $user->display_name ? $user->display_name : $user->user_login ) : '';
-$bu_logout = wp_logout_url( home_url() );
+$user  = wp_get_current_user();
+$first = $user && $user->exists() ? ( $user->first_name ?: ( explode( ' ', $user->display_name ?: $user->user_login )[0] ) ) : '';
 
-$bu_sections = array(
-	array( 'icon' => 'check',          'title' => __( 'Students', 'buckleup' ),      'desc' => __( 'Manage student accounts and bookings.', 'buckleup' ) ),
-	array( 'icon' => 'shield-check',   'title' => __( 'Instructors', 'buckleup' ),   'desc' => __( 'Instructor roster and stats.', 'buckleup' ) ),
-	array( 'icon' => 'clock',          'title' => __( 'Bookings', 'buckleup' ),      'desc' => __( 'All lessons across instructors.', 'buckleup' ) ),
-	array( 'icon' => 'star',           'title' => __( 'Reviews', 'buckleup' ),       'desc' => __( 'Approve, hide, or remove reviews.', 'buckleup' ) ),
-	array( 'icon' => 'message-circle', 'title' => __( 'Notifications', 'buckleup' ),  'desc' => __( 'Email notification templates.', 'buckleup' ) ),
-	array( 'icon' => 'monitor',        'title' => __( 'Settings', 'buckleup' ),      'desc' => __( 'Site and console preferences.', 'buckleup' ) ),
+$cards = array(
+	array( 'icon' => 'user',           'title' => __( 'Students', 'buckleup' ),  'desc' => __( 'Manage student accounts and bookings.', 'buckleup' ), 'href' => home_url( '/admin/students/' ) ),
+	array( 'icon' => 'star',           'title' => __( 'Graduates', 'buckleup' ), 'desc' => __( 'Upload and manage Hall-of-Fame photos.', 'buckleup' ), 'href' => home_url( '/admin/graduates/' ) ),
+	array( 'icon' => 'check',          'title' => __( 'Reviews', 'buckleup' ),   'desc' => __( 'Approve, unapprove, or remove reviews.', 'buckleup' ), 'href' => home_url( '/admin/reviews/' ) ),
+	array( 'icon' => 'message-circle', 'title' => __( 'Blogs', 'buckleup' ),     'desc' => __( 'Write and edit posts in wp-admin.', 'buckleup' ),     'href' => admin_url( 'edit.php' ) ),
+);
+
+ob_start();
+echo buckleup_console_heading( // phpcs:ignore WordPress.Security.EscapeOutput
+	sprintf( /* translators: %s: admin first name */ __( 'Welcome back, %s', 'buckleup' ), $first ),
+	__( 'Manage students, graduates, reviews, and content.', 'buckleup' )
 );
 ?>
-<!-- wp:html -->
-<section class="min-h-[80vh] flex items-center justify-center p-4">
-	<div class="w-full max-w-2xl">
-		<div class="text-center mb-8">
-			<span class="inline-flex items-center gap-2 px-3 py-1 mb-4 rounded-full text-sm bg-accent/10 text-accent border border-accent/20"><?php esc_html_e( 'Admin Console', 'buckleup' ); ?></span>
-			<h1 class="text-3xl font-bold mb-2 text-foreground">
-				<?php
-				/* translators: %s: the signed-in user's name. */
-				printf( esc_html__( 'Welcome back, %s', 'buckleup' ), '<span class="gradient-text">' . esc_html( $bu_name ) . '</span>' );
-				?>
-			</h1>
-			<p class="text-muted-foreground"><?php esc_html_e( 'Manage students, instructors, bookings, and content.', 'buckleup' ); ?></p>
-		</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+	<?php foreach ( $cards as $c ) : ?>
+		<a href="<?php echo esc_url( $c['href'] ); ?>" class="<?php echo esc_attr( buckleup_card_class( 'p-6 hover-lift card-highlight' ) ); ?>">
+			<span class="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-primary/10 text-primary mb-4"><?php echo buckleup_icon( $c['icon'], 'w-5 h-5' ); // phpcs:ignore ?></span>
+			<h2 class="font-semibold text-foreground"><?php echo esc_html( $c['title'] ); ?></h2>
+			<p class="text-sm text-muted-foreground mt-1"><?php echo esc_html( $c['desc'] ); ?></p>
+		</a>
+	<?php endforeach; ?>
+</div>
+<?php
+$content = (string) ob_get_clean();
 
-		<div class="<?php echo esc_attr( buckleup_card_class( 'p-6 md:p-8' ) ); ?>">
-			<div class="space-y-3">
-				<?php foreach ( $bu_sections as $bu_s ) : ?>
-					<div class="flex items-start gap-3 rounded-lg p-3">
-						<span class="rounded-lg bg-accent/10 text-accent p-2"><?php echo buckleup_icon( $bu_s['icon'], 'w-4 h-4' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
-						<div>
-							<p class="font-medium text-foreground"><?php echo esc_html( $bu_s['title'] ); ?></p>
-							<p class="text-sm text-muted-foreground"><?php echo esc_html( $bu_s['desc'] ); ?></p>
-						</div>
-					</div>
-				<?php endforeach; ?>
-			</div>
-
-			<div class="mt-6 flex items-center justify-between border-t border-border pt-6">
-				<a href="<?php echo esc_url( admin_url() ); ?>" class="text-sm font-medium text-muted-foreground hover:text-foreground"><?php esc_html_e( 'WordPress admin (blog) →', 'buckleup' ); ?></a>
-				<a href="<?php echo esc_url( $bu_logout ); ?>" class="<?php echo esc_attr( buckleup_button_class( 'outline' ) ); ?>"><?php esc_html_e( 'Sign out', 'buckleup' ); ?></a>
-			</div>
-		</div>
-	</div>
-</section>
-<!-- /wp:html -->
+echo buckleup_console_shell( 'admin', 'overview', $content ); // phpcs:ignore WordPress.Security.EscapeOutput

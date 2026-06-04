@@ -23,6 +23,8 @@ require_once __DIR__ . '/inc/site.php';
 // content-image WebP delivery deterministically. The hero LCP <picture>/preload is
 // separate (home-hero.php + the wp_head preload below).
 require_once __DIR__ . '/inc/webp.php';
+// Console (portal) shell + per-role sidebar nav for Student/Instructor/Admin pages.
+require_once __DIR__ . '/inc/console.php';
 
 add_action( 'after_setup_theme', function () {
 	add_theme_support( 'wp-block-styles' );
