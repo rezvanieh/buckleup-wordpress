@@ -296,6 +296,52 @@ function click(el) {
     win.document.querySelectorAll('[data-cal-grid] [data-cal-day]').length > 0);
 }
 
+// --- instructor My Students: search + filter ------------------------------
+{
+  const win = setupDom(`
+    <div data-students-toolbar>
+      <input data-students-search>
+      <button data-students-filter="all" aria-pressed="true"></button>
+      <button data-students-filter="upcoming" aria-pressed="false"></button>
+      <button data-students-filter="active" aria-pressed="false"></button>
+    </div>
+    <div data-students-list>
+      <div data-student data-student-search="alice alice@ex.com" data-student-upcoming="1" data-student-active="1"></div>
+      <div data-student data-student-search="bob bob@ex.com" data-student-upcoming="0" data-student-active="0"></div>
+      <div data-students-noresults class="hidden"></div>
+    </div>`);
+  let threw = false;
+  try {
+    const { initConsoleStudents } = await import('../src/js/modules/console-students.js');
+    initConsoleStudents(win.document);
+  } catch (e) {
+    threw = true;
+    console.error(e);
+  }
+  ok('Students roster inits without throwing in jsdom', !threw);
+
+  const cards = () => Array.from(win.document.querySelectorAll('[data-student]'));
+  const visible = () => cards().filter((c) => !c.classList.contains('hidden'));
+
+  // Search narrows to matching name/email.
+  const search = win.document.querySelector('[data-students-search]');
+  search.value = 'bob';
+  search.dispatchEvent(new win.Event('input', { bubbles: true }));
+  ok('Students search filters by name/email', visible().length === 1 && visible()[0].getAttribute('data-student-search').includes('bob'));
+
+  // Clear search, then "Has Upcoming" keeps only upcoming.
+  search.value = '';
+  search.dispatchEvent(new win.Event('input', { bubbles: true }));
+  win.document.querySelector('[data-students-filter="upcoming"]').dispatchEvent(new win.Event('click', { bubbles: true }));
+  ok('Students "Has Upcoming" filter shows only upcoming', visible().length === 1 && visible()[0].getAttribute('data-student-upcoming') === '1');
+
+  // A search with no matches reveals the no-results card.
+  search.value = 'zzz';
+  search.dispatchEvent(new win.Event('input', { bubbles: true }));
+  ok('Students no-results card shows when empty',
+    visible().length === 0 && win.document.querySelector('[data-students-noresults]').classList.contains('hidden') === false);
+}
+
 // Contact form: intentionally NO JS test — the v1 form is a plain server-rendered
 // admin-post POST (no AJAX module). Its data path (validation, nonce, ?contact=
 // success|error redirect, wp_mail → Mailpit) is owned + tested by the plugin
