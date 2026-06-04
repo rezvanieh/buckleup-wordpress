@@ -175,13 +175,21 @@ function buckleup_console_role_for_page( $post = null ): string {
 
 /**
  * Bind console CHILD pages (e.g. /student/reviews/) to the role-root no-chrome
- * console template via the FSE template_hierarchy: prepend page-{role} so a child
- * page resolves to templates/page-student|instructor|admin.html (no marketing
- * chrome). The role-root pages already match page-{role}.html by slug. This means
- * the content engineer only creates child pages with leaf slugs — no per-page
- * template handoff.
+ * console template: prepend page-{role} so a child page resolves to
+ * templates/page-student|instructor|admin.html (no marketing chrome, full-width).
+ * The role-root pages already match page-{role}.html by their own slug; child
+ * pages (leaf slugs like "reviews") otherwise fall through to page.html — which
+ * carries the header/footer parts + an is-layout-constrained wrapper + a
+ * wp:post-title, squishing the shell and showing a stray page title.
+ *
+ * IMPORTANT: core's get_query_template() applies the TYPE-SPECIFIC filter
+ * (`page_template_hierarchy`), not the generic `template_hierarchy`, on the page
+ * render path — so we must hook `page_template_hierarchy`. We keep the generic
+ * `template_hierarchy` too as a belt-and-suspenders for any code path that uses
+ * it. This means the content engineer only creates child pages with leaf slugs —
+ * no per-page template handoff.
  */
-add_filter( 'template_hierarchy', function ( $templates ) {
+function buckleup_console_template_hierarchy( $templates ) {
 	if ( ! is_page() ) {
 		return $templates;
 	}
@@ -190,9 +198,13 @@ add_filter( 'template_hierarchy', function ( $templates ) {
 		return $templates;
 	}
 	// Prepend the role-root template so it wins over generic page templates.
-	array_unshift( $templates, "page-$role" );
+	if ( ! in_array( "page-$role", $templates, true ) ) {
+		array_unshift( $templates, "page-$role" );
+	}
 	return $templates;
-}, 20 );
+}
+add_filter( 'page_template_hierarchy', 'buckleup_console_template_hierarchy', 20 );
+add_filter( 'template_hierarchy', 'buckleup_console_template_hierarchy', 20 );
 
 /**
  * Console page heading block (title + optional subline) — used at the top of each
