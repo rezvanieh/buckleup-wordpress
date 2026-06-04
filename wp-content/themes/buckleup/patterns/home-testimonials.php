@@ -10,7 +10,10 @@
  * card with a Quote glyph, the quote, a 5-star row, and the named author + role.
  * Data from the `testimonial` CPT via buckleup_get_testimonials() (seeded with the
  * 5 named live fallbacks: Jason Kim, Amanda Liu, David Wang, Sarah Martinez,
- * Michael Chen).
+ * Michael Chen), with REAL approved+public student reviews
+ * (buckleup_get_public_reviews()) appended — so a review approved in the admin
+ * console surfaces here. Real reviews are normalized to the card shape (comment →
+ * content, role "Student", initials avatar).
  *
  * @package BuckleUp
  */
@@ -18,6 +21,26 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 $testimonials = function_exists( 'buckleup_get_testimonials' ) ? buckleup_get_testimonials() : array();
+
+// Append real approved+public student reviews (Phase-2 app), normalized to the
+// testimonial card shape. The grid below slices to 6, so these fill remaining
+// slots after the curated CPT testimonials — approving a review surfaces it here.
+if ( function_exists( 'buckleup_get_public_reviews' ) ) {
+	foreach ( buckleup_get_public_reviews( 6 ) as $r ) {
+		$comment = (string) ( $r['comment'] ?? '' );
+		if ( '' === trim( $comment ) ) {
+			continue;
+		}
+		$testimonials[] = array(
+			'name'    => (string) ( $r['name'] ?? '' ),
+			'role'    => __( 'Student', 'buckleup' ),
+			'content' => $comment,
+			'rating'  => (int) ( $r['rating'] ?? 5 ),
+			'image'   => '',
+		);
+	}
+}
+
 if ( empty( $testimonials ) ) {
 	return;
 }
