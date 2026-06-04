@@ -36,6 +36,11 @@ $logo = buckleup_asset_url( 'logo.png' );
 			<div data-register-status role="alert" class="mb-4 rounded-lg px-4 py-3 text-sm bg-destructive/10 text-destructive border border-destructive/20 hidden" hidden></div>
 
 			<form data-register-form class="space-y-4" novalidate>
+				<?php /* Honeypot: hidden from humans (off-screen, no tab/autofill); bots that fill it get a fake success from the plugin. */ ?>
+				<div aria-hidden="true" class="absolute -left-[9999px] w-px h-px overflow-hidden" data-register-honeypot>
+					<label for="bu-reg-website"><?php esc_html_e( 'Website', 'buckleup' ); ?></label>
+					<input id="bu-reg-website" name="website" type="text" tabindex="-1" autocomplete="off">
+				</div>
 				<div>
 					<label for="bu-reg-name" class="<?php echo esc_attr( buckleup_label_class( 'mb-1.5 block' ) ); ?>"><?php esc_html_e( 'Full name', 'buckleup' ); ?></label>
 					<input id="bu-reg-name" name="name" type="text" required autocomplete="name" placeholder="John Doe" class="<?php echo esc_attr( buckleup_input_class() ); ?>">

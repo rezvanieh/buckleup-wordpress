@@ -52,6 +52,8 @@ function initRegister(root) {
     const phone = form.phone?.value.trim() || '';
     const password = form.password?.value || '';
     const confirm = form.confirm?.value || '';
+    // Honeypot — humans leave it blank; the plugin fakes a success if it's filled.
+    const website = form.website?.value || '';
 
     if (!name || !email || !password) {
       showError('Please fill in your name, email, and password.');
@@ -81,7 +83,7 @@ function initRegister(root) {
         'X-WP-Nonce': cfg.nonce || '',
       },
       credentials: 'same-origin',
-      body: JSON.stringify({ name, email, phone, password }),
+      body: JSON.stringify({ name, email, phone, password, website }),
     })
       .then((res) => res.json().then((data) => ({ status: res.status, data })))
       .then(({ status: code, data }) => {
