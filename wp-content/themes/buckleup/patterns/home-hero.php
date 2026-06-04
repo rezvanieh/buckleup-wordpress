@@ -47,7 +47,7 @@ $bg_webp = buckleup_asset_webp_url( 'image2.png' ); // optimized next-gen LCP so
 	<!-- Grid pattern -->
 	<div class="absolute inset-0 z-0 opacity-[0.02]" style="background-image:linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px); background-size:60px 60px;"></div>
 
-	<div class="container relative z-10 mx-auto px-4 pt-24 pb-32">
+	<div class="container relative z-10 mx-auto px-4 pt-16 pb-24">
 		<div class="grid lg:grid-cols-[1.2fr_1fr] gap-12 items-center">
 
 			<!-- Left: typography -->
