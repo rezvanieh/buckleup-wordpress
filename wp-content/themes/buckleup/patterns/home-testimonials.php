@@ -20,18 +20,19 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-$testimonials = function_exists( 'buckleup_get_testimonials' ) ? buckleup_get_testimonials() : array();
+$cpt_testimonials = function_exists( 'buckleup_get_testimonials' ) ? buckleup_get_testimonials() : array();
 
-// Append real approved+public student reviews (Phase-2 app), normalized to the
-// testimonial card shape. The grid below slices to 6, so these fill remaining
-// slots after the curated CPT testimonials — approving a review surfaces it here.
+// Real approved+public student reviews (Phase-2 app), normalized to the
+// testimonial card shape. These are GUARANTEED slots — every approved review must
+// surface on the homepage (client intent: "approving a review makes it visible").
+$review_cards = array();
 if ( function_exists( 'buckleup_get_public_reviews' ) ) {
-	foreach ( buckleup_get_public_reviews( 6 ) as $r ) {
+	foreach ( buckleup_get_public_reviews( 12 ) as $r ) {
 		$comment = (string) ( $r['comment'] ?? '' );
 		if ( '' === trim( $comment ) ) {
 			continue;
 		}
-		$testimonials[] = array(
+		$review_cards[] = array(
 			'name'    => (string) ( $r['name'] ?? '' ),
 			'role'    => __( 'Student', 'buckleup' ),
 			'content' => $comment,
@@ -40,6 +41,14 @@ if ( function_exists( 'buckleup_get_public_reviews' ) ) {
 		);
 	}
 }
+
+// Compose the grid (clean 3-row max = 9 cards). Approved reviews are GUARANTEED a
+// slot — reserve room for all of them first, then let curated CPT testimonials
+// LEAD and fill whatever remains. So curated stay prominent, but approving a
+// review always makes it visible (never silently dropped by the cap).
+$grid_cap        = 9;
+$curated_slots   = max( 0, $grid_cap - count( $review_cards ) );
+$testimonials    = array_merge( array_slice( $cpt_testimonials, 0, $curated_slots ), $review_cards );
 
 if ( empty( $testimonials ) ) {
 	return;
@@ -69,7 +78,8 @@ $initials = static function ( $name ) {
 		</div>
 
 		<div data-reveal-stagger="0.05" class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-			<?php foreach ( array_slice( $testimonials, 0, 6 ) as $t ) : ?>
+			<?php /* $testimonials is already composed (≤6 curated + all approved reviews); cap at 9 for a clean 3-row grid while never dropping an approved review. */ ?>
+			<?php foreach ( array_slice( $testimonials, 0, 9 ) as $t ) : ?>
 				<div data-reveal class="<?php echo esc_attr( buckleup_card_class( 'group p-8 hover-lift card-highlight' ) ); ?>">
 					<?php echo buckleup_icon( 'message-circle', 'h-10 w-10 text-primary/20 mb-6 group-hover:text-primary/40 transition-colors' ); // phpcs:ignore ?>
 					<p class="text-foreground leading-relaxed mb-6 text-pretty"><?php echo esc_html( $t['content'] ); ?></p>
