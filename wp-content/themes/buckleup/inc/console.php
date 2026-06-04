@@ -117,10 +117,10 @@ function buckleup_console_shell( string $role, string $active, string $content )
 	<div class="min-h-screen bg-background flex" data-console>
 
 		<!-- Desktop sidebar -->
-		<aside class="w-64 border-r border-border glass hidden md:flex flex-col fixed h-full z-40">
+		<aside class="w-64 border-r border-border glass hidden md:flex flex-col fixed top-0 bottom-0 z-40">
 			<div class="p-6 border-b border-border"><?php echo $brand; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
 			<nav data-tabs="<?php echo esc_attr( $group ); ?>" class="flex-1 p-4 space-y-1 overflow-y-auto"><?php echo $nav_d; // phpcs:ignore WordPress.Security.EscapeOutput ?></nav>
-			<div class="p-4 border-t border-border"><?php echo $signout; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+			<div class="px-4 pt-4 pb-6 border-t border-border"><?php echo $signout; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
 		</aside>
 
 		<!-- Mobile top bar -->
@@ -142,7 +142,7 @@ function buckleup_console_shell( string $role, string $active, string $content )
 					<button type="button" data-console-close aria-label="<?php esc_attr_e( 'Close menu', 'buckleup' ); ?>" class="p-2 hover:bg-muted rounded-lg"><?php echo buckleup_icon( 'x', 'w-5 h-5' ); // phpcs:ignore ?></button>
 				</div>
 				<nav class="flex-1 p-4 space-y-1 overflow-y-auto"><?php echo buckleup_console_nav_html( $cfg['nav'], $active, $group . '-m' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></nav>
-				<div class="p-4 border-t border-border"><?php echo $signout; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+				<div class="px-4 pt-4 pb-6 border-t border-border"><?php echo $signout; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
 			</aside>
 		</div>
 
