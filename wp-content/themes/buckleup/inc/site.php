@@ -155,10 +155,10 @@ function buckleup_hero_visual(): string {
 	ob_start();
 	?>
 	<div data-tilt class="relative hidden lg:block">
-		<div data-tilt-card class="relative w-full max-w-[500px] mx-auto">
+		<div data-tilt-card class="relative w-full max-w-[580px] mx-auto">
 			<div class="relative rounded-3xl overflow-hidden shadow-2xl glow-primary">
 				<?php if ( $card ) : ?>
-					<img src="<?php echo esc_url( $card ); ?>" alt="<?php esc_attr_e( 'Farhad Sanaeifar with BuckleUp Driving School car', 'buckleup' ); ?>" class="w-full h-[400px] object-cover" decoding="async">
+					<img src="<?php echo esc_url( $card ); ?>" alt="<?php esc_attr_e( 'Farhad Sanaeifar with BuckleUp Driving School car', 'buckleup' ); ?>" class="w-full h-[460px] object-cover" decoding="async">
 				<?php endif; ?>
 				<div class="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent"></div>
 			</div>
