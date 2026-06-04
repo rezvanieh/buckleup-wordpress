@@ -445,6 +445,61 @@ function click(el) {
     dialog.getAttribute('data-state') === 'closed' && win.document.querySelector('[data-graduate="3"]') !== null);
 }
 
+// --- admin Reviews: search + filter + approve toggle ----------------------
+{
+  const win = setupDom(`
+    <span data-reviews-pending-badge><span data-reviews-pending>1</span> Pending</span>
+    <div data-reviews-toolbar>
+      <input data-reviews-search>
+      <button data-reviews-filter="all" aria-pressed="true"></button>
+      <button data-reviews-filter="pending" aria-pressed="false"></button>
+      <button data-reviews-filter="approved" aria-pressed="false"></button>
+    </div>
+    <div data-reviews-list>
+      <div data-review="1" data-review-search="alice great lesson" data-review-approved="1">
+        <button data-review-approve></button><button data-review-pending class="hidden"></button><button data-review-delete></button>
+      </div>
+      <div data-review="2" data-review-search="bob needs work" data-review-approved="0">
+        <button data-review-approve class="hidden"></button><button data-review-pending></button><button data-review-delete></button>
+      </div>
+      <div data-reviews-noresults class="hidden"></div>
+    </div>
+    <div data-reviews-status hidden></div>`);
+  win.fetch = global.fetch = () => Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({}) });
+  let threw = false;
+  try {
+    const { initConsoleAdminReviews } = await import('../src/js/modules/console-admin-reviews.js');
+    initConsoleAdminReviews(win.document);
+  } catch (e) {
+    threw = true;
+    console.error(e);
+  }
+  ok('Admin reviews inits without throwing in jsdom', !threw);
+
+  const visible = () => Array.from(win.document.querySelectorAll('[data-review]')).filter((c) => !c.classList.contains('hidden'));
+
+  // Pending filter shows only the unapproved one.
+  win.document.querySelector('[data-reviews-filter="pending"]').dispatchEvent(new win.Event('click', { bubbles: true }));
+  ok('Admin reviews pending filter shows only unapproved', visible().length === 1 && visible()[0].getAttribute('data-review') === '2');
+
+  // Back to All; search narrows by content.
+  win.document.querySelector('[data-reviews-filter="all"]').dispatchEvent(new win.Event('click', { bubbles: true }));
+  const search = win.document.querySelector('[data-reviews-search]');
+  search.value = 'great';
+  search.dispatchEvent(new win.Event('input', { bubbles: true }));
+  ok('Admin reviews search filters by content', visible().length === 1 && visible()[0].getAttribute('data-review') === '1');
+
+  // Approve the pending review → its state flips, pending count drops to 0.
+  search.value = '';
+  search.dispatchEvent(new win.Event('input', { bubbles: true }));
+  win.document.querySelector('[data-review="2"] [data-review-pending]').dispatchEvent(new win.Event('click', { bubbles: true }));
+  await new Promise((r) => setTimeout(r, 0));
+  ok('Admin reviews approve flips state + clears pending badge',
+    win.document.querySelector('[data-review="2"]').getAttribute('data-review-approved') === '1' &&
+    win.document.querySelector('[data-reviews-pending]').textContent === '0' &&
+    win.document.querySelector('[data-reviews-pending-badge]').classList.contains('hidden') === true);
+}
+
 // Contact form: intentionally NO JS test — the v1 form is a plain server-rendered
 // admin-post POST (no AJAX module). Its data path (validation, nonce, ?contact=
 // success|error redirect, wp_mail → Mailpit) is owned + tested by the plugin
