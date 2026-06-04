@@ -13,7 +13,8 @@
  * Michael Chen), with REAL approved+public student reviews
  * (buckleup_get_public_reviews()) appended — so a review approved in the admin
  * console surfaces here. Real reviews are normalized to the card shape (comment →
- * content, role "Student", initials avatar).
+ * content, role "Student"); the student's uploaded photo (the helper's `avatar`)
+ * renders in the card, falling back to the author's initials when there's none.
  *
  * @package BuckleUp
  */
@@ -37,7 +38,9 @@ if ( function_exists( 'buckleup_get_public_reviews' ) ) {
 			'role'    => __( 'Student', 'buckleup' ),
 			'content' => $comment,
 			'rating'  => (int) ( $r['rating'] ?? 5 ),
-			'image'   => '',
+			// Student's uploaded photo (bu_avatar_id thumbnail) from the helper;
+			// '' falls back to the author's initials in the card's buckleup_avatar().
+			'image'   => (string) ( $r['avatar'] ?? '' ),
 		);
 	}
 }
