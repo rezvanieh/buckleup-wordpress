@@ -8,9 +8,11 @@
  * scroll-aware glass header (data-scrolled, set by navbar.js at scrollY>20), logo
  * theme-swap, desktop nav pill at min-[1100px] with a Locations dropdown, a 2-state
  * theme toggle, the mobile hamburger + slide-down menu, and the signed-out mobile
- * bottom tab bar + WhatsApp FAB. Heights h-16 min-[1100px]:h-24 (compact, matching
- * the original) with the 500ms transition; logo h-8 min-[1100px]:h-16. The fixed-
- * header spacer below mirrors the same height. v1 = marketing only (no auth/portal UI).
+ * bottom tab bar + WhatsApp FAB. Heights h-16 min-[1100px]:h-32 (matching the
+ * source/live site) with the 500ms transition; logo h-8 min-[1100px]:h-16. The
+ * fixed-header spacer below mirrors the same height. Each nav item carries a
+ * lucide icon (gap-1.5 before the label), per the original Navbar. v1 = marketing
+ * only (no auth/portal UI).
  *
  * @package BuckleUp
  */
@@ -34,7 +36,7 @@ $logout_url     = wp_logout_url( home_url() );
 <header data-navbar data-scrolled="false"
 	class="fixed top-0 left-0 right-0 z-50 transition-all duration-500 data-[scrolled=false]:bg-background/80 data-[scrolled=false]:backdrop-blur-xl data-[scrolled=true]:bg-background/95 data-[scrolled=true]:backdrop-blur-2xl data-[scrolled=true]:border-b data-[scrolled=true]:border-border data-[scrolled=true]:shadow-lg data-[scrolled=true]:shadow-black/5 dark:data-[scrolled=true]:shadow-black/20">
 	<div class="container mx-auto px-4">
-		<div class="flex items-center justify-between h-16 min-[1100px]:h-24 transition-all duration-500">
+		<div class="flex items-center justify-between h-16 min-[1100px]:h-32 transition-all duration-500">
 
 			<!-- Logo -->
 			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="flex items-center gap-0 shrink-0" aria-label="<?php esc_attr_e( 'BuckleUp home', 'buckleup' ); ?>">
@@ -46,8 +48,9 @@ $logout_url     = wp_logout_url( home_url() );
 				<div class="flex items-center gap-0.5 px-1.5 py-1 rounded-2xl bg-muted/60 backdrop-blur-sm border border-border/50">
 					<?php foreach ( $nav as $item ) : ?>
 						<a href="<?php echo esc_url( $item['href'] ); ?>"
-							class="relative px-4 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-background/60 transition-all">
-							<?php echo esc_html( $item['name'] ); ?>
+							class="relative flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-background/60 transition-all">
+							<?php if ( ! empty( $item['icon'] ) ) { echo buckleup_icon( $item['icon'], 'w-3.5 h-3.5' ); } // phpcs:ignore WordPress.Security.EscapeOutput ?>
+							<span><?php echo esc_html( $item['name'] ); ?></span>
 						</a>
 					<?php endforeach; ?>
 
@@ -134,8 +137,9 @@ $logout_url     = wp_logout_url( home_url() );
 		<nav aria-label="<?php esc_attr_e( 'Mobile', 'buckleup' ); ?>" class="container mx-auto px-4 py-4 flex flex-col gap-1">
 			<?php foreach ( $nav as $item ) : ?>
 				<a href="<?php echo esc_url( $item['href'] ); ?>"
-					class="px-4 py-3 rounded-xl text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
-					<?php echo esc_html( $item['name'] ); ?>
+					class="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+					<?php if ( ! empty( $item['icon'] ) ) { echo buckleup_icon( $item['icon'], 'w-5 h-5' ); } // phpcs:ignore WordPress.Security.EscapeOutput ?>
+					<span><?php echo esc_html( $item['name'] ); ?></span>
 				</a>
 			<?php endforeach; ?>
 			<div class="px-4 pt-2 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground"><?php esc_html_e( 'Locations', 'buckleup' ); ?></div>
@@ -172,7 +176,7 @@ $logout_url     = wp_logout_url( home_url() );
 </header>
 
 <!-- Spacer matching the fixed header height -->
-<div class="h-16 min-[1100px]:h-24 transition-all duration-500" aria-hidden="true"></div>
+<div class="h-16 min-[1100px]:h-32 transition-all duration-500" aria-hidden="true"></div>
 
 <!-- Signed-out mobile bottom tab bar + WhatsApp FAB -->
 <div class="fixed bottom-0 left-0 right-0 z-40 min-[1100px]:hidden pointer-events-none">

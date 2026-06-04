@@ -155,10 +155,10 @@ function buckleup_hero_visual(): string {
 	ob_start();
 	?>
 	<div data-tilt class="relative hidden lg:block">
-		<div data-tilt-card class="relative w-full max-w-[580px] mx-auto">
+		<div data-tilt-card class="relative w-full max-w-[500px] mx-auto">
 			<div class="relative rounded-3xl overflow-hidden shadow-2xl glow-primary">
 				<?php if ( $card ) : ?>
-					<img src="<?php echo esc_url( $card ); ?>" alt="<?php esc_attr_e( 'Farhad Sanaeifar with BuckleUp Driving School car', 'buckleup' ); ?>" class="w-full h-[460px] object-cover" decoding="async">
+					<img src="<?php echo esc_url( $card ); ?>" alt="<?php esc_attr_e( 'Farhad Sanaeifar with BuckleUp Driving School car', 'buckleup' ); ?>" class="w-full h-[400px] object-cover" decoding="async">
 				<?php endif; ?>
 				<div class="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent"></div>
 			</div>
@@ -214,20 +214,22 @@ function buckleup_hero_visual(): string {
 }
 
 /**
- * Public primary-nav items (v1 marketing site). Services + Instructors are the
- * feature-flagged-on pages per PLAN §1. Locations is a dropdown built from the
- * location CPT so it stays in sync with content.
+ * Public primary-nav items. Matches the original site's navbar EXACTLY
+ * (Home · Graduates · FAQ · Contact · Blog · About + the Locations dropdown).
+ * Services + Instructors pages still exist but are intentionally NOT in the
+ * primary nav (the original site doesn't list them). Locations is a dropdown
+ * built from the location CPT so it stays in sync with content.
  */
 function buckleup_nav_items(): array {
+	// Per-item lucide icons mirror the source Navbar.tsx (Home/ImageIcon/HelpCircle/
+	// Phone/BookOpen/Info); rendered before the label at gap-1.5 in site-header.php.
 	$items = array(
-		array( 'name' => 'Home', 'href' => home_url( '/' ) ),
-		array( 'name' => 'Services', 'href' => home_url( '/services' ) ),
-		array( 'name' => 'Instructors', 'href' => home_url( '/instructors' ) ),
-		array( 'name' => 'Graduates', 'href' => home_url( '/#graduates' ) ),
-		array( 'name' => 'FAQ', 'href' => home_url( '/#faq' ) ),
-		array( 'name' => 'Contact', 'href' => home_url( '/contact' ) ),
-		array( 'name' => 'Blog', 'href' => home_url( '/blog' ) ),
-		array( 'name' => 'About', 'href' => home_url( '/about' ) ),
+		array( 'name' => 'Home', 'href' => home_url( '/' ), 'icon' => 'home' ),
+		array( 'name' => 'Graduates', 'href' => home_url( '/#graduates' ), 'icon' => 'image' ),
+		array( 'name' => 'FAQ', 'href' => home_url( '/#faq' ), 'icon' => 'help-circle' ),
+		array( 'name' => 'Contact', 'href' => home_url( '/contact' ), 'icon' => 'phone' ),
+		array( 'name' => 'Blog', 'href' => home_url( '/blog' ), 'icon' => 'book-open' ),
+		array( 'name' => 'About', 'href' => home_url( '/about' ), 'icon' => 'info' ),
 	);
 	return $items;
 }

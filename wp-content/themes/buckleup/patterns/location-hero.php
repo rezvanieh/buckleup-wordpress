@@ -35,7 +35,7 @@ $wa_link   = 'https://wa.me/' . preg_replace( '/\D/', '', $wa ) . '?text=' . raw
 	</div>
 
 	<div class="container relative z-10 mx-auto px-4">
-		<div class="grid lg:grid-cols-[1.2fr_1fr] gap-12 items-start">
+		<div class="grid lg:grid-cols-[1.2fr_1fr] gap-12 items-center">
 
 			<!-- Left: typography -->
 			<div class="text-left space-y-8 xl:pr-8">
