@@ -214,10 +214,10 @@ function buckleup_hero_visual(): string {
 }
 
 /**
- * Public primary-nav items. Matches the original site's navbar EXACTLY
- * (Home · Graduates · FAQ · Contact · Blog · About + the Locations dropdown).
- * Services + Instructors pages still exist but are intentionally NOT in the
- * primary nav (the original site doesn't list them). Locations is a dropdown
+ * Public primary-nav items: Home · Services · Graduates · FAQ · Contact · Blog ·
+ * About, plus the Locations dropdown (appended in the header). Services is shown
+ * (client decision); Instructors is intentionally NOT in the primary nav. Each
+ * item carries a lucide icon rendered before the label. Locations is a dropdown
  * built from the location CPT so it stays in sync with content.
  */
 function buckleup_nav_items(): array {
@@ -225,6 +225,7 @@ function buckleup_nav_items(): array {
 	// Phone/BookOpen/Info); rendered before the label at gap-1.5 in site-header.php.
 	$items = array(
 		array( 'name' => 'Home', 'href' => home_url( '/' ), 'icon' => 'home' ),
+		array( 'name' => 'Services', 'href' => home_url( '/services' ), 'icon' => 'briefcase' ),
 		array( 'name' => 'Graduates', 'href' => home_url( '/#graduates' ), 'icon' => 'image' ),
 		array( 'name' => 'FAQ', 'href' => home_url( '/#faq' ), 'icon' => 'help-circle' ),
 		array( 'name' => 'Contact', 'href' => home_url( '/contact' ), 'icon' => 'phone' ),
