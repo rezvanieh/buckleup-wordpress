@@ -8,8 +8,9 @@
  * scroll-aware glass header (data-scrolled, set by navbar.js at scrollY>20), logo
  * theme-swap, desktop nav pill at min-[1100px] with a Locations dropdown, a 2-state
  * theme toggle, the mobile hamburger + slide-down menu, and the signed-out mobile
- * bottom tab bar + WhatsApp FAB. Heights h-16 min-[1100px]:h-32 with the 500ms
- * transition; logo h-8 min-[1100px]:h-16. v1 = marketing only (no auth/portal UI).
+ * bottom tab bar + WhatsApp FAB. Heights h-16 min-[1100px]:h-24 (compact, matching
+ * the original) with the 500ms transition; logo h-8 min-[1100px]:h-16. The fixed-
+ * header spacer below mirrors the same height. v1 = marketing only (no auth/portal UI).
  *
  * @package BuckleUp
  */
@@ -33,7 +34,7 @@ $logout_url     = wp_logout_url( home_url() );
 <header data-navbar data-scrolled="false"
 	class="fixed top-0 left-0 right-0 z-50 transition-all duration-500 data-[scrolled=false]:bg-background/80 data-[scrolled=false]:backdrop-blur-xl data-[scrolled=true]:bg-background/95 data-[scrolled=true]:backdrop-blur-2xl data-[scrolled=true]:border-b data-[scrolled=true]:border-border data-[scrolled=true]:shadow-lg data-[scrolled=true]:shadow-black/5 dark:data-[scrolled=true]:shadow-black/20">
 	<div class="container mx-auto px-4">
-		<div class="flex items-center justify-between h-16 min-[1100px]:h-32 transition-all duration-500">
+		<div class="flex items-center justify-between h-16 min-[1100px]:h-24 transition-all duration-500">
 
 			<!-- Logo -->
 			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="flex items-center gap-0 shrink-0" aria-label="<?php esc_attr_e( 'BuckleUp home', 'buckleup' ); ?>">
@@ -171,7 +172,7 @@ $logout_url     = wp_logout_url( home_url() );
 </header>
 
 <!-- Spacer matching the fixed header height -->
-<div class="h-16 min-[1100px]:h-32 transition-all duration-500" aria-hidden="true"></div>
+<div class="h-16 min-[1100px]:h-24 transition-all duration-500" aria-hidden="true"></div>
 
 <!-- Signed-out mobile bottom tab bar + WhatsApp FAB -->
 <div class="fixed bottom-0 left-0 right-0 z-40 min-[1100px]:hidden pointer-events-none">
