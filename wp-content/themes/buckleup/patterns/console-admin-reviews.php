@@ -120,10 +120,10 @@ ob_start();
 
 					<!-- Actions -->
 					<div class="flex lg:flex-col items-center justify-end gap-2 lg:w-32 shrink-0 border-t lg:border-t-0 lg:border-l border-border pt-4 lg:pt-0 lg:pl-4" data-review-actions>
-						<button type="button" data-review-approve class="<?php echo esc_attr( buckleup_button_class( 'outline', 'sm', 'w-full text-green-600 border-green-500/30 hover:bg-green-500/10' . ( $approved ? '' : ' hidden' ) ) ); ?>">
+						<button type="button" data-review-approve <?php echo $approved ? '' : 'hidden'; ?> class="<?php echo esc_attr( buckleup_button_class( 'outline', 'sm', 'w-full text-green-600 border-green-500/30 hover:bg-green-500/10' ) ); ?>">
 							<?php echo buckleup_icon( 'check', 'w-4 h-4' ); // phpcs:ignore ?><?php esc_html_e( 'Approved', 'buckleup' ); ?>
 						</button>
-						<button type="button" data-review-pending class="<?php echo esc_attr( buckleup_button_class( 'default', 'sm', 'w-full bg-primary/10 text-primary hover:bg-primary/20 shadow-none' . ( $approved ? ' hidden' : '' ) ) ); ?>">
+						<button type="button" data-review-pending <?php echo $approved ? 'hidden' : ''; ?> class="<?php echo esc_attr( buckleup_button_class( 'default', 'sm', 'w-full bg-primary/10 text-primary hover:bg-primary/20 shadow-none' ) ); ?>">
 							<?php esc_html_e( 'Approve', 'buckleup' ); ?>
 						</button>
 						<div class="flex gap-2 w-full">

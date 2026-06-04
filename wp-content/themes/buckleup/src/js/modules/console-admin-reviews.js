@@ -80,8 +80,12 @@ export function initConsoleAdminReviews(root = document) {
   // Toggle a card's approved UI without re-rendering.
   const setCardApproved = (card, approved) => {
     card.setAttribute('data-review-approved', approved ? '1' : '0');
-    card.querySelector('[data-review-approve]')?.classList.toggle('hidden', !approved);
-    card.querySelector('[data-review-pending]')?.classList.toggle('hidden', approved);
+    // Toggle the `hidden` ATTRIBUTE (base CSS forces [hidden]{display:none!important},
+    // so it beats the buttons' inline-flex — using the .hidden class would lose).
+    const approvedBtn = card.querySelector('[data-review-approve]');
+    const pendingBtn = card.querySelector('[data-review-pending]');
+    if (approvedBtn) approvedBtn.hidden = !approved; // "Approved" pill shows only when approved
+    if (pendingBtn) pendingBtn.hidden = approved; // "Approve" button shows only when pending
     refreshPending();
     applyFilter(); // a card may drop out of the current filter view
   };

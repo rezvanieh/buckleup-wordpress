@@ -457,10 +457,10 @@ function click(el) {
     </div>
     <div data-reviews-list>
       <div data-review="1" data-review-search="alice great lesson" data-review-approved="1">
-        <button data-review-approve></button><button data-review-pending class="hidden"></button><button data-review-delete></button>
+        <button data-review-approve></button><button data-review-pending hidden></button><button data-review-delete></button>
       </div>
       <div data-review="2" data-review-search="bob needs work" data-review-approved="0">
-        <button data-review-approve class="hidden"></button><button data-review-pending></button><button data-review-delete></button>
+        <button data-review-approve hidden></button><button data-review-pending></button><button data-review-delete></button>
       </div>
       <div data-reviews-noresults class="hidden"></div>
     </div>
@@ -498,6 +498,13 @@ function click(el) {
     win.document.querySelector('[data-review="2"]').getAttribute('data-review-approved') === '1' &&
     win.document.querySelector('[data-reviews-pending]').textContent === '0' &&
     win.document.querySelector('[data-reviews-pending-badge]').classList.contains('hidden') === true);
+
+  // The card now shows ONLY the approved state — the "Approve" button is hidden via
+  // the `hidden` attribute, the "Approved" pill is shown (the both-buttons bug).
+  const card2 = win.document.querySelector('[data-review="2"]');
+  ok('Admin reviews approve shows ONLY the approved state (no double button)',
+    card2.querySelector('[data-review-pending]').hidden === true &&
+    card2.querySelector('[data-review-approve]').hidden === false);
 }
 
 // --- admin Settings avatar card: upload swaps preview ---------------------

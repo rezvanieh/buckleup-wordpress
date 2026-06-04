@@ -250,6 +250,14 @@ html.dark {
     @apply border-border outline-ring/50;
   }
 
+  /* The `hidden` ATTRIBUTE must always win — equal-specificity utilities like
+     `inline-flex` (e.g. on .wp-element-button / our buttons) otherwise beat the
+     UA `[hidden]{display:none}` and leave the element visible. Used by JS toggles
+     (review approve/pending, password show/hide, dialogs) to hide reliably. */
+  [hidden] {
+    display: none !important;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
