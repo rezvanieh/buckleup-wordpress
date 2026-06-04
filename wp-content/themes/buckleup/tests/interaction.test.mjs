@@ -236,6 +236,66 @@ function click(el) {
   ok('reveal/tilt/lightbox init without throwing in jsdom', !threw);
 }
 
+// --- instructor Availability: tabs + weekly toggle reveal -----------------
+{
+  const win = setupDom(`
+    <div data-avail-tabs>
+      <button data-avail-tab="weekly" aria-selected="true" class="bg-background text-foreground shadow-sm"></button>
+      <button data-avail-tab="calendar" aria-selected="false" class="text-muted-foreground"></button>
+    </div>
+    <div data-avail-panel="weekly">
+      <div data-weekly>
+        <div data-weekly-day="1" class="bg-muted/50 border-transparent">
+          <button data-switch data-state="unchecked" data-weekly-toggle="1"><span data-slot="switch-thumb" data-state="unchecked"></span></button>
+          <span data-weekly-label class="text-muted-foreground"></span>
+          <div data-weekly-times class="hidden"><input data-weekly-start value="09:00"><input data-weekly-end value="17:00"></div>
+          <span data-weekly-off></span>
+        </div>
+      </div>
+      <button data-weekly-save></button>
+    </div>
+    <div data-avail-panel="calendar" class="hidden">
+      <h2 data-cal-title></h2>
+      <button data-cal-prev></button><button data-cal-next></button>
+      <div data-cal-grid></div>
+      <div data-exc-card class="hidden"><div data-exc-list></div></div>
+    </div>
+    <div data-avail-status hidden></div>`);
+  // Stub fetch — the module loads exceptions on init; return an empty set so the
+  // calendar renders without a network. (Mutations aren't exercised here.)
+  win.fetch = global.fetch = () => Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ exceptions: [] }) });
+  let threw = false;
+  try {
+    const { initForms } = await import('../src/js/modules/forms.js');
+    const { initConsoleAvailability } = await import('../src/js/modules/console-availability.js');
+    initForms(win.document);
+    initConsoleAvailability(win.document);
+  } catch (e) {
+    threw = true;
+    console.error(e);
+  }
+  ok('Availability inits without throwing in jsdom', !threw);
+
+  // Tab switch → calendar panel shows, weekly hides.
+  win.document.querySelector('[data-avail-tab="calendar"]').dispatchEvent(new win.Event('click', { bubbles: true }));
+  ok('Availability calendar tab reveals calendar panel',
+    win.document.querySelector('[data-avail-panel="calendar"]').classList.contains('hidden') === false &&
+    win.document.querySelector('[data-avail-panel="weekly"]').classList.contains('hidden') === true);
+
+  // Flip a weekly switch → its time inputs reveal, "off" label hides.
+  win.document.querySelector('[data-weekly-toggle="1"]').dispatchEvent(new win.Event('click', { bubbles: true }));
+  const day1 = win.document.querySelector('[data-weekly-day="1"]');
+  ok('Availability weekly toggle reveals time inputs',
+    day1.querySelector('[data-weekly-times]').classList.contains('hidden') === false &&
+    day1.querySelector('[data-weekly-off]').classList.contains('hidden') === true);
+
+  // Calendar grid renders from the stubbed (empty) exceptions — loadExceptions()
+  // is async, so let its promise chain settle before asserting.
+  await new Promise((r) => setTimeout(r, 0));
+  ok('Availability calendar grid renders day cells',
+    win.document.querySelectorAll('[data-cal-grid] [data-cal-day]').length > 0);
+}
+
 // Contact form: intentionally NO JS test — the v1 form is a plain server-rendered
 // admin-post POST (no AJAX module). Its data path (validation, nonce, ?contact=
 // success|error redirect, wp_mail → Mailpit) is owned + tested by the plugin

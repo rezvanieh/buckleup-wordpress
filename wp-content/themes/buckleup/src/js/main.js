@@ -28,6 +28,7 @@ import { initConsoleReviews } from './modules/console-reviews.js';
 import { initConsoleProfile } from './modules/console-profile.js';
 import { initConsoleTags } from './modules/console-tags.js';
 import { initConsoleSchedule } from './modules/console-schedule.js';
+import { initConsoleAvailability } from './modules/console-availability.js';
 
 function boot() {
   // Theme first so the resolved class/logo are correct before anything paints
@@ -45,6 +46,7 @@ function boot() {
   initConsoleProfile();
   initConsoleTags();
   initConsoleSchedule();
+  initConsoleAvailability();
   initReveals();
 }
 
