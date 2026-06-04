@@ -22,6 +22,7 @@ import { initHeroTilt } from './modules/tilt.js';
 import { initLightbox } from './modules/lightbox.js';
 import { initOverlays } from './modules/overlays.js';
 import { initForms } from './modules/forms.js';
+import { initAuth } from './modules/auth.js';
 
 function boot() {
   // Theme first so the resolved class/logo are correct before anything paints
@@ -33,6 +34,7 @@ function boot() {
   initLightbox();
   initOverlays();
   initForms();
+  initAuth();
   initReveals();
 }
 

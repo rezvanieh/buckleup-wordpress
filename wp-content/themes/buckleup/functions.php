@@ -99,6 +99,13 @@ add_action( 'wp_enqueue_scripts', function () {
 
 	if ( $js ) {
 		wp_enqueue_script( 'buckleup-main', $js, array(), BUCKLEUP_VERSION, true );
+		// Auth: the register form (src/js/modules/auth.js) fetches the buckleup/v1
+		// REST endpoint with the wp_rest nonce. (Harmless if the plugin later drops
+		// the register nonce requirement — the header is simply ignored.)
+		wp_localize_script( 'buckleup-main', 'buckleupAuth', array(
+			'nonce'   => wp_create_nonce( 'wp_rest' ),
+			'restUrl' => esc_url_raw( rest_url( 'buckleup/v1/' ) ),
+		) );
 	}
 } );
 

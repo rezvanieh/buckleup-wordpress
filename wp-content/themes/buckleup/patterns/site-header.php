@@ -21,6 +21,13 @@ $locations  = buckleup_location_items();
 $wa         = function_exists( 'buckleup_get_setting' ) ? buckleup_get_setting( 'whatsapp', '16044413677' ) : '16044413677';
 // Generic CTAs carry a prefilled message (production parity).
 $wa_link    = 'https://wa.me/' . preg_replace( '/\D/', '', $wa ) . '?text=' . rawurlencode( "Hi, I'm interested in driving lessons." );
+
+// Auth state for the Sign In link / user menu.
+$is_logged_in   = is_user_logged_in();
+$dashboard_url  = function_exists( 'buckleup_dashboard_url' ) ? buckleup_dashboard_url() : home_url( '/student/' );
+$current_user   = $is_logged_in ? wp_get_current_user() : null;
+$user_name      = $current_user ? ( $current_user->display_name ?: $current_user->user_login ) : '';
+$logout_url     = wp_logout_url( home_url() );
 ?>
 <!-- wp:html -->
 <header data-navbar data-scrolled="false"
@@ -72,6 +79,33 @@ $wa_link    = 'https://wa.me/' . preg_replace( '/\D/', '', $wa ) . '?text=' . ra
 					<span class="inline dark:hidden"><?php echo buckleup_icon( 'moon', 'size-5' ); // phpcs:ignore ?></span>
 				</button>
 
+				<?php if ( $is_logged_in ) : ?>
+					<!-- Logged-in: user menu (Dashboard + Sign out) -->
+					<div data-dropdown class="relative hidden min-[1100px]:block">
+						<button type="button" data-dropdown-trigger aria-expanded="false" aria-haspopup="true"
+							class="flex items-center gap-2 p-1.5 pr-3 rounded-full text-sm font-medium text-foreground hover:bg-muted transition-colors border border-border/50">
+							<span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary"><?php echo buckleup_icon( 'user', 'size-4' ); // phpcs:ignore ?></span>
+							<span class="max-w-[8rem] truncate"><?php echo esc_html( $user_name ); ?></span>
+							<?php echo buckleup_icon( 'chevron-down', 'size-4' ); // phpcs:ignore ?>
+						</button>
+						<div data-dropdown-content data-state="closed" data-side="bottom" hidden
+							class="absolute right-0 top-full mt-2 w-48 bg-card/98 backdrop-blur-2xl border border-border rounded-xl shadow-xl shadow-black/10 py-1 overflow-hidden z-50 <?php echo esc_attr( buckleup_dropdown_content_class() ); ?>">
+							<a href="<?php echo esc_url( $dashboard_url ); ?>" class="flex items-center gap-2 px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+								<?php echo buckleup_icon( 'layout-dashboard', 'size-4' ); // phpcs:ignore ?><?php esc_html_e( 'Dashboard', 'buckleup' ); ?>
+							</a>
+							<a href="<?php echo esc_url( $logout_url ); ?>" class="flex items-center gap-2 px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+								<?php echo buckleup_icon( 'log-out', 'size-4' ); // phpcs:ignore ?><?php esc_html_e( 'Sign out', 'buckleup' ); ?>
+							</a>
+						</div>
+					</div>
+				<?php else : ?>
+					<!-- Logged-out: Sign In link -->
+					<a href="<?php echo esc_url( home_url( '/login/' ) ); ?>"
+						class="hidden min-[1100px]:inline-flex items-center px-4 py-2 rounded-full text-sm font-medium text-foreground hover:bg-muted transition-colors border border-border/50">
+						<?php esc_html_e( 'Sign In', 'buckleup' ); ?>
+					</a>
+				<?php endif; ?>
+
 				<div class="hidden min-[1100px]:block">
 					<?php
 					buckleup_button( array(
@@ -110,6 +144,16 @@ $wa_link    = 'https://wa.me/' . preg_replace( '/\D/', '', $wa ) . '?text=' . ra
 					<?php echo esc_html( $loc['name'] ); ?>
 				</a>
 			<?php endforeach; ?>
+			<!-- Auth (mobile) -->
+			<div class="mt-2 pt-2 border-t border-border flex flex-col gap-1">
+				<?php if ( $is_logged_in ) : ?>
+					<a href="<?php echo esc_url( $dashboard_url ); ?>" class="flex items-center gap-2 px-4 py-3 rounded-xl text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"><?php echo buckleup_icon( 'layout-dashboard', 'size-5' ); // phpcs:ignore ?><?php esc_html_e( 'Dashboard', 'buckleup' ); ?></a>
+					<a href="<?php echo esc_url( $logout_url ); ?>" class="flex items-center gap-2 px-4 py-3 rounded-xl text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"><?php echo buckleup_icon( 'log-out', 'size-5' ); // phpcs:ignore ?><?php esc_html_e( 'Sign out', 'buckleup' ); ?></a>
+				<?php else : ?>
+					<a href="<?php echo esc_url( home_url( '/login/' ) ); ?>" class="flex items-center gap-2 px-4 py-3 rounded-xl text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"><?php echo buckleup_icon( 'user', 'size-5' ); // phpcs:ignore ?><?php esc_html_e( 'Sign In', 'buckleup' ); ?></a>
+				<?php endif; ?>
+			</div>
+
 			<div class="px-2 pt-3">
 				<?php
 				buckleup_button( array(
