@@ -292,3 +292,60 @@ When you learn something new and non-obvious during a fix, **write it to memory*
 - **Demo accounts (`*@buckleup.test`) are kept** for ongoing console testing.
 - **Always reproduce + verify locally, then deploy, then verify on prod, then
   clean up** any helper scripts.
+
+---
+
+## 11. Updating the homepage Google reviews (testimonials)
+
+The "Loved by Thousands" section is fed by the **`testimonial` CPT**, seeded from
+the **real Google reviews**. The single source of truth is
+**`scripts/wp/real-testimonials.php`** (returns an array of
+`{slug,name,role,rating,quote}`); it's `require`d by both `seed-content.php` (so
+`make reset` reproduces them) and the prod applier. The homepage renders via
+`wp-content/themes/buckleup/patterns/home-testimonials.php` (card = avatar + name
++ role on top, star row, then the quote; shows up to `$grid_cap` = 24). Each card's
+subtitle is the literal **"Google Review"** (client choice). First done 2026-06-05
+(replaced the 5 fake placeholder testimonials Jason Kim / Amanda Liu / etc.).
+
+**Capturing new reviews is the hard part — Google blocks bulk scraping.** A Maps
+PLACE page served to an automated/not-signed-in browser is a degraded **"limited
+view"** with no reviews pane; the internal `listugcposts` RPC `pb` layout is stale.
+What works: **per-review SHARE links**. Ask the client to open each review on the
+listing → **Share → Copy link** (`https://maps.app.goo.gl/XXXX`); a single-review
+deep-link renders in FULL view even unauthenticated.
+
+End-to-end loop:
+
+1. **Extract.** From `tests/`, run the reusable scraper on the share links:
+   ```bash
+   cd tests && node bin/scrape-review-link.js <share-url> [<share-url> ...]
+   ```
+   It forces `hl=en` (verbatim English original, not Google's auto-translation),
+   and pulls name / rating / "X ago" / text → `tests/results/google-reviews.json`.
+   (Playwright + Chromium already installed under `tests/`.)
+2. **Transcribe** into `scripts/wp/real-testimonials.php`: text **verbatim**;
+   title-case names for polish; clean non-name handles (e.g. `Cineplex_customer`
+   → "Verified Customer"); `role` = "Google Review"; `menu_order` = newest first.
+3. **Apply to dev + verify:**
+   ```bash
+   docker compose run --rm -T wpcli wp eval-file /scripts/wp/seed-content.php
+   docker compose run --rm -T wpcli wp cache flush
+   ```
+   The seed deletes the legacy fake slugs (idempotent) and upserts the array.
+   Check `http://localhost:8080/?cb=$(date +%s)` (hard-refresh the browser — plain
+   browser cache, no service worker).
+4. **Deploy to prod** (no WP-CLI on Bluehost — §5C token-PHP pattern):
+   - SFTP `scripts/wp/real-testimonials.php` → `bu-deploy/real-testimonials.php`
+     (outside the webroot) and the changed
+     `…/patterns/home-testimonials.php` → its mirror path under `public_html/`.
+   - Drop a token-protected `bu-fix.php` in `public_html` that `require`s
+     `wp-load.php` + the uploaded data file, deletes the fake slugs
+     (`get_page_by_path(...,'testimonial')` → `wp_delete_post`), upserts the array
+     via `wp_insert_post`/`update_post_meta` (`bu_author_name/role/rating`,
+     `bu_is_active='1'`), then `wp_cache_flush()` + clears the Newfold
+     `endurance-page-cache` dir. `curl` it, read the output, **delete it (verify
+     404)** and remove `bu-deploy/`.
+   - Verify: `curl -sS "https://www.buckleupdriving.ca/?cb=$(date +%s)"` shows the
+     new names + "Google Review" and no old fakes.
+5. **Commit** all of the above (data file + seed + pattern + the scraper tool) and
+   keep repo == prod.
