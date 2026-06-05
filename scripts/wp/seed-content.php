@@ -1,7 +1,7 @@
 <?php
 /**
  * Seeds marketing content into the buckleup-core CPTs (verbatim from source):
- *   - testimonial (5)  src/components/landing/Testimonials.tsx  (named fallbacks)
+ *   - testimonial (17) real Google reviews (scripts/wp/real-testimonials.php)
  *   - faq (14)         src/components/landing/FAQ.tsx
  *   - instructor (2)   prisma/seed.ts  (REAL: Sarah Mitchell + Farhad Sanaeifar)
  *   - location (5)     src/app/locations/<slug>/page.tsx  (hero + SEO meta, CPT)
@@ -20,13 +20,19 @@ require_once __DIR__ . '/lib.php';
  * placeholders are intentionally dropped per PLAN §4); theme shows the initial.
  * ========================================================================= */
 if ( post_type_exists( 'testimonial' ) ) {
-	$testimonials = array(
-		array( 'slug' => 'jason-kim',      'name' => 'Jason Kim',      'role' => 'Passed N Test',         'quote' => "I failed my test twice with another school. After 5 lessons with BuckleUp, I passed with zero demerits. The instructors actually care about your success, not just your money." ),
-		array( 'slug' => 'amanda-liu',     'name' => 'Amanda Liu',     'role' => 'New Driver',            'quote' => "The online booking system is a game changer. Being able to pick my slots without calling anyone made my life so much easier. Plus, learning in a Tesla was pretty cool!" ),
-		array( 'slug' => 'david-wang',     'name' => 'David Wang',     'role' => 'Parent',                'quote' => "As a parent, I was worried about my son driving. The student portal let me see his progress and feedback after every lesson. The transparency is amazing. Highly recommend." ),
-		array( 'slug' => 'sarah-martinez', 'name' => 'Sarah Martinez', 'role' => 'Class 5 License',       'quote' => "Professional, patient, and truly skilled instructors. They helped me overcome my fear of highway driving. Now I'm confidently commuting to work every day!" ),
-		array( 'slug' => 'michael-chen',   'name' => 'Michael Chen',   'role' => 'International Student',  'quote' => "Coming from a country where we drive on the other side, I was nervous. The instructors were incredibly patient and helped me adapt quickly. Best decision I made!" ),
-	);
+	// Remove the original placeholder/fake testimonials (Jason Kim et al.) —
+	// replaced 2026-06-05 by the real Google reviews. Idempotent: only deletes
+	// a legacy slug if it's still present.
+	foreach ( array( 'jason-kim', 'amanda-liu', 'david-wang', 'sarah-martinez', 'michael-chen' ) as $old_slug ) {
+		$old = bu_find_post( 'testimonial', $old_slug );
+		if ( $old ) {
+			wp_delete_post( $old, true );
+			WP_CLI::log( "  testimonial removed (legacy fake): {$old_slug} (#{$old})" );
+		}
+	}
+
+	// Real Google reviews — single source of truth (see real-testimonials.php).
+	$testimonials = require __DIR__ . '/real-testimonials.php';
 	$order = 0;
 	foreach ( $testimonials as $t ) {
 		bu_upsert_post(
@@ -40,7 +46,7 @@ if ( post_type_exists( 'testimonial' ) ) {
 			array(
 				'bu_author_name' => $t['name'],
 				'bu_author_role' => $t['role'],
-				'bu_rating'      => 5,
+				'bu_rating'      => (int) $t['rating'],
 				'bu_is_active'   => '1',
 			)
 		);
@@ -383,4 +389,4 @@ if ( $sample ) {
 	WP_CLI::log( "  removed default 'Sample Page' (#{$sample->ID})" );
 }
 
-WP_CLI::success( 'Content seeded: 5 testimonials, 14 FAQ, 2 instructors, 5 locations, static pages.' );
+WP_CLI::success( 'Content seeded: 17 testimonials, 14 FAQ, 2 instructors, 5 locations, static pages.' );

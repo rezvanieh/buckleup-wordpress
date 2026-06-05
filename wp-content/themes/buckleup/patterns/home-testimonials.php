@@ -4,17 +4,15 @@
  * Slug: buckleup/home-testimonials
  * Inserter: no
  *
- * Reproduces src/components/landing/Testimonials.tsx: eyebrow "Student Reviews"
- * (star), h2 "Loved by Thousands" (gradient span), a 3-col card grid on md+ (the
- * source also has a mobile carousel; the grid stacks to 1-col on mobile here), each
- * card with a Quote glyph, the quote, a 5-star row, and the named author + role.
- * Data from the `testimonial` CPT via buckleup_get_testimonials() (seeded with the
- * 5 named live fallbacks: Jason Kim, Amanda Liu, David Wang, Sarah Martinez,
- * Michael Chen), with REAL approved+public student reviews
- * (buckleup_get_public_reviews()) appended — so a review approved in the admin
- * console surfaces here. Real reviews are normalized to the card shape (comment →
- * content, role "Student"); the student's uploaded photo (the helper's `avatar`)
- * renders in the card, falling back to the author's initials when there's none.
+ * "Loved by Thousands" review grid. Card header leads with the reviewer
+ * (avatar + name + role) and the star rating on top, with the review text
+ * below. Data from the `testimonial` CPT via buckleup_get_testimonials()
+ * (seeded from the REAL Google reviews — see scripts/wp/real-testimonials.php),
+ * with any REAL approved+public student reviews (buckleup_get_public_reviews())
+ * appended — so a review approved in the admin console also surfaces here.
+ * Approved reviews are normalized to the card shape (comment → content, role
+ * "Student"); the student's uploaded photo (the helper's `avatar`) renders in
+ * the card, falling back to the author's initials when there's none.
  *
  * @package BuckleUp
  */
@@ -45,11 +43,11 @@ if ( function_exists( 'buckleup_get_public_reviews' ) ) {
 	}
 }
 
-// Compose the grid (clean 3-row max = 9 cards). Approved reviews are GUARANTEED a
-// slot — reserve room for all of them first, then let curated CPT testimonials
-// LEAD and fill whatever remains. So curated stay prominent, but approving a
-// review always makes it visible (never silently dropped by the cap).
-$grid_cap        = 9;
+// Compose the grid. Show ALL curated testimonials (the real Google reviews) plus
+// any approved+public student reviews. Approved reviews are GUARANTEED a slot —
+// reserve room for them first, then let curated fill the rest, up to a generous
+// cap so the section can't grow unbounded if many app reviews are approved later.
+$grid_cap        = 24;
 $curated_slots   = max( 0, $grid_cap - count( $review_cards ) );
 $testimonials    = array_merge( array_slice( $cpt_testimonials, 0, $curated_slots ), $review_cards );
 
@@ -81,17 +79,10 @@ $initials = static function ( $name ) {
 		</div>
 
 		<div data-reveal-stagger="0.05" class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-			<?php /* $testimonials is already composed (≤6 curated + all approved reviews); cap at 9 for a clean 3-row grid while never dropping an approved review. */ ?>
-			<?php foreach ( array_slice( $testimonials, 0, 9 ) as $t ) : ?>
+			<?php /* $testimonials is already composed (all real Google reviews + any approved student reviews); cap at the grid max. */ ?>
+			<?php foreach ( array_slice( $testimonials, 0, $grid_cap ) as $t ) : ?>
 				<div data-reveal class="<?php echo esc_attr( buckleup_card_class( 'group p-8 hover-lift card-highlight' ) ); ?>">
-					<?php echo buckleup_icon( 'message-circle', 'h-10 w-10 text-primary/20 mb-6 group-hover:text-primary/40 transition-colors' ); // phpcs:ignore ?>
-					<p class="text-foreground leading-relaxed mb-6 text-pretty"><?php echo esc_html( $t['content'] ); ?></p>
-					<div class="flex items-center gap-1 mb-4">
-						<?php for ( $i = 0; $i < max( 1, (int) $t['rating'] ); $i++ ) : ?>
-							<?php echo buckleup_icon( 'star', 'h-4 w-4 fill-yellow-500 text-yellow-500' ); // phpcs:ignore ?>
-						<?php endfor; ?>
-					</div>
-					<div class="flex items-center gap-3">
+					<div class="flex items-center gap-3 mb-4">
 						<?php
 						buckleup_avatar( array(
 							'src'      => $t['image'],
@@ -107,6 +98,12 @@ $initials = static function ( $name ) {
 							<?php endif; ?>
 						</div>
 					</div>
+					<div class="flex items-center gap-1 mb-4">
+						<?php for ( $i = 0; $i < max( 1, (int) $t['rating'] ); $i++ ) : ?>
+							<?php echo buckleup_icon( 'star', 'h-4 w-4 fill-yellow-500 text-yellow-500' ); // phpcs:ignore ?>
+						<?php endfor; ?>
+					</div>
+					<p class="text-foreground leading-relaxed text-pretty"><?php echo esc_html( $t['content'] ); ?></p>
 				</div>
 			<?php endforeach; ?>
 		</div>
@@ -115,7 +112,7 @@ $initials = static function ( $name ) {
 		<div data-reveal class="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 mt-12 text-center">
 			<div class="flex items-center gap-2">
 				<?php echo buckleup_icon( 'star', 'w-5 h-5 fill-yellow-500 text-yellow-500' ); // phpcs:ignore ?>
-				<span class="font-bold text-foreground">4.9</span>
+				<span class="font-bold text-foreground">5.0</span>
 				<span class="text-sm text-muted-foreground"><?php esc_html_e( 'Google Reviews', 'buckleup' ); ?></span>
 			</div>
 			<div class="hidden sm:block w-px h-6 bg-border"></div>
