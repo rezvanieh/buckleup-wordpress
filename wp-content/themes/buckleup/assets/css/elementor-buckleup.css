@@ -1,0 +1,23 @@
+/* BuckleUp Elementor fixes — minimal CSS for the handful of things Elementor's
+ * free Container/widget controls can't express. Enqueued site-wide (handle
+ * buckleup-elementor-fixes) so it also covers pills inside the header/footer
+ * Elementor library templates, not just Elementor-built page bodies.
+ *
+ * Keep this lean: only rules that have no native free-Elementor control. */
+
+/* Eyebrow / badge "pill": Elementor-free Container has no "hug content / inline
+ * width" option, so a pill container stretches full-width. Shrink it to its
+ * content. Tagged via css_classes on the pill container. */
+.bu-pill {
+  width: -moz-fit-content;
+  width: fit-content;
+  max-width: 100%;
+}
+
+/* "Hug content" columns (logo / nav / CTA / footer-cta): same fit-content trick
+ * without the pill's max-width cap, so a flex child sizes to its content instead
+ * of stretching. Tagged via css_classes on the container. */
+.bu-hug {
+  width: -moz-fit-content;
+  width: fit-content;
+}

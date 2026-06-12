@@ -29,9 +29,11 @@ $logo        = buckleup_asset_url( 'logo.png' );
 	<div class="w-full max-w-md">
 		<!-- Brand -->
 		<div class="text-center mb-8">
-			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="inline-flex items-center gap-2 mb-4">
+			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="inline-flex items-center justify-center mb-5">
 				<?php if ( $logo ) : ?>
-					<img src="<?php echo esc_url( $logo ); ?>" alt="BuckleUp Driving School" width="48" height="48" class="rounded-xl shadow-lg" data-logo data-logo-light="<?php echo esc_url( $logo ); ?>" data-logo-dark="<?php echo esc_url( buckleup_asset_url( 'logo-dark.png' ) ?: $logo ); ?>">
+					<!-- Wide wordmark (1815×355). Size by HEIGHT with w-auto so it keeps its
+					     aspect ratio (forcing 48×48 squished it); enlarged for visibility. -->
+					<img src="<?php echo esc_url( $logo ); ?>" alt="BuckleUp Driving School" width="1815" height="355" class="h-12 md:h-14 w-auto" data-logo data-logo-light="<?php echo esc_url( $logo ); ?>" data-logo-dark="<?php echo esc_url( buckleup_asset_url( 'logo-dark.png' ) ?: $logo ); ?>">
 				<?php else : ?>
 					<span class="text-2xl font-bold tracking-tight text-foreground">BuckleUp</span>
 				<?php endif; ?>

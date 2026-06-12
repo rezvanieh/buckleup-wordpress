@@ -245,7 +245,9 @@ function buckleup_seo_url( $path = '' ) {
 	if ( '/' === $path ) {
 		return BUCKLEUP_SEO_BASE_URL . '/';
 	}
-	return BUCKLEUP_SEO_BASE_URL . rtrim( $path, '/' );
+	// Match WP's permalink form (trailing slash) so the self-referential canonical
+	// is the final 200 URL, not the slash-less form that 301-redirects (QA B2).
+	return BUCKLEUP_SEO_BASE_URL . user_trailingslashit( $path );
 }
 
 /**

@@ -25,6 +25,9 @@ require_once __DIR__ . '/inc/site.php';
 require_once __DIR__ . '/inc/webp.php';
 // Console (portal) shell + per-role sidebar nav for Student/Instructor/Admin pages.
 require_once __DIR__ . '/inc/console.php';
+// Elementor interop: full-width page template, conditional dequeue of the Tailwind
+// bundle/JS on Elementor-built pages, and an always-on Geist @font-face stylesheet.
+require_once __DIR__ . '/inc/elementor.php';
 
 add_action( 'after_setup_theme', function () {
 	add_theme_support( 'wp-block-styles' );
