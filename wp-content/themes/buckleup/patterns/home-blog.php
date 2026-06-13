@@ -117,8 +117,12 @@ global $wp_query;
 				?>
 				<nav class="mt-12 flex items-center justify-center gap-4" aria-label="<?php esc_attr_e( 'Posts pagination', 'buckleup' ); ?>">
 					<?php
-					echo wp_kses_post( $prev );
-					echo wp_kses_post( $next );
+					// Trusted markup: core's get_*_posts_link() (escaped href) + our
+					// buckleup_icon() SVG + esc_html__ label. Echoed raw rather than via
+					// wp_kses_post(), which strips the inline <svg>/<path> icons — matching
+					// how buckleup_icon output is treated elsewhere in this theme.
+					echo $prev; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					echo $next; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					?>
 				</nav>
 			<?php endif; ?>
