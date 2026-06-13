@@ -26,6 +26,12 @@ wp-data/graduates/
 # Generated deployment bundle (rebuilt by scripts/package-bluehost.sh)
 dist/
 
+# Production backups (large; contain user data / option secrets — NEVER commit)
+backups/
+
+# Generated Elementor prod-migration data (regenerate via export-for-prod.php)
+scripts/wp/elementor/_prod-data.php
+
 # Generated blog-card SVG intermediates (the rasterized PNGs are committed).
 content/blog-cards/*.svg
 

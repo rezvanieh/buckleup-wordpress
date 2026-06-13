@@ -149,8 +149,10 @@ function buckleup_hero_trust_badges(): string {
  * floating 4.98/200+ rating card, and the Farhad instructor chip. lg-only.
  */
 function buckleup_hero_visual(): string {
-	$card   = buckleup_asset_url( 'hero_card_image.png' );
-	$farhad = buckleup_asset_url( 'farhad-instructor.jpg' );
+	$card        = buckleup_asset_url( 'hero_card_image.png' );
+	$card_webp   = buckleup_asset_webp_url( 'hero_card_image.png' );   // ~136KB vs 184KB JPG
+	$farhad      = buckleup_asset_url( 'farhad-instructor.jpg' );
+	$farhad_webp = buckleup_asset_webp_url( 'farhad-instructor.jpg' ); // ~135KB vs 434KB JPG
 
 	ob_start();
 	?>
@@ -158,7 +160,10 @@ function buckleup_hero_visual(): string {
 		<div data-tilt-card class="relative w-full max-w-[500px] mx-auto">
 			<div class="relative rounded-3xl overflow-hidden shadow-2xl glow-primary">
 				<?php if ( $card ) : ?>
-					<img src="<?php echo esc_url( $card ); ?>" alt="<?php esc_attr_e( 'Farhad Sanaeifar with BuckleUp Driving School car', 'buckleup' ); ?>" class="w-full h-[400px] object-cover" decoding="async">
+					<picture>
+						<?php if ( $card_webp ) : ?><source srcset="<?php echo esc_url( $card_webp ); ?>" type="image/webp"><?php endif; ?>
+						<img src="<?php echo esc_url( $card ); ?>" alt="<?php esc_attr_e( 'Farhad Sanaeifar with BuckleUp Driving School car', 'buckleup' ); ?>" class="w-full h-[400px] object-cover" decoding="async">
+					</picture>
 				<?php endif; ?>
 				<div class="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent"></div>
 			</div>
@@ -168,7 +173,10 @@ function buckleup_hero_visual(): string {
 				<div class="flex items-center gap-3">
 					<div class="relative">
 						<?php if ( $farhad ) : ?>
-							<img src="<?php echo esc_url( $farhad ); ?>" alt="Farhad Sanaeifar" class="w-12 h-12 rounded-full object-cover border-2 border-accent" decoding="async">
+							<picture>
+								<?php if ( $farhad_webp ) : ?><source srcset="<?php echo esc_url( $farhad_webp ); ?>" type="image/webp"><?php endif; ?>
+								<img src="<?php echo esc_url( $farhad ); ?>" alt="Farhad Sanaeifar" class="w-12 h-12 rounded-full object-cover border-2 border-accent" decoding="async">
+							</picture>
 						<?php else : ?>
 							<span class="w-12 h-12 rounded-full bg-muted border-2 border-accent flex items-center justify-center text-sm font-bold">FS</span>
 						<?php endif; ?>
@@ -225,16 +233,19 @@ function buckleup_nav_items(): array {
 	// HelpCircle/Phone/BookOpen/Info); rendered before the label at gap-1.5 in
 	// site-header.php. `active` drives the white rounded "box" highlight (+ blue
 	// icon) per item, mirroring the source's pathname===href / startsWith logic.
+	// Page paths carry a trailing slash to match WP's permalink structure — the
+	// slash-less form triggers a 301 redirect hop on every click (QA B2). Anchor
+	// links (/#graduates, /#faq) and home_url('/') are already correct.
 	$items = array(
 		array( 'name' => 'Home', 'href' => home_url( '/' ), 'icon' => 'home', 'active' => is_front_page() ),
-		array( 'name' => 'Services', 'href' => home_url( '/services' ), 'icon' => 'briefcase', 'active' => buckleup_path_is( 'services' ) ),
+		array( 'name' => 'Services', 'href' => home_url( '/services/' ), 'icon' => 'briefcase', 'active' => buckleup_path_is( 'services' ) ),
 		// Graduates + FAQ are #anchors to home sections — never their own active box
 		// (Home carries the highlight on the front page).
 		array( 'name' => 'Graduates', 'href' => home_url( '/#graduates' ), 'icon' => 'image', 'active' => false ),
 		array( 'name' => 'FAQ', 'href' => home_url( '/#faq' ), 'icon' => 'help-circle', 'active' => false ),
-		array( 'name' => 'Contact', 'href' => home_url( '/contact' ), 'icon' => 'phone', 'active' => buckleup_path_is( 'contact' ) ),
-		array( 'name' => 'Blog', 'href' => home_url( '/blog' ), 'icon' => 'book-open', 'active' => buckleup_path_is( 'blog', true ) ),
-		array( 'name' => 'About', 'href' => home_url( '/about' ), 'icon' => 'info', 'active' => buckleup_path_is( 'about' ) ),
+		array( 'name' => 'Contact', 'href' => home_url( '/contact/' ), 'icon' => 'phone', 'active' => buckleup_path_is( 'contact' ) ),
+		array( 'name' => 'Blog', 'href' => home_url( '/blog/' ), 'icon' => 'book-open', 'active' => buckleup_path_is( 'blog', true ) ),
+		array( 'name' => 'About', 'href' => home_url( '/about/' ), 'icon' => 'info', 'active' => buckleup_path_is( 'about' ) ),
 	);
 	return $items;
 }
@@ -261,11 +272,12 @@ function buckleup_path_is( string $slug, bool $starts_with = false ): bool {
  * else the known v1 set (exact slugs from PLAN §2).
  */
 function buckleup_location_items(): array {
+	// Trailing-slash all hrefs to match WP permalinks (no 301 hop on click — QA B2).
 	if ( function_exists( 'buckleup_get_locations' ) ) {
 		$locs = buckleup_get_locations();
 		if ( ! empty( $locs ) ) {
 			return array_map( static function ( $l ) {
-				return array( 'name' => $l['title'], 'href' => $l['url'] );
+				return array( 'name' => $l['title'], 'href' => user_trailingslashit( $l['url'] ) );
 			}, $locs );
 		}
 	}
@@ -278,7 +290,7 @@ function buckleup_location_items(): array {
 	);
 	$out = array();
 	foreach ( $fallback as $slug => $name ) {
-		$out[] = array( 'name' => $name, 'href' => home_url( "/locations/$slug" ) );
+		$out[] = array( 'name' => $name, 'href' => home_url( "/locations/$slug/" ) );
 	}
 	return $out;
 }
@@ -298,7 +310,7 @@ function buckleup_location_items(): array {
 function buckleup_sections(): array {
 	return array(
 		'site-header', 'site-footer',
-		'home-hero', 'home-graduates', 'home-pricing', 'home-testimonials', 'home-faq',
+		'home-hero', 'home-graduates', 'home-pricing', 'home-testimonials', 'home-faq', 'home-blog',
 		'location-hero',
 		'page-instructors', 'page-services', 'page-contact', 'page-about', 'page-resources', 'page-icbc',
 	);
@@ -313,6 +325,17 @@ add_action( 'init', function () {
 		'render_callback' => 'buckleup_render_section_block',
 		'supports'        => array( 'html' => false ),
 	) );
+} );
+
+/**
+ * Blog index (page_for_posts) shows 6 posts/page → a clean 2-col × 3-row grid in
+ * patterns/home-blog.php. Scoped to the main query on the posts page only, so the
+ * global posts_per_page option (feeds, REST, other archives) is left untouched.
+ */
+add_action( 'pre_get_posts', function ( $query ) {
+	if ( ! is_admin() && $query->is_main_query() && $query->is_home() ) {
+		$query->set( 'posts_per_page', 6 );
+	}
 } );
 
 /**

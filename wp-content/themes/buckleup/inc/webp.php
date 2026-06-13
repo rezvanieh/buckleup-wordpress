@@ -128,6 +128,26 @@ add_filter( 'render_block_core/post-featured-image', function ( $block_content )
 }, 10, 1 );
 
 /**
+ * the_post_thumbnail() / get_the_post_thumbnail() — wrap in a WebP <picture>.
+ * The block editor path goes through render_block_core/post-featured-image above;
+ * this covers PHP templates/patterns that call the_post_thumbnail() directly (e.g.
+ * the blog index cards in patterns/home-blog.php). Skipped in admin/feeds.
+ */
+add_filter( 'post_thumbnail_html', function ( $html ) {
+	if ( is_admin() || is_feed() || false === stripos( (string) $html, '<img' ) || false !== stripos( (string) $html, '<picture' ) ) {
+		return $html;
+	}
+	return preg_replace_callback(
+		'/<img\b[^>]*>/i',
+		static function ( $mm ) {
+			return buckleup_wrap_img_webp( $mm[0] );
+		},
+		$html,
+		1
+	);
+}, 10, 1 );
+
+/**
  * Post/page body images (core/image + classic content). Wrap each <img> that has
  * a webp sibling. Runs on the_content only (not admin/feeds).
  */

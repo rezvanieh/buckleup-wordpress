@@ -25,6 +25,12 @@ require_once __DIR__ . '/inc/site.php';
 require_once __DIR__ . '/inc/webp.php';
 // Console (portal) shell + per-role sidebar nav for Student/Instructor/Admin pages.
 require_once __DIR__ . '/inc/console.php';
+// Elementor interop: registers the [buckleup_elementor]/[buckleup_section]/
+// [buckleup_contact_form] shortcodes and force-enqueues Elementor's frontend CSS/JS
+// site-wide (so the embedded footer + ElementsKit nav init render on every view,
+// incl. non-Elementor consoles/blog), plus a defensive Geist @font-face fallback.
+// NOTE: the Tailwind bundle is NOT dequeued — the design system loads site-wide.
+require_once __DIR__ . '/inc/elementor.php';
 
 add_action( 'after_setup_theme', function () {
 	add_theme_support( 'wp-block-styles' );

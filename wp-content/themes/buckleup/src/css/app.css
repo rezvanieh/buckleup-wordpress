@@ -400,6 +400,8 @@ html.dark {
   );
   transform: rotate(30deg) translateX(-100%);
   transition: transform 0.6s ease;
+  /* Decorative overlay only — never intercept clicks on links/buttons beneath. */
+  pointer-events: none;
 }
 
 .shine:hover::after {
@@ -486,6 +488,9 @@ html.dark {
   mask-composite: exclude;
   opacity: 0;
   transition: opacity 0.3s ease;
+  /* Decorative gradient-border overlay only — it spans inset:0 over the whole card,
+     so it must not intercept clicks on the title/Read-more links beneath it. */
+  pointer-events: none;
 }
 
 .card-highlight:hover::before {

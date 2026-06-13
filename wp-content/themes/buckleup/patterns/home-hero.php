@@ -65,7 +65,7 @@ $bg_webp = buckleup_asset_webp_url( 'image2.png' ); // optimized next-gen LCP so
 				</p>
 
 				<div data-reveal class="flex flex-wrap gap-4 mb-8">
-					<a href="#most-popular">
+					<a href="/#most-popular">
 						<?php
 						buckleup_button( array(
 							'label' => __( 'Start Learning Today', 'buckleup' ),

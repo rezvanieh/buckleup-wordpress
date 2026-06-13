@@ -1,14 +1,15 @@
 <!-- wp:template-part {"slug":"header","tagName":"div"} /-->
 
-<!-- wp:group {"tagName":"main","layout":{"type":"default"}} -->
+<!-- wp:group {"tagName":"main"} -->
 <main class="wp-block-group">
-  <!-- Home: Hero → Graduates → Pricing → Testimonials → FAQ (fixed order, PLAN §3) -->
+  <!-- The hero is the REAL bespoke showpiece (floating rating card, Toyota badge,
+       instructor chip, 3D tilt, gradient text) — Elementor can't reproduce the
+       floating overlays / star rendering cleanly, so we render the original hero for
+       exact fidelity (matches the live site). The rest of the Home body below is
+       authored in Elementor and renders via post-content. -->
   <!-- wp:buckleup/section {"name":"home-hero"} /-->
-  <!-- wp:buckleup/section {"name":"home-graduates"} /-->
-  <!-- wp:buckleup/section {"name":"home-pricing"} /-->
-  <!-- wp:buckleup/section {"name":"home-testimonials"} /-->
-  <!-- wp:buckleup/section {"name":"home-faq"} /-->
+  <!-- wp:post-content /-->
 </main>
 <!-- /wp:group -->
 
-<!-- wp:template-part {"slug":"footer","tagName":"div"} /-->
+<!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->
