@@ -117,7 +117,12 @@ function buckleup_seo_settings() {
 		'price_range'    => '$$',
 		'payments'       => array( 'Cash', 'Credit Card', 'E-Transfer' ),
 		'rating_value'   => '4.98',
-		'review_count'   => '500',
+		// Must match the genuine review volume shown on-page ("200+ Google
+		// reviews" in the Elementor hero + body copy) and the real Google
+		// Business Profile. The source's verbatim 500 contradicts the visible
+		// "200+" claim — an aggregateRating/visible-content mismatch that risks a
+		// Google review-snippet policy flag — so we standardise on 200.
+		'review_count'   => '200',
 		'best_rating'    => '5',
 		'worst_rating'   => '1',
 		'founding_date'  => '2014',
@@ -363,6 +368,227 @@ function buckleup_seo_is_icbc_guide() {
 }
 
 /* -------------------------------------------------------------------------
+ * Per-location SEO specificity — "ultimate" local SEO for the 5 location pages
+ *
+ * On a /locations/{slug}/ page the JSON-LD must read as a LOCAL business for THAT
+ * city: a city-qualified business name, the city's own geo coordinates + geo meta,
+ * a city-scoped areaServed, and a city-specific FAQPage (so the structured FAQ
+ * matches that page's visible accordion, not the homepage one).
+ *
+ * The data lives in scripts/wp/elementor/locations-content.php (the single source
+ * shared with the Elementor page body + Rank Math meta). On prod that file is part
+ * of the repo deploy, but it lives OUTSIDE wp-content, so the mu-plugin must never
+ * fatal if it's absent: a compact, self-contained fallback map below carries the
+ * geo + areaServed + name for all 5 slugs, and the FAQ map is loaded from the
+ * content file only when present (else the location falls back to the homepage FAQ).
+ * ---------------------------------------------------------------------- */
+
+/**
+ * The current location slug, or '' when this isn't a location page.
+ *
+ * Prefers the queried `location` CPT post slug; falls back to the second URL
+ * segment under /locations/ so it works whether locations are a CPT or plain Pages.
+ *
+ * @return string Lowercase slug (e.g. "coquitlam"), or ''.
+ */
+function buckleup_seo_location_slug() {
+	if ( is_singular( 'location' ) ) {
+		$queried = get_queried_object();
+		if ( $queried instanceof WP_Post && '' !== $queried->post_name ) {
+			return sanitize_title( $queried->post_name );
+		}
+	}
+	$path = isset( $_SERVER['REQUEST_URI'] ) ? trim( (string) wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ), '/' ) : '';
+	if ( 0 === strpos( $path, 'locations/' ) ) {
+		$segments = explode( '/', $path );
+		if ( isset( $segments[1] ) && '' !== $segments[1] ) {
+			return sanitize_title( $segments[1] );
+		}
+	}
+	return '';
+}
+
+/**
+ * Self-contained slug → { name, locality, geo, area_served } map for the 5
+ * locations. Mirrors scripts/wp/elementor/locations-content.php (city / geo /
+ * area_served) so the schema is correct even when that content file isn't on the
+ * server. Keep these in sync if the content file's geo / area_served change.
+ *
+ * @return array<string,array<string,mixed>>
+ */
+function buckleup_seo_location_map() {
+	$base = buckleup_seo_settings();
+	$name = (string) $base['name'];
+	return array(
+		'coquitlam'       => array(
+			'name'        => $name . ' — Coquitlam',
+			'locality'    => 'Coquitlam',
+			'lat'         => 49.2838,
+			'lng'         => -122.7932,
+			'area_served' => array( 'Coquitlam', 'Burquitlam', 'Westwood Plateau', 'Maillardville', 'Eagle Ridge' ),
+		),
+		'north-vancouver' => array(
+			'name'        => $name . ' — North Vancouver',
+			'locality'    => 'North Vancouver',
+			'lat'         => 49.3200,
+			'lng'         => -123.0724,
+			'area_served' => array( 'North Vancouver', 'Lonsdale', 'Lynn Valley', 'Deep Cove', 'Capilano' ),
+		),
+		'port-coquitlam'  => array(
+			'name'        => $name . ' — Port Coquitlam',
+			'locality'    => 'Port Coquitlam',
+			'lat'         => 49.2620,
+			'lng'         => -122.7811,
+			'area_served' => array( 'Port Coquitlam', 'Citadel Heights', 'Mary Hill', 'Riverwood', 'Birchland Manor' ),
+		),
+		'port-moody'      => array(
+			'name'        => $name . ' — Port Moody',
+			'locality'    => 'Port Moody',
+			'lat'         => 49.2838,
+			'lng'         => -122.8556,
+			'area_served' => array( 'Port Moody', 'Moody Centre', 'Inlet Centre', 'Heritage Mountain', 'Newport Village' ),
+		),
+		'tri-cities'      => array(
+			'name'        => $name . ' — Tri-Cities',
+			'locality'    => 'Coquitlam', // regional centroid placename for geo meta.
+			'lat'         => 49.2780,
+			'lng'         => -122.7930,
+			'area_served' => array( 'Tri-Cities', 'Coquitlam', 'Port Coquitlam', 'Port Moody' ),
+		),
+	);
+}
+
+/**
+ * The per-location data row for the current request, or null when this isn't one
+ * of the 5 known location pages.
+ *
+ * @return array<string,mixed>|null
+ */
+function buckleup_seo_current_location() {
+	static $cache = false;
+	if ( false !== $cache ) {
+		return $cache;
+	}
+	$cache = null;
+	$slug  = buckleup_seo_location_slug();
+	if ( '' === $slug ) {
+		return $cache;
+	}
+	$map = buckleup_seo_location_map();
+	if ( isset( $map[ $slug ] ) ) {
+		$cache = $map[ $slug ];
+	}
+	return $cache;
+}
+
+/**
+ * Self-contained slug → location FAQ map (question/answer), mirroring the `faqs`
+ * in scripts/wp/elementor/locations-content.php (which feeds the visible Elementor
+ * accordion). Embedded here so the location FAQPage schema renders correctly even
+ * on a server / container where the content file isn't on the include path (the
+ * web tier doesn't mount ./scripts; prod keeps the content file outside wp-content)
+ * — schema and accordion still match because both derive from the SAME copy. Keep
+ * in sync with the content file if the FAQs change.
+ *
+ * @return array<string,array<int,array{q:string,a:string}>>
+ */
+function buckleup_seo_location_faq_map() {
+	return array(
+		'coquitlam' => array(
+			array( 'q' => 'Where do you offer driving lessons in Coquitlam?', 'a' => 'We offer lessons across all of Coquitlam, including Town Centre, Burquitlam, Maillardville, Westwood Plateau, Eagle Ridge, and Austin Heights. We can pick you up from home, work, school, or a SkyTrain station.' ),
+			array( 'q' => 'Do you prepare students for the Coquitlam ICBC road test?', 'a' => 'Yes. We train directly on the routes used by the Coquitlam ICBC Driver Licensing office — the same multi-lane changes, hill starts, and parking manoeuvres the examiner will ask for — so you walk in already familiar with the area.' ),
+			array( 'q' => 'How many lessons will I need to pass in Coquitlam?', 'a' => 'Most beginners need around six to ten lessons depending on prior experience. After a free assessment, your instructor will recommend a realistic plan for the Coquitlam test routes.' ),
+			array( 'q' => 'Do you offer driving lessons in Farsi in Coquitlam?', 'a' => 'Yes. Lessons are available in both English and Farsi, which many students in Coquitlam\'s diverse community find makes learning faster and less stressful.' ),
+			array( 'q' => 'What licence classes can I train for in Coquitlam?', 'a' => 'We provide training for Class 7L (learner), Class 7N (novice), Class 5 (full licence), and Class 4 (commercial), all with ICBC-certified instructors and modern Toyota vehicles.' ),
+		),
+		'north-vancouver' => array(
+			array( 'q' => 'Where do you offer driving lessons in North Vancouver?', 'a' => 'We cover all of North Vancouver, including Lower and Central Lonsdale, Lynn Valley, Deep Cove, Capilano, and Edgemont Village, with pickup from home, work, school, or the SeaBus terminal.' ),
+			array( 'q' => 'Do you teach hill starts and steep-grade driving?', 'a' => 'Yes — and it is a core part of every North Shore lesson. We practise hill starts, downhill braking, and hill parking on the real Lonsdale and Lynn Valley grades the ICBC examiner uses.' ),
+			array( 'q' => 'Can you prepare me for the North Vancouver ICBC road test?', 'a' => 'Absolutely. We train on the routes used by the North Vancouver ICBC Driver Licensing office so you are already familiar with the hills, arterials, and parking spots before test day.' ),
+			array( 'q' => 'Do you offer driving lessons in Farsi in North Vancouver?', 'a' => 'Yes. Lessons are available in both English and Farsi for clearer, more comfortable learning.' ),
+			array( 'q' => 'How do you handle North Shore wet weather in lessons?', 'a' => 'We deliberately build wet-weather skills — safe braking distances, smooth steering, and visibility management — because the North Shore sees the region\'s heaviest rainfall and the road test happens rain or shine.' ),
+		),
+		'port-coquitlam' => array(
+			array( 'q' => 'Where do you offer driving lessons in Port Coquitlam?', 'a' => 'We serve all of Port Coquitlam, including Downtown PoCo, Citadel Heights, Mary Hill, Riverwood, and Birchland Manor, with pickup from home, work, or school.' ),
+			array( 'q' => 'Do you teach how to handle PoCo\'s rail crossings?', 'a' => 'Yes. Port Coquitlam has many level rail crossings, and we make them a focus — proper stopping, scanning, and never stopping on the tracks are exactly what examiners watch for.' ),
+			array( 'q' => 'Where will I take my Port Coquitlam road test?', 'a' => 'Most PoCo road tests are booked at the Coquitlam ICBC Driver Licensing office, which serves the Tri-Cities. We train on those routes so you arrive familiar and confident.' ),
+			array( 'q' => 'How many lessons do I need to pass in Port Coquitlam?', 'a' => 'Most beginners need around six to ten lessons. After a quick assessment, your instructor will give you an honest plan for the PoCo test routes.' ),
+			array( 'q' => 'Do you offer lessons in Farsi in Port Coquitlam?', 'a' => 'Yes. Lessons are available in both English and Farsi for clearer communication and faster learning.' ),
+		),
+		'port-moody' => array(
+			array( 'q' => 'Where do you offer driving lessons in Port Moody?', 'a' => 'Port Moody is our home base, so we cover the entire city — Moody Centre, Inlet Centre, Newport Village, Heritage Mountain, and College Park — with pickup from home, work, school, or a SkyTrain station.' ),
+			array( 'q' => 'Is BuckleUp actually located in Port Moody?', 'a' => 'Yes. BuckleUp Driving School is based in Port Moody, which means our instructors teach on these exact streets, hills, and test routes every day.' ),
+			array( 'q' => 'Do you teach the Heritage Mountain hill starts?', 'a' => 'Definitely. Hill starts and downhill control on the Heritage Mountain and College Park grades are a core part of Port Moody lessons because examiners frequently test them.' ),
+			array( 'q' => 'Where will I take my Port Moody road test?', 'a' => 'Most Port Moody road tests are booked at the nearby Coquitlam ICBC Driver Licensing office, which serves the Tri-Cities. We train you directly on those routes.' ),
+			array( 'q' => 'Do you offer driving lessons in Farsi in Port Moody?', 'a' => 'Yes. Lessons are available in both English and Farsi for clearer, more comfortable learning.' ),
+		),
+		'tri-cities' => array(
+			array( 'q' => 'Which cities do you cover in the Tri-Cities?', 'a' => 'We provide driving lessons across all three Tri-Cities — Coquitlam, Port Coquitlam, and Port Moody — with pickup from home, work, school, or a SkyTrain station anywhere in the region.' ),
+			array( 'q' => 'Where will I take my Tri-Cities road test?', 'a' => 'Most Tri-Cities road tests are booked at the Coquitlam ICBC Driver Licensing office, which serves Coquitlam, Port Coquitlam, and Port Moody. We train you on those exact routes regardless of which city you live in.' ),
+			array( 'q' => 'Do you cover both the hills and the rail crossings?', 'a' => 'Yes. The Tri-Cities mix steep grades (Westwood Plateau, Heritage Mountain) with Port Coquitlam\'s level rail crossings, and our lessons prepare you confidently for both.' ),
+			array( 'q' => 'How many lessons will I need to pass in the Tri-Cities?', 'a' => 'Most beginners need around six to ten lessons. After a free assessment, your instructor will recommend a plan based on the test routes you\'ll be driving.' ),
+			array( 'q' => 'Do you offer driving lessons in Farsi across the Tri-Cities?', 'a' => 'Yes. Lessons are available in both English and Farsi throughout Coquitlam, Port Coquitlam, and Port Moody.' ),
+		),
+	);
+}
+
+/**
+ * The location-specific FAQ Q&A pairs for the current location page.
+ *
+ * Uses the embedded slug→FAQ map (always available), but lets the shared content
+ * file (scripts/wp/elementor/locations-content.php) override it when that file IS
+ * on the include path — so a future content edit there flows through automatically
+ * without touching this mu-plugin. NEVER fatals if the file is absent.
+ *
+ * Returns [] when this isn't a location page or the slug has no FAQs — callers then
+ * fall back to the homepage/CPT FAQ so the schema is never empty.
+ *
+ * @return array<int,array{question:string,answer:string}>
+ */
+function buckleup_seo_location_faq_items() {
+	$slug = buckleup_seo_location_slug();
+	if ( '' === $slug ) {
+		return array();
+	}
+
+	// Optional override from the shared content file when it's readable here.
+	static $content = null;
+	if ( null === $content ) {
+		$content = array();
+		$file    = dirname( __DIR__, 2 ) . '/scripts/wp/elementor/locations-content.php';
+		if ( is_readable( $file ) ) {
+			$loaded = include $file;
+			if ( is_array( $loaded ) ) {
+				$content = $loaded;
+			}
+		}
+	}
+
+	$raw = array();
+	if ( ! empty( $content[ $slug ]['faqs'] ) && is_array( $content[ $slug ]['faqs'] ) ) {
+		$raw = $content[ $slug ]['faqs'];
+	} else {
+		$map = buckleup_seo_location_faq_map();
+		if ( ! empty( $map[ $slug ] ) ) {
+			$raw = $map[ $slug ];
+		}
+	}
+
+	$items = array();
+	foreach ( (array) $raw as $faq ) {
+		$q = isset( $faq['q'] ) ? trim( wp_strip_all_tags( (string) $faq['q'] ) ) : '';
+		$a = isset( $faq['a'] ) ? trim( wp_strip_all_tags( (string) $faq['a'] ) ) : '';
+		if ( '' !== $q && '' !== $a ) {
+			$items[] = array(
+				'question' => $q,
+				'answer'   => $a,
+			);
+		}
+	}
+	return $items;
+}
+
+/* -------------------------------------------------------------------------
  * Organization / LocalBusiness node (the @graph anchor)
  * ---------------------------------------------------------------------- */
 
@@ -382,8 +608,20 @@ function buckleup_seo_organization_node() {
 		$payments[] = $method;
 	}
 
+	// Per-location specificity: on a /locations/{slug}/ page, qualify the business
+	// name with the city, swap in the city's areaServed + geo, so the node reads as
+	// a local business for THAT city. Everywhere else (homepage, etc.) keeps the
+	// global name + the head-office geo + the regional areaServed. The @id stays the
+	// SAME sitewide #organization id so cross-references (WebSite/Breadcrumb/Article
+	// publisher) still resolve — this is one business with a local face per page.
+	$loc          = buckleup_seo_current_location();
+	$name         = $loc ? (string) $loc['name'] : (string) $s['name'];
+	$geo_lat      = $loc ? (float) $loc['lat'] : (float) $s['lat'];
+	$geo_lng      = $loc ? (float) $loc['lng'] : (float) $s['lng'];
+	$served_cities = ( $loc && ! empty( $loc['area_served'] ) ) ? (array) $loc['area_served'] : (array) $s['area_served'];
+
 	$area_served = array();
-	foreach ( (array) $s['area_served'] as $city ) {
+	foreach ( $served_cities as $city ) {
 		$area_served[] = array(
 			'@type' => 'City',
 			'name'  => $city,
@@ -393,7 +631,7 @@ function buckleup_seo_organization_node() {
 	return array(
 		'@type'         => array( 'LocalBusiness', 'EducationalOrganization', 'DrivingSchool' ),
 		'@id'           => $org_id,
-		'name'          => $s['name'],
+		'name'          => $name,
 		'alternateName' => $s['alternate_name'],
 		'description'   => $s['description'],
 		'url'           => BUCKLEUP_SEO_BASE_URL,
@@ -412,8 +650,8 @@ function buckleup_seo_organization_node() {
 		),
 		'geo'           => array(
 			'@type'     => 'GeoCoordinates',
-			'latitude'  => (float) $s['lat'],
-			'longitude' => (float) $s['lng'],
+			'latitude'  => $geo_lat,
+			'longitude' => $geo_lng,
 		),
 		'openingHoursSpecification' => array(
 			'@type'     => 'OpeningHoursSpecification',
@@ -567,6 +805,15 @@ function buckleup_seo_faq_fallback() {
 function buckleup_seo_faq_items() {
 	$items = array();
 
+	// On a location page, prefer that city's OWN FAQs (the same Q&A the Elementor
+	// page body shows) so the FAQPage schema matches the visible accordion for
+	// THAT location and is rich with local-intent terms. Falls through to the
+	// homepage/CPT FAQ below when the content file isn't deployed.
+	$location_faqs = buckleup_seo_location_faq_items();
+	if ( ! empty( $location_faqs ) ) {
+		return $location_faqs;
+	}
+
 	if ( function_exists( 'buckleup_get_faqs' ) ) {
 		foreach ( (array) buckleup_get_faqs() as $faq ) {
 			$question = isset( $faq['question'] ) ? trim( wp_strip_all_tags( $faq['question'] ) ) : '';
@@ -685,12 +932,29 @@ function buckleup_seo_breadcrumb_node() {
 		$name    = ( $i === $last_idx && '' !== $leaf_title )
 			? $leaf_title
 			: buckleup_seo_humanise_segment( $segment );
-		$items[] = array(
+
+		$item = array(
 			'@type'    => 'ListItem',
 			'position' => $position,
 			'name'     => $name,
-			'item'     => buckleup_seo_url( $accum ),
 		);
+
+		// Only advertise an `item` URL for a crumb that resolves to a real,
+		// fetchable page. The leaf is always the current request (a 200), so it
+		// keeps its URL; an INTERMEDIATE segment that has no page of its own —
+		// e.g. /locations/, which 404s because the cities are a flat CPT with no
+		// archive page — would otherwise point Google at a 404 (a structured-data
+		// quality defect). `item` is optional per schema.org, so we omit it for an
+		// intermediate crumb that doesn't resolve, keeping a valid, non-broken
+		// BreadcrumbList. (Resolution is checked against the SERVING host because
+		// url_to_postid matches on home_url(); the emitted URL stays www-canonical.)
+		$is_leaf   = ( $i === $last_idx );
+		$resolves  = $is_leaf || ( 0 !== url_to_postid( home_url( user_trailingslashit( $accum ) ) ) );
+		if ( $resolves ) {
+			$item['item'] = buckleup_seo_url( $accum );
+		}
+
+		$items[] = $item;
 		$position++;
 	}
 
@@ -872,8 +1136,14 @@ add_action( 'wp_head', 'buckleup_seo_print_head', 5 );
  */
 function buckleup_seo_print_geo_meta() {
 	$s   = buckleup_seo_settings();
-	$lat = (float) $s['lat'];
-	$lng = (float) $s['lng'];
+
+	// On a location page, anchor the geo meta on THAT city (placename + position),
+	// so local-intent ranking signals point at the city the page targets — not the
+	// head office. geo.region stays CA-BC for every page (same province).
+	$loc       = buckleup_seo_current_location();
+	$lat       = $loc ? (float) $loc['lat'] : (float) $s['lat'];
+	$lng       = $loc ? (float) $loc['lng'] : (float) $s['lng'];
+	$placename = $loc ? (string) $loc['locality'] : (string) $s['locality'];
 
 	printf(
 		"<meta name=\"geo.region\" content=\"%s\" />\n",
@@ -881,7 +1151,7 @@ function buckleup_seo_print_geo_meta() {
 	);
 	printf(
 		"<meta name=\"geo.placename\" content=\"%s\" />\n",
-		esc_attr( $s['locality'] )
+		esc_attr( $placename )
 	);
 	printf(
 		"<meta name=\"geo.position\" content=\"%s;%s\" />\n",
@@ -1024,6 +1294,11 @@ function buckleup_seo_end_head_buffer() {
 			$head
 		);
 	}
+
+	// Rewrite og:locale → en_CA on location pages (Rank Math can't emit en_CA
+	// because it's not on Facebook's locale whitelist — see the function docblock).
+	$head = buckleup_seo_localise_og_locale( $head );
+
 	echo $head; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- re-emitting already-escaped head markup.
 }
 
@@ -1100,6 +1375,111 @@ add_filter( 'rank_math/opengraph/url', 'buckleup_seo_normalise_host', 5 );
 add_filter( 'rank_math/opengraph/facebook/image', 'buckleup_seo_normalise_host', 25 );
 add_filter( 'rank_math/opengraph/twitter/image', 'buckleup_seo_normalise_host', 25 );
 add_filter( 'rank_math/opengraph/facebook/image_secure_url', 'buckleup_seo_normalise_host', 25 );
+
+/* -------------------------------------------------------------------------
+ * Location pages: enrich og:image with width/height/alt + emit og:locale en_CA.
+ *
+ * On the 5 /locations/{slug}/ pages the social image is the city's landmark
+ * hero (the page's featured image), but it was wired into Rank Math as a bare
+ * URL (rank_math_facebook_image), so Rank Math's add_image_by_url() path emits
+ * og:image WITHOUT og:image:width/height/alt (those are only populated when the
+ * image is resolved by attachment ID). We restore them from the featured-image
+ * attachment metadata so Facebook/LinkedIn render the card reliably, and we use
+ * the attachment's real (descriptive) alt text instead of the bare city name.
+ * Scoped to is_singular('location') so the homepage and every other page are
+ * untouched.
+ * ---------------------------------------------------------------------- */
+
+/**
+ * The featured-image enrichment (url/width/height/alt) for the current location
+ * single, or null when this isn't a location single or it has no featured image.
+ *
+ * @return array{url:string,width:int,height:int,alt:string}|null
+ */
+function buckleup_seo_location_image_meta() {
+	if ( ! is_singular( 'location' ) ) {
+		return null;
+	}
+	$post = get_queried_object();
+	if ( ! $post instanceof WP_Post ) {
+		return null;
+	}
+	$thumb_id = (int) get_post_thumbnail_id( $post );
+	if ( ! $thumb_id ) {
+		return null;
+	}
+	$meta = wp_get_attachment_metadata( $thumb_id );
+	$url  = (string) wp_get_attachment_image_url( $thumb_id, 'full' );
+	if ( '' === $url ) {
+		return null;
+	}
+	$alt = trim( (string) get_post_meta( $thumb_id, '_wp_attachment_image_alt', true ) );
+
+	return array(
+		'url'    => buckleup_seo_normalise_host( $url ),
+		'width'  => isset( $meta['width'] ) ? (int) $meta['width'] : 0,
+		'height' => isset( $meta['height'] ) ? (int) $meta['height'] : 0,
+		'alt'    => $alt,
+	);
+}
+
+/**
+ * Add width/height/alt to Rank Math's og:image array on location singles.
+ *
+ * Hooks the `image_array` filter (the secondary hook Rank Math exposes to change
+ * the whole image array) so the og:image:width / og:image:height / og:image:alt
+ * tags get emitted from the real attachment. Only fills a key that's missing or
+ * empty — never clobbers a value Rank Math already resolved.
+ *
+ * @param array $attachment Rank Math's image array (at least ['url'=>...]).
+ * @return array
+ */
+function buckleup_seo_og_image_enrich( $attachment ) {
+	if ( ! is_array( $attachment ) ) {
+		return $attachment;
+	}
+	$enrich = buckleup_seo_location_image_meta();
+	if ( null === $enrich ) {
+		return $attachment;
+	}
+	if ( empty( $attachment['width'] ) && $enrich['width'] ) {
+		$attachment['width'] = $enrich['width'];
+	}
+	if ( empty( $attachment['height'] ) && $enrich['height'] ) {
+		$attachment['height'] = $enrich['height'];
+	}
+	if ( empty( $attachment['alt'] ) && '' !== $enrich['alt'] ) {
+		$attachment['alt'] = $enrich['alt'];
+	}
+	return $attachment;
+}
+add_filter( 'rank_math/opengraph/facebook/image_array', 'buckleup_seo_og_image_enrich', 30 );
+
+/**
+ * Emit og:locale = en_CA on location pages.
+ *
+ * BuckleUp is a Canadian (BC) business, so en_CA is the correct regional locale.
+ * Rank Math derives og:locale from get_locale() and then validates it against
+ * Facebook's OFFICIAL locale whitelist (which lists en_US / en_GB but NOT en_CA),
+ * silently falling back to en_US — and exposes no filter on the emitted value. So
+ * we rewrite the already-printed <meta property="og:locale"> in the head buffer
+ * this plugin already brackets (the same pass that de-dupes <title>). en_CA is a
+ * valid Open Graph locale and a clearer regional signal for Google. Location
+ * pages only; the homepage's og:locale is left as Rank Math emits it.
+ *
+ * @param string $head The buffered <head> HTML.
+ * @return string
+ */
+function buckleup_seo_localise_og_locale( $head ) {
+	if ( ! is_singular( 'location' ) ) {
+		return $head;
+	}
+	return preg_replace(
+		'#(<meta\s+property=(["\'])og:locale\2\s+content=(["\']))[^"\']*(\3\s*/?>)#i',
+		'${1}en_CA${4}',
+		$head
+	);
+}
 
 /**
  * Homepage SEO title/description fallback.

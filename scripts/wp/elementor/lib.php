@@ -151,6 +151,27 @@ function el_section( array $opts, array $children ) {
 		$outer['background_background'] = 'classic';
 		$outer = el_with_globals( $outer, array( 'background_color' => el_gcolor( $opts['bg_global'] ) ) );
 	}
+	// Background IMAGE (e.g. a recognizable landmark hero), cover-cropped + centered,
+	// with an optional dark overlay so foreground text stays legible. Wins over a
+	// solid/gradient bg if both are supplied (the landmark photo is the backdrop).
+	if ( ! empty( $opts['bg_image'] ) ) {
+		$img = $opts['bg_image'];
+		$outer['background_background'] = 'classic';
+		$outer['background_image']      = array(
+			'url' => is_array( $img ) ? ( isset( $img['url'] ) ? $img['url'] : '' ) : $img,
+			'id'  => is_array( $img ) && isset( $img['id'] ) ? $img['id'] : '',
+		);
+		$outer['background_position'] = 'center center';
+		$outer['background_repeat']   = 'no-repeat';
+		$outer['background_size']     = 'cover';
+		// Optional overlay: ['color' => 'rgba(...)|#hex', 'opacity' => 0..1].
+		if ( ! empty( $opts['overlay'] ) ) {
+			$ov = $opts['overlay'];
+			$outer['background_overlay_background'] = 'classic';
+			$outer['background_overlay_color']      = is_array( $ov ) ? ( isset( $ov['color'] ) ? $ov['color'] : 'rgba(15,23,41,0.7)' ) : $ov;
+			$outer['background_overlay_opacity']    = el_size( ( is_array( $ov ) && isset( $ov['opacity'] ) ) ? $ov['opacity'] : 0.65, '' );
+		}
+	}
 
 	$inner = array(
 		'content_width'    => 'boxed',
@@ -530,9 +551,12 @@ function el_save_page( $post_id, array $elements, array $opts = array() ) {
 	// preserving the JSON's escaped slashes/unicode.
 	update_post_meta( $post_id, '_elementor_data', wp_slash( $json ) );
 	update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
-	update_post_meta( $post_id, '_elementor_template_type', 'wp-page' );
+	// Document type: 'wp-page' for Pages, 'wp-post' for CPT singles (e.g. location).
+	update_post_meta( $post_id, '_elementor_template_type', isset( $opts['template_type'] ) ? $opts['template_type'] : 'wp-page' );
 	update_post_meta( $post_id, '_elementor_version', defined( 'ELEMENTOR_VERSION' ) ? ELEMENTOR_VERSION : '3.0.0' );
 
+	// For Pages, assign the full-width Elementor template. CPT singles resolve their
+	// own template via the hierarchy (single-location.html), so pass template=>false.
 	$tpl = array_key_exists( 'template', $opts ) ? $opts['template'] : 'page-elementor';
 	if ( $tpl ) {
 		update_post_meta( $post_id, '_wp_page_template', $tpl );

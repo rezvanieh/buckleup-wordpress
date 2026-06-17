@@ -49,9 +49,11 @@ function buckleup_settings_defaults() {
 		'instagram_url'    => 'https://www.instagram.com/budrivingschool',
 		'facebook_url'     => 'https://www.facebook.com/DriveMasterca',
 
-		// Schema claims.
+		// Schema claims. review_count MUST match the genuine review volume shown
+		// on-page ("200+ Google reviews") — a schema-vs-visible mismatch risks a
+		// Google review-snippet manual action. Keep in sync with the SEO mu-plugin.
 		'rating_value'     => '4.98',
-		'review_count'     => '500',
+		'review_count'     => '200',
 		'founding_year'    => '2014',
 		'price_range'      => '$$',
 	);

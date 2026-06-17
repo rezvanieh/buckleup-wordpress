@@ -26,6 +26,10 @@ deterministically. Run them with WP-CLI against the dev stack.
 | `lib.php` | Authoring helpers — native Elementor **Container** + widget builders (`el_container`, `el_col`, `el_heading`, `el_button`, `el_image`, `el_pill`, `el_icon_list`, `el_shortcode`, …). `require`d by the builders. |
 | `build-home.php` | Builds the Home (id 38) Elementor body: pricing + the home-only CTA, with the live sections embedded via `[buckleup_section]`. |
 | `build-pages.php` | Builds the 6 inner pages (About 39, Services 41, Instructors 42, Contact 40, Resources 44, ICBC 45). Contact embeds `[buckleup_contact_form]`. |
+| `build-locations.php` | Builds the **5 location landing pages** (Coquitlam 33, North Vancouver 34, Port Coquitlam 35, Port Moody 36, Tri-Cities 37) as fully-editable Elementor on the `location` CPT — landmark hero (image bg + overlay) + local intro/why/neighbourhoods/ICBC/FAQ/CTA, with shared pricing/graduates/testimonials embedded via `[buckleup_section]`. Self-enables `elementor_cpt_support` for `location`, and syncs each post's `bu_seo_title`/`bu_seo_description` from the content file. Consumes `locations-content.php`. |
+| `locations-content.php` | **Single source of truth** for per-location copy + SEO (hero, intro, why, neighbourhoods, ICBC routes, FAQs, `seo_title`/`seo_description`, `geo`, `area_served`). Also mirrored by the SEO mu-plugin (per-location JSON-LD) and `seo-config.php`. |
+| `import-location-heroes.php` | Imports the 5 landmark hero WebPs from `assets/heroes/{slug}.webp` into the Media Library (tagged `_bu_location_hero`, idempotent) with alt text + CC attribution baked into each attachment. |
+| `assets/heroes/*.webp` | The 5 pre-processed landmark hero images (Wikimedia Commons, CC-licensed — attribution stored on the attachments). |
 | `build-chrome.php` | Builds the footer (library template **164**) and the header (163, retained but **unused** — the real theme header renders live). |
 | `set-kit.php` | Writes the Elementor Kit globals (brand colors + Geist) onto the active kit. |
 | `export-for-prod.php` | Exports the built DB content (base64 `_elementor_data`, kit globals, options, menu) to a portable `_prod-data.php` for the prod importer. **Generated `_prod-data.php` is gitignored.** |
@@ -39,8 +43,15 @@ docker compose run --rm -T wpcli wp eval-file /scripts/wp/elementor/build-chrome
 docker compose run --rm -T wpcli wp eval-file /scripts/wp/elementor/build-home.php     # page 38
 docker compose run --rm -T wpcli wp eval-file /scripts/wp/elementor/build-pages.php    # pages 39-45
 docker compose run --rm -T wpcli wp eval 'foreach([38,39,40,41,42,44,45] as $id){update_post_meta($id,"_wp_page_template","page-elementor");}'
+# --- location landing pages (CPT 33-37) ---
+docker compose run --rm -T wpcli wp eval-file /scripts/wp/elementor/import-location-heroes.php  # media: 5 landmark heroes
+docker compose run --rm -T wpcli wp eval-file /scripts/wp/elementor/build-locations.php         # locations 33-37 (+enables CPT support)
+docker compose run --rm -T wpcli wp eval-file /scripts/wp/seo-config.php                          # push bu_seo_* -> Rank Math titles
 docker compose run --rm -T wpcli wp eval '\Elementor\Plugin::$instance->files_manager->clear_cache();'
 ```
+The location CPT singles render via the theme's full-bleed `templates/single-location.html`
+(no `_wp_page_template` — the template hierarchy resolves it), so they are NOT in the
+page-template loop above.
 The builders write meta with `update_post_meta($id,"_elementor_data",wp_slash(wp_json_encode($elements)))`
 (Elementor's own save form). Re-running is idempotent (overwrites the same post IDs).
 
