@@ -17,6 +17,29 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 /**
+ * Preload the location landing-page hero for a faster LCP.
+ *
+ * The landmark hero is an Elementor CSS background-image, which browsers discover
+ * late (only after the per-post CSS is parsed). On a `location` single we preload
+ * the featured image (= the hero, set by build-locations.php) with high priority so
+ * it starts downloading immediately — improving Largest Contentful Paint / Core Web
+ * Vitals, which feed local search ranking.
+ */
+add_action( 'wp_head', function () {
+	if ( ! is_singular( 'location' ) ) {
+		return;
+	}
+	$tid = get_post_thumbnail_id();
+	if ( ! $tid ) {
+		return;
+	}
+	$url = wp_get_attachment_url( $tid );
+	if ( $url ) {
+		printf( '<link rel="preload" as="image" href="%s" fetchpriority="high">' . "\n", esc_url( $url ) );
+	}
+}, 2 );
+
+/**
  * Theme-aware logo <img>. The JS theme module swaps src on toggle via data-logo*;
  * we render the correct src for the server-resolved theme so there's no flash.
  * Logos are migrated into the Media Library by the content task; we fall back to

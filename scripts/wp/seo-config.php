@@ -11,8 +11,10 @@
  *                           verbatim per-page titles/descriptions, OG/Twitter
  *                           defaults, robots, per-post-type & per-CPT title
  *                           templates, breadcrumbs ON.
- *   2. rank_math_sitemap  — a COMPLETE sitemap: posts, pages, AND every public
- *                           marketing CPT (fixes the source's 3-URL sitemap).
+ *   2. rank-math-options-sitemap — a COMPLETE sitemap: posts, pages, AND the public
+ *                           Location CPT (fixes the source's 3-URL sitemap). NOTE:
+ *                           Rank Math reads the HYPHENATED option key, not the
+ *                           underscore `rank_math_sitemap` — see the write below.
  *   3. rank_math_general  — self-referential canonicals, strip-category-base,
  *                           attachment redirect. Rank Math's OWN redirections +
  *                           404-monitor modules are DISABLED (the standalone
@@ -209,8 +211,22 @@ foreach ( array( 'graduate', 'testimonial', 'faq', 'service', 'package', 'instru
 	$sitemap[ "pt_{$cpt}_sitemap" ] = 'off';
 }
 
+// Rank Math READS the hyphenated option key `rank-math-options-sitemap` (see
+// includes/class-settings.php → add_options('sitemap','rank-math-options-sitemap')).
+// Writing only to the underscore `rank_math_sitemap` key is a silent no-op — it's
+// why the Location CPT never appeared in the sitemap. Merge our settings into the
+// real option so they take effect, preserving Rank Math's other sitemap defaults.
+$rm_sitemap_key = 'rank-math-options-sitemap';
+$rm_sitemap_cur = get_option( $rm_sitemap_key, array() );
+$rm_sitemap_cur = is_array( $rm_sitemap_cur ) ? $rm_sitemap_cur : array();
+update_option( $rm_sitemap_key, array_merge( $rm_sitemap_cur, $sitemap ) );
+// Keep the legacy underscore key in sync too (harmless; some tooling reads it).
 update_option( 'rank_math_sitemap', $sitemap );
-WP_CLI::log( '     rank_math_sitemap set (posts + pages + location CPT + category; CPT noise excluded).' );
+// Bust Rank Math's cached sitemap so the new providers/URLs regenerate.
+if ( class_exists( '\\RankMath\\Sitemap\\Cache' ) ) {
+	\RankMath\Sitemap\Cache::invalidate_storage();
+}
+WP_CLI::log( '     rank-math-options-sitemap set (posts + pages + location CPT + category; CPT noise excluded).' );
 
 /* =========================================================================
  * 3. Rank Math — General (canonicals, redirections module, misc)
@@ -305,30 +321,33 @@ $page_meta = array(
 	//     the CPT rewrite — NOT pages; the old location Pages were removed). SEO
 	//     title/desc verbatim from src/app/locations/<slug>/page.tsx; per-location
 	//     editable bu_seo_* fields override these when set (see apply loop). ---
+	// SEO title/desc optimized for local search (single source of truth:
+	// scripts/wp/elementor/locations-content.php → seo_title / seo_description).
+	// Per-location editable bu_seo_* fields still override these when set.
 	'port-moody' => array(
 		'type'        => 'location',
-		'title'       => 'Driving School in Port Moody',
-		'description' => 'Top-rated driving school in Port Moody. Master the Port Moody road test routes with our ICBC-certified instructors. Book your Class 5 or 7 lessons today!',
+		'title'       => 'Driving Lessons in Port Moody | BuckleUp Driving School',
+		'description' => 'Your local Port Moody driving school. ICBC-certified instructors, 98% pass rate, and expert prep for Heritage Mountain hills and test routes. Book today!',
 	),
 	'coquitlam' => array(
 		'type'        => 'location',
-		'title'       => 'Driving Lessons in Coquitlam & Port Coquitlam',
-		'description' => 'Looking for the best driving lessons in Coquitlam and Port Coquitlam? BuckleUp Driving School offers top-tier ICBC-certified training with a 98% pass rate.',
+		'title'       => 'Driving Lessons in Coquitlam | BuckleUp Driving School',
+		'description' => 'Driving lessons in Coquitlam with ICBC-certified instructors and a 98% pass rate. Master test routes from Town Centre to Westwood Plateau. Book today!',
 	),
 	'north-vancouver' => array(
 		'type'        => 'location',
-		'title'       => 'Driving School in North Vancouver',
-		'description' => 'Premier driving school in North Vancouver. Learn to navigate the North Shore confidently with our ICBC-certified instructors. Start your Class 5 or Class 7 lessons today!',
+		'title'       => 'Driving Lessons in North Vancouver | BuckleUp School',
+		'description' => 'Master North Shore hills, bridges & test routes with ICBC-certified instructors and a 98% pass rate. Driving lessons in North Vancouver. Book today!',
 	),
 	'port-coquitlam' => array(
 		'type'        => 'location',
-		'title'       => 'Driving Lessons in Port Coquitlam',
-		'description' => 'Looking for the best driving lessons in Port Coquitlam? BuckleUp Driving School offers top-tier ICBC-certified training with a 98% pass rate.',
+		'title'       => 'Driving Lessons in Port Coquitlam | BuckleUp School',
+		'description' => 'Driving lessons in Port Coquitlam with ICBC-certified instructors and a 98% pass rate. Master PoCo rail crossings and local test routes. Book today!',
 	),
 	'tri-cities' => array(
 		'type'        => 'location',
-		'title'       => 'Driving Lessons in the Tri-Cities',
-		'description' => 'Looking for the best driving lessons in the Tri-Cities? BuckleUp Driving School offers top-tier ICBC-certified training with a 98% pass rate across Coquitlam, Port Coquitlam, and Port Moody.',
+		'title'       => 'Driving Lessons in the Tri-Cities | BuckleUp School',
+		'description' => 'ICBC-certified driving lessons across Coquitlam, Port Coquitlam & Port Moody. 98% pass rate and expert local route prep. Book a lesson today!',
 	),
 );
 

@@ -31,6 +31,10 @@ require_once __DIR__ . '/inc/console.php';
 // incl. non-Elementor consoles/blog), plus a defensive Geist @font-face fallback.
 // NOTE: the Tailwind bundle is NOT dequeued — the design system loads site-wide.
 require_once __DIR__ . '/inc/elementor.php';
+// [buckleup_image_credits] — CC attribution for the location hero photos (/image-credits/).
+require_once __DIR__ . '/inc/credits.php';
+// Front-end performance: strip dead-weight ElementsKit assets + jquery-migrate.
+require_once __DIR__ . '/inc/perf.php';
 
 add_action( 'after_setup_theme', function () {
 	add_theme_support( 'wp-block-styles' );
