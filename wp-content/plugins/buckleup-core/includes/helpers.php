@@ -292,3 +292,84 @@ function buckleup_get_location_fields( $post = null ) {
 		'seo_description' => get_post_meta( $post->ID, 'bu_seo_description', true ),
 	);
 }
+
+/**
+ * Resolve the brand logo URL for transactional emails. Prefers a named logo
+ * attachment, then the theme custom logo, then the square site icon.
+ *
+ * @return string
+ */
+function buckleup_email_logo_url() {
+	foreach ( array( 'buckleup-driving-school-logo-light', 'logo' ) as $slug ) {
+		$ids = get_posts(
+			array(
+				'name'        => $slug,
+				'post_type'   => 'attachment',
+				'post_status' => 'inherit',
+				'numberposts' => 1,
+				'fields'      => 'ids',
+			)
+		);
+		if ( $ids ) {
+			$url = wp_get_attachment_image_url( $ids[0], 'full' );
+			if ( $url ) {
+				return $url;
+			}
+		}
+	}
+	$custom = get_theme_mod( 'custom_logo' );
+	if ( $custom ) {
+		$url = wp_get_attachment_image_url( $custom, 'full' );
+		if ( $url ) {
+			return $url;
+		}
+	}
+	return (string) get_site_icon_url( 192 );
+}
+
+/**
+ * Shared branded HTML email chrome: the logo header (red top accent), the white
+ * 600px card, and the footer. Callers supply the inner `<tr>…</tr>` rows so each
+ * email keeps full control of its body while sharing one house style. Used by
+ * the contact form and the quiz result report.
+ *
+ * @param string $title       Document <title> + accessible heading (escaped).
+ * @param string $inner        Pre-built, already-escaped table rows for the body.
+ * @param string $footer_note  Pre-built footer note HTML; a default is used if ''.
+ * @return string Full HTML document.
+ */
+function buckleup_email_shell( $title, $inner, $footer_note = '' ) {
+	$logo   = esc_url( buckleup_email_logo_url() );
+	$site   = esc_html( get_bloginfo( 'name' ) );
+	$home   = esc_url( home_url( '/' ) );
+	$accent = '#dc2626';
+	$ink    = '#111827';
+	$muted  = '#6b7280';
+	$border = '#e5e7eb';
+	$panel  = '#f9fafb';
+	$page   = '#f3f4f6';
+	$title_e = esc_html( $title );
+
+	$logo_html = $logo
+		? sprintf( '<a href="%1$s"><img src="%2$s" alt="%3$s" height="44" style="height:44px;width:auto;display:block;border:0;"></a>', $home, $logo, $site )
+		: sprintf( '<a href="%1$s" style="font:700 22px/1 Arial,Helvetica,sans-serif;color:%2$s;text-decoration:none;">%3$s</a>', $home, $ink, $site );
+
+	if ( '' === $footer_note ) {
+		$footer_note = sprintf(
+			/* translators: %s: linked site domain. */
+			esc_html__( 'Sent from %s', 'buckleup-core' ),
+			'<a href="' . $home . '" style="color:' . $muted . ';">buckleupdriving.ca</a>'
+		);
+	}
+
+	return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
+		. '<meta name="viewport" content="width=device-width,initial-scale=1"><title>' . $title_e . '</title></head>'
+		. '<body style="margin:0;padding:0;background:' . $page . ';">'
+		. '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:' . $page . ';padding:24px 12px;"><tr><td align="center">'
+		. '<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border:1px solid ' . $border . ';border-radius:12px;overflow:hidden;">'
+		. '<tr><td align="center" style="padding:28px 24px 22px;border-bottom:3px solid ' . $accent . ';">' . $logo_html . '</td></tr>'
+		. $inner
+		. '<tr><td style="padding:18px 32px;background:' . $panel . ';border-top:1px solid ' . $border . ';">'
+		. '<p style="margin:0;font:400 12px/1.5 Arial,Helvetica,sans-serif;color:' . $muted . ';">' . $footer_note . '</p>'
+		. '</td></tr></table></td></tr></table></body></html>';
+}

@@ -30,7 +30,9 @@
     "typography": { "fontFamily": "Geist, ui-sans-serif, system-ui, sans-serif" }
   },
   "customTemplates": [
-    { "name": "page-elementor", "title": "Elementor Full Width", "postTypes": ["page"] }
+    { "name": "page-elementor", "title": "Elementor Full Width", "postTypes": ["page"] },
+    { "name": "page-practice-test", "title": "Practice Test (no title)", "postTypes": ["page"] },
+    { "name": "page-exam", "title": "Practice Exam (no chrome)", "postTypes": ["page"] }
   ],
   "templateParts": [
     { "name": "header", "title": "Header", "area": "header" },

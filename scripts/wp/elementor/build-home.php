@@ -201,6 +201,81 @@ function build_pricing( $packages ) {
 	);
 }
 
+/* --------------------------------------------------- PRACTICE EXAM -- */
+/**
+ * Practice Exam Center spotlight — the conversion centrepiece. Sits right after
+ * Pricing. Marketing copy + benefit list + a CTA into the free practice exam, with
+ * an elegant stats panel (the figures that build trust + intent).
+ */
+function build_practice() {
+	$benefits = el_icon_list(
+		array(
+			'Mirrors the real ICBC Class 4 test — same length and topics',
+			'Instant score with a topic-by-topic breakdown',
+			'Find and fix your weak spots before test day',
+			'Earn a certificate of completion when you pass',
+		),
+		array( 'icon' => 'fas fa-check-circle', 'color_global' => 'secondary' )
+	);
+
+	$left = el_col(
+		array(
+			el_pill( 'Free Practice Exam', 'fas fa-graduation-cap' ),
+			el_heading( 'Walk Into Your ICBC Class 4 Test <span class="gradient-text">Ready</span>', array( 'tag' => 'h2', 'size' => 40, 'weight' => 800, 'color_global' => 'text', 'line_height' => 1.1 ) ),
+			el_text( 'Take our free, timed practice exam before the real thing. It mirrors ICBC&rsquo;s Class 4 knowledge test, so you walk in knowing exactly what to expect — and exactly what to study.', array( 'size' => 18, 'color_global' => 'mutedcol', 'max_width' => 540 ) ),
+			$benefits,
+			el_button( 'Start the Free Practice Test', array( 'url' => '/icbc-class-4-knowledge-test/', 'size' => 'lg', 'icon' => 'fas fa-arrow-right', 'bg_global' => 'primary' ) ),
+		),
+		array( 'width' => 50, 'gap_px' => 22, 'align' => 'flex-start' )
+	);
+
+	// Stat tiles (2x2) — the figures that read as "data/charts".
+	$tile = function ( $num, $label ) {
+		return el_col(
+			array(
+				el_heading( $num, array( 'tag' => 'div', 'size' => 42, 'weight' => 800, 'color_global' => 'primary', 'line_height' => 1 ) ),
+				el_text( $label, array( 'size' => 13, 'color_global' => 'mutedcol' ) ),
+			),
+			array( 'width' => 46, 'bg' => '#FFFFFF', 'pad' => 22, 'radius' => 16, 'border' => '#CBD5E1', 'shadow' => true, 'gap_px' => 6, 'align' => 'flex-start' )
+		);
+	};
+	$tiles = el_row(
+		array(
+			$tile( '50', 'Questions, like the real test' ),
+			$tile( '80%', 'Score you need to pass' ),
+			$tile( '45', 'Minute timed exam' ),
+			$tile( '12', 'Commercial-driving topics' ),
+		),
+		16, 'stretch', 'flex-start'
+	);
+	$highlight = el_col(
+		array(
+			el_container(
+				array( 'content_width' => 'full', 'flex_direction' => 'row', 'flex_align_items' => 'center', 'flex_gap' => array( 'unit' => 'px', 'size' => 16, 'column' => '16', 'row' => '16' ) ),
+				array(
+					el_heading( '98%', array( 'tag' => 'div', 'size' => 48, 'weight' => 800, 'color_global' => 'secondary', 'line_height' => 1 ) ),
+					el_col(
+						array(
+							el_text( '<strong>First-time pass rate</strong>', array( 'raw' => true, 'size' => 17, 'color_global' => 'text' ) ),
+							el_text( 'for BuckleUp students who practise before the real exam', array( 'size' => 14, 'color_global' => 'mutedcol' ) ),
+						),
+						array( 'gap' => 2, 'width' => 'grow', 'align' => 'flex-start' )
+					),
+				)
+			),
+		),
+		array( 'width' => 100, 'bg' => '#FFFFFF', 'pad' => 24, 'radius' => 16, 'border' => '#CBD5E1', 'shadow' => true, 'gap_px' => 0 )
+	);
+	$right = el_col( array( $tiles, $highlight ), array( 'width' => 42, 'gap_px' => 16, 'align' => 'stretch' ) );
+
+	$row = el_row( array( $left, $right ), 48, 'flex-start', 'space-between' );
+
+	return el_section(
+		array( 'gradient' => array( '#EEF4FF', '#F8FAFC', 155 ), 'pad_y' => 80, 'gap' => 24, 'content_width' => 1200, 'id_css' => 'practice-test' ),
+		array( $row )
+	);
+}
+
 /* ------------------------------------------------------- TESTIMONIALS -- */
 function build_testimonials( $testimonials ) {
 	$cards = array();
@@ -295,6 +370,7 @@ function build_cta() {
 $tree = array(
 	el_container( array( 'content_width' => 'full', 'padding' => el_box( 0, 0, 0, 0 ) ), array( el_shortcode( '[buckleup_section name="home-graduates"]' ) ) ),
 	build_pricing( $packages ),
+	build_practice(),
 	el_container( array( 'content_width' => 'full', 'padding' => el_box( 0, 0, 0, 0 ) ), array( el_shortcode( '[buckleup_section name="home-testimonials"]' ) ) ),
 	// FAQ as the LIVE theme section (accessible accordion + dynamic from the faq CPT) —
 	// avoids the Elementor accordion's aria-allowed-attr a11y violation (QA S3).

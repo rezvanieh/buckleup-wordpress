@@ -317,6 +317,104 @@ $page_meta = array(
 		'og_desc'     => 'Learn why Vancouver students fail their ICBC road tests and how we help you achieve a 98% pass rate.',
 	),
 
+	// --- ICBC Class 4 knowledge/practice test: hub + 12 category Pages
+	//     (post_type=page). Hub targets the head term "ICBC Class 4 knowledge/
+	//     practice test"; each category targets its own long-tail. Unique
+	//     title/description per URL avoids thin/duplicate-content cannibalisation
+	//     across the 12 near-sibling category pages. Resolved by canonical PATH
+	//     (the nested children are real Pages under the hub). ---
+	'icbc-class-4-knowledge-test' => array(
+		'type'        => 'page',
+		'title'       => 'ICBC Class 4 Knowledge Test — Free Practice Test 2026 | BuckleUp',
+		'description' => 'Free ICBC Class 4 practice test for BC. Hundreds of real-style questions across 12 commercial-driving topics, instant scoring at the 80% pass mark. Pass your Class 4 knowledge test in Vancouver & the Tri-Cities on the first try.',
+		'og_title'    => 'Free ICBC Class 4 Knowledge Practice Test (BC) | BuckleUp',
+		'og_desc'     => 'Practise real-style ICBC Class 4 questions across 12 topics with instant scoring. Free Class 4 knowledge test prep for Vancouver & the Tri-Cities.',
+	),
+	'getting-your-licence' => array(
+		'type'        => 'page',
+		'title'       => 'ICBC Class 4 Getting Your Licence Practice Test (BC) | BuckleUp',
+		'description' => 'Free ICBC Class 4 practice questions on licence classes, eligibility, medical and vision standards, and the testing process. Study the Getting Your Licence chapter for your BC Class 4 knowledge test.',
+		'og_title'    => 'ICBC Class 4 Getting Your Licence Practice Questions | BuckleUp',
+		'og_desc'     => 'Practise Class 4 licence eligibility, medical standards and the testing process — free ICBC Class 4 knowledge test prep for BC.',
+	),
+	'heavy-vehicle-braking' => array(
+		'type'        => 'page',
+		'title'       => 'ICBC Heavy Vehicle Braking Practice Test (Class 4 BC) | BuckleUp',
+		'description' => 'Free ICBC Class 4 practice questions on heavy vehicle braking: stopping distance, the effect of speed and weight, brake fade, and safe downhill braking. Master braking for your BC Class 4 knowledge test.',
+		'og_title'    => 'ICBC Heavy Vehicle Braking Practice Questions (Class 4) | BuckleUp',
+		'og_desc'     => 'Practise stopping distance, brake fade and downhill braking — free ICBC Class 4 heavy vehicle braking test prep for BC.',
+	),
+	'basic-driving-skills' => array(
+		'type'        => 'page',
+		'title'       => 'ICBC Class 4 Basic Driving Skills Practice Test (BC) | BuckleUp',
+		'description' => 'Free ICBC Class 4 practice questions on basic driving skills: following distance, manoeuvring, seeing and being seen, and vehicle and personal safety. Prep for your BC Class 4 knowledge test.',
+		'og_title'    => 'ICBC Class 4 Basic Driving Skills Practice Questions | BuckleUp',
+		'og_desc'     => 'Practise following distance, manoeuvring and safety — free ICBC Class 4 basic driving skills test prep for BC.',
+	),
+	'fuel-efficient-driving' => array(
+		'type'        => 'page',
+		'title'       => 'ICBC Class 4 Fuel-Efficient Driving Practice Test (BC) | BuckleUp',
+		'description' => 'Free ICBC Class 4 practice questions on fuel-efficient driving: smart driving habits and vehicle-maintenance choices that cut fuel use. Study for your BC Class 4 commercial knowledge test.',
+		'og_title'    => 'ICBC Class 4 Fuel-Efficient Driving Practice Questions | BuckleUp',
+		'og_desc'     => 'Practise fuel-saving driving habits and maintenance — free ICBC Class 4 fuel-efficient driving test prep for BC.',
+	),
+	'trucks-and-trailers' => array(
+		'type'        => 'page',
+		'title'       => 'ICBC Trucks & Trailers Practice Test (Class 4 BC) | BuckleUp',
+		'description' => 'Free ICBC Class 4 practice questions on trucks and trailers: vehicle dimensions, loading basics, weight distribution, and load securement. Prep for your BC Class 4 knowledge test.',
+		'og_title'    => 'ICBC Trucks & Trailers Practice Questions (Class 4) | BuckleUp',
+		'og_desc'     => 'Practise loading, weight distribution and load securement — free ICBC Class 4 trucks and trailers test prep for BC.',
+	),
+	'buses-taxis-limos-ride-hailing' => array(
+		'type'        => 'page',
+		'title'       => 'ICBC Class 4 Buses, Taxis & Ride-Hailing Practice Test | BuckleUp',
+		'description' => 'Free ICBC Class 4 practice questions on buses, taxis, limos and ride-hailing: passenger safety, pick-ups and drop-offs, vehicle operations, and refusing passengers. Prep for your BC Class 4 test.',
+		'og_title'    => 'ICBC Class 4 Buses, Taxis & Ride-Hailing Questions | BuckleUp',
+		'og_desc'     => 'Practise passenger safety, pick-ups and ride-hailing rules — free ICBC Class 4 knowledge test prep for BC.',
+	),
+	'hours-of-service' => array(
+		'type'        => 'page',
+		'title'       => 'ICBC Class 4 Hours of Service Practice Test (BC) | BuckleUp',
+		'description' => 'Free ICBC Class 4 practice questions on hours of service: on-duty and off-duty time limits and the record-keeping rules for commercial drivers in BC. Study for your Class 4 knowledge test.',
+		'og_title'    => 'ICBC Class 4 Hours of Service Practice Questions | BuckleUp',
+		'og_desc'     => 'Practise on-duty limits and logbook rules — free ICBC Class 4 hours of service test prep for BC.',
+	),
+	'air-brakes' => array(
+		'type'        => 'page',
+		'title'       => 'ICBC Air Brake Practice Test (Class 4 BC) | BuckleUp',
+		'description' => 'Free ICBC air brake practice test for BC Class 4. Practice questions on air-brake components and operation, system checks, low-air warnings, and ABS. Pass your air brake knowledge test the first time.',
+		'og_title'    => 'Free ICBC Air Brake Practice Test (Class 4) | BuckleUp',
+		'og_desc'     => 'Practise air-brake components, system checks, low-air warnings and ABS — free ICBC air brake test prep for BC.',
+	),
+	'air-brake-adjustment' => array(
+		'type'        => 'page',
+		'title'       => 'ICBC Air Brake Adjustment Practice Test (Class 4 BC) | BuckleUp',
+		'description' => 'Free ICBC Class 4 practice questions on air brake adjustment: why adjustment matters, how to check pushrod stroke, and slack-adjuster procedures. Prep for your BC air brake endorsement test.',
+		'og_title'    => 'ICBC Air Brake Adjustment Practice Questions (Class 4) | BuckleUp',
+		'og_desc'     => 'Practise pushrod stroke checks and slack-adjuster procedures — free ICBC air brake adjustment test prep for BC.',
+	),
+	'pre-trip-inspections' => array(
+		'type'        => 'page',
+		'title'       => 'ICBC Pre-Trip Inspection Practice Test (Class 4 BC) | BuckleUp',
+		'description' => 'Free ICBC Class 4 practice questions on pre-trip inspections: inspection duties, bus and passenger-vehicle procedures, and reporting defects. Study pre-trip inspections for your BC Class 4 test.',
+		'og_title'    => 'ICBC Pre-Trip Inspection Practice Questions (Class 4) | BuckleUp',
+		'og_desc'     => 'Practise inspection duties and defect reporting — free ICBC Class 4 pre-trip inspection test prep for BC.',
+	),
+	'signs-signals-and-markings' => array(
+		'type'        => 'page',
+		'title'       => 'ICBC Signs, Signals & Markings Practice Test (Class 4) | BuckleUp',
+		'description' => 'Free ICBC Class 4 practice questions on signs, signals and road markings: regulatory and warning signs, traffic signals, and lane and road markings. Prep for your BC Class 4 knowledge test.',
+		'og_title'    => 'ICBC Signs, Signals & Markings Practice Questions | BuckleUp',
+		'og_desc'     => 'Practise regulatory and warning signs, signals and road markings — free ICBC Class 4 test prep for BC.',
+	),
+	'industrial-roads' => array(
+		'type'        => 'page',
+		'title'       => 'ICBC Class 4 Industrial Roads Practice Test (BC) | BuckleUp',
+		'description' => 'Free ICBC Class 4 practice questions on industrial roads: awareness and right-of-way when driving on private, resource, and industrial roads in BC. Study for your Class 4 knowledge test.',
+		'og_title'    => 'ICBC Class 4 Industrial Roads Practice Questions | BuckleUp',
+		'og_desc'     => 'Practise right-of-way and awareness on resource and industrial roads — free ICBC Class 4 test prep for BC.',
+	),
+
 	// --- Locations (post_type=location CPT, resolving at /locations/{slug}/ via
 	//     the CPT rewrite — NOT pages; the old location Pages were removed). SEO
 	//     title/desc verbatim from src/app/locations/<slug>/page.tsx; per-location
@@ -387,6 +485,22 @@ $page_paths = array(
 	'contact'  => '/contact/',
 	'services' => '/services/',
 	'icbc-road-test-failures' => '/resources/icbc-road-test-failures/',
+
+	// ICBC Class 4 practice-test hub + 12 nested category Pages.
+	'icbc-class-4-knowledge-test'    => '/icbc-class-4-knowledge-test/',
+	'getting-your-licence'           => '/icbc-class-4-knowledge-test/getting-your-licence/',
+	'heavy-vehicle-braking'          => '/icbc-class-4-knowledge-test/heavy-vehicle-braking/',
+	'basic-driving-skills'           => '/icbc-class-4-knowledge-test/basic-driving-skills/',
+	'fuel-efficient-driving'         => '/icbc-class-4-knowledge-test/fuel-efficient-driving/',
+	'trucks-and-trailers'            => '/icbc-class-4-knowledge-test/trucks-and-trailers/',
+	'buses-taxis-limos-ride-hailing' => '/icbc-class-4-knowledge-test/buses-taxis-limos-ride-hailing/',
+	'hours-of-service'               => '/icbc-class-4-knowledge-test/hours-of-service/',
+	'air-brakes'                     => '/icbc-class-4-knowledge-test/air-brakes/',
+	'air-brake-adjustment'           => '/icbc-class-4-knowledge-test/air-brake-adjustment/',
+	'pre-trip-inspections'           => '/icbc-class-4-knowledge-test/pre-trip-inspections/',
+	'signs-signals-and-markings'     => '/icbc-class-4-knowledge-test/signs-signals-and-markings/',
+	'industrial-roads'               => '/icbc-class-4-knowledge-test/industrial-roads/',
+
 	'port-moody'      => '/locations/port-moody/',
 	'coquitlam'       => '/locations/coquitlam/',
 	'north-vancouver' => '/locations/north-vancouver/',
