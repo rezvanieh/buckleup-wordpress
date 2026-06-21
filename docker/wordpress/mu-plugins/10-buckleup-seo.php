@@ -877,7 +877,30 @@ function buckleup_seo_humanise_segment( $segment ) {
 		'coquitlam'               => 'Coquitlam',
 		'icbc'                    => 'ICBC',
 		'faq'                     => 'FAQ',
+
+		// ICBC Class 4 practice-test hub + 12 categories. Prefer the quiz
+		// plugin's own labels for the categories (kept in sync via the loop
+		// below); these literals are the fallback when the plugin isn't loaded.
+		'icbc-class-4-knowledge-test'     => 'ICBC Class 4 Knowledge Test',
+		'getting-your-licence'            => 'Getting Your Licence',
+		'heavy-vehicle-braking'           => 'Heavy Vehicle Braking',
+		'basic-driving-skills'            => 'Basic Driving Skills',
+		'fuel-efficient-driving'          => 'Fuel-Efficient Driving',
+		'trucks-and-trailers'             => 'Trucks and Trailers',
+		'buses-taxis-limos-ride-hailing'  => 'Buses, Taxis, Limos & Ride-Hailing',
+		'hours-of-service'                => 'Hours of Service',
+		'air-brakes'                      => 'Air Brakes',
+		'air-brake-adjustment'            => 'Air Brake Adjustment',
+		'pre-trip-inspections'            => 'Pre-Trip Inspections',
+		'signs-signals-and-markings'      => 'Signs, Signals & Road Markings',
+		'industrial-roads'                => 'Industrial Roads',
 	);
+
+	// Defer to the quiz plugin's canonical category label when available, so a
+	// future label edit there flows through to breadcrumbs automatically.
+	if ( function_exists( 'buckleup_quiz_is_category' ) && function_exists( 'buckleup_quiz_category_label' ) && buckleup_quiz_is_category( $segment ) ) {
+		return buckleup_quiz_category_label( $segment );
+	}
 	if ( isset( $overrides[ $segment ] ) ) {
 		return $overrides[ $segment ];
 	}
@@ -1046,6 +1069,297 @@ function buckleup_seo_icbc_article_node() {
 }
 
 /* -------------------------------------------------------------------------
+ * ICBC Class 4 knowledge/practice test — Quiz + Question (Education Q&A) on the
+ * hub + 12 category pages, plus an FAQPage on the hub only.
+ *
+ * The interactive runner is JS, so it is invisible to indexing; the theme
+ * pattern renders a FIXED set of crawlable sample questions per landing page via
+ * buckleup_quiz_sample_questions(). To stay compliant with Google's
+ * practice-problems guidance (marked-up content MUST be the content visible on
+ * the page), this layer marks up ONLY those same visible samples — it calls the
+ * SAME helper with the SAME arguments the theme uses (mixed `('',6)` on the hub,
+ * `($cat,6)` on a category page), so the Question count in the JSON-LD always
+ * equals the questions a visitor (and a crawler) actually see, and the full
+ * question bank stays behind the JS runner where it can't become a free SERP
+ * answer key. All quiz helpers are guarded with function_exists() because they
+ * come from the separately-owned buckleup-quiz plugin.
+ * ---------------------------------------------------------------------- */
+
+/**
+ * The current practice-test page context, or null when this isn't one.
+ *
+ * Prefers the buckleup-quiz plugin's own detector (the single source of truth
+ * the theme + REST runner share) and falls back to a path check on the base
+ * slug so the schema layer still works if the helper is briefly unavailable.
+ *
+ * @return array{type:string,category:string}|null
+ */
+function buckleup_seo_practice_context() {
+	static $cache = false;
+	if ( false !== $cache ) {
+		return $cache;
+	}
+	$cache = null;
+
+	if ( function_exists( 'buckleup_quiz_page_context' ) ) {
+		$ctx = buckleup_quiz_page_context();
+		if ( is_array( $ctx ) && ! empty( $ctx['type'] ) ) {
+			$cache = array(
+				'type'     => (string) $ctx['type'],
+				'category' => isset( $ctx['category'] ) ? (string) $ctx['category'] : '',
+			);
+		}
+		return $cache;
+	}
+
+	// Fallback: derive context from the request path against the known base slug.
+	$base = function_exists( 'buckleup_quiz_base_slug' ) ? buckleup_quiz_base_slug() : 'icbc-class-4-knowledge-test';
+	$path = isset( $_SERVER['REQUEST_URI'] ) ? trim( (string) wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ), '/' ) : '';
+	if ( '' === $path || 0 !== strpos( $path, $base ) ) {
+		return $cache;
+	}
+	$rest = trim( substr( $path, strlen( $base ) ), '/' );
+	if ( '' === $rest ) {
+		$cache = array( 'type' => 'hub', 'category' => '' );
+	} else {
+		$segment = explode( '/', $rest )[0];
+		$cache   = array( 'type' => 'category', 'category' => $segment );
+	}
+	return $cache;
+}
+
+/**
+ * Whether the current request is the practice-test HUB page.
+ *
+ * @return bool
+ */
+function buckleup_seo_is_practice_hub() {
+	$ctx = buckleup_seo_practice_context();
+	return ( null !== $ctx && 'hub' === $ctx['type'] );
+}
+
+/**
+ * Whether the current request is one of the 12 practice-test CATEGORY pages.
+ *
+ * @return bool
+ */
+function buckleup_seo_is_practice_category() {
+	$ctx = buckleup_seo_practice_context();
+	return ( null !== $ctx && 'category' === $ctx['type'] && '' !== $ctx['category'] );
+}
+
+/**
+ * Whether the current request is any practice-test landing page.
+ *
+ * @return bool
+ */
+function buckleup_seo_is_practice() {
+	return buckleup_seo_is_practice_hub() || buckleup_seo_is_practice_category();
+}
+
+/**
+ * Build a single Quiz `Question` (flashcard) node from a sample-question row.
+ *
+ * Maps the buckleup-quiz helper row onto Google's practice-problems shape:
+ *   - eduQuestionType "Flashcard"  → eligible for the Education Q&A rich result
+ *   - text            = the prompt
+ *   - acceptedAnswer  = the CORRECT option (resolved via correct_index)
+ *   - suggestedAnswer = the distractor options (the other three)
+ *   - comment         = the explanation (shown on the page, so safe to mark up)
+ *
+ * @param array{qid:int,question:string,options:array<int,string>,correct_index:int,explanation:string} $row
+ * @return array|null Null when the row is malformed.
+ */
+function buckleup_seo_practice_question_node( array $row ) {
+	$question = isset( $row['question'] ) ? trim( wp_strip_all_tags( (string) $row['question'] ) ) : '';
+	$options  = isset( $row['options'] ) && is_array( $row['options'] ) ? array_values( $row['options'] ) : array();
+	$correct  = isset( $row['correct_index'] ) ? (int) $row['correct_index'] : -1;
+
+	if ( '' === $question || count( $options ) < 2 || $correct < 0 || ! isset( $options[ $correct ] ) ) {
+		return null;
+	}
+
+	$accepted = trim( wp_strip_all_tags( (string) $options[ $correct ] ) );
+	if ( '' === $accepted ) {
+		return null;
+	}
+
+	$suggested = array();
+	foreach ( $options as $i => $opt ) {
+		if ( $i === $correct ) {
+			continue;
+		}
+		$text = trim( wp_strip_all_tags( (string) $opt ) );
+		if ( '' !== $text ) {
+			$suggested[] = array(
+				'@type' => 'Answer',
+				'text'  => $text,
+			);
+		}
+	}
+
+	$node = array(
+		'@type'                => 'Question',
+		'eduQuestionType'      => 'Flashcard',
+		'learningResourceType' => 'Flashcard',
+		'text'                 => $question,
+		'acceptedAnswer'       => array(
+			'@type' => 'Answer',
+			'text'  => $accepted,
+		),
+	);
+
+	if ( $suggested ) {
+		$node['suggestedAnswer'] = $suggested;
+	}
+
+	$explanation = isset( $row['explanation'] ) ? trim( wp_strip_all_tags( (string) $row['explanation'] ) ) : '';
+	if ( '' !== $explanation ) {
+		$node['comment'] = array(
+			'@type' => 'Comment',
+			'text'  => $explanation,
+		);
+	}
+
+	return $node;
+}
+
+/**
+ * The Quiz node for the current practice-test landing page (hub or category).
+ *
+ * Marks up ONLY the visible sample questions — the same set the theme renders —
+ * by calling buckleup_quiz_sample_questions() with the identical arguments the
+ * pattern uses (mixed on the hub, single-category otherwise). Returns null when
+ * this isn't a practice page or the quiz plugin/data isn't available, so the
+ * schema is never an empty/orphaned Quiz.
+ *
+ * @return array|null
+ */
+function buckleup_seo_practice_quiz_node() {
+	if ( ! buckleup_seo_is_practice() ) {
+		return null;
+	}
+	if ( ! function_exists( 'buckleup_quiz_sample_questions' ) ) {
+		return null;
+	}
+
+	$ctx      = buckleup_seo_practice_context();
+	$category = ( null !== $ctx && 'category' === $ctx['type'] ) ? (string) $ctx['category'] : '';
+
+	// 6 = the theme pattern's sample_count (buckleup_quiz_cfg('sample_count')).
+	// Calling with the SAME args keeps schema == visible content.
+	$rows = (array) buckleup_quiz_sample_questions( $category, 6 );
+
+	$questions = array();
+	foreach ( $rows as $row ) {
+		if ( ! is_array( $row ) ) {
+			continue;
+		}
+		$q = buckleup_seo_practice_question_node( $row );
+		if ( null !== $q ) {
+			$questions[] = $q;
+		}
+	}
+
+	if ( empty( $questions ) ) {
+		return null;
+	}
+
+	$url = buckleup_seo_current_url();
+
+	if ( '' !== $category ) {
+		$label    = function_exists( 'buckleup_quiz_category_label' ) ? buckleup_quiz_category_label( $category ) : ucwords( str_replace( '-', ' ', $category ) );
+		$quiz_name = sprintf( 'ICBC Class 4 %s Practice Test', $label );
+		$about     = sprintf( 'ICBC Class 4 %s knowledge test (British Columbia)', $label );
+	} else {
+		$quiz_name = 'ICBC Class 4 Knowledge Test — Free Practice Questions';
+		$about     = 'ICBC Class 4 commercial driver knowledge test (British Columbia)';
+	}
+
+	return array(
+		'@type'                => 'Quiz',
+		'@id'                  => $url . '#quiz',
+		'name'                 => $quiz_name,
+		'url'                  => $url,
+		'about'                => array(
+			'@type' => 'Thing',
+			'name'  => $about,
+		),
+		'educationalLevel'     => 'Professional certification',
+		'educationalAlignment' => array(
+			'@type'          => 'AlignmentObject',
+			'alignmentType'  => 'educationalSubject',
+			'targetName'     => 'ICBC Class 4 Commercial Driver Licensing (British Columbia)',
+		),
+		'hasPart'              => $questions,
+		'mainEntityOfPage'     => array(
+			'@type' => 'WebPage',
+			'@id'   => $url,
+		),
+		'publisher'            => array( '@id' => BUCKLEUP_SEO_BASE_URL . '/#organization' ),
+	);
+}
+
+/**
+ * The top-of-funnel FAQPage node for the practice-test HUB only.
+ *
+ * Distinct from the homepage/location FAQ (different intent), so it is a
+ * dedicated builder rather than reusing buckleup_seo_faq_node(). Answers the
+ * real informational queries about the ICBC Class 4 knowledge test (question
+ * count, pass mark, who needs it, where to take it locally). Figures are pulled
+ * from the quiz engine config so the schema can't drift from the live runner.
+ *
+ * NOTE: these Q&A must also be rendered as a visible accordion by the theme
+ * pattern on the hub (the same single-source discipline used elsewhere). The
+ * pattern is being built in parallel; the copy here is the agreed source.
+ *
+ * @return array|null
+ */
+function buckleup_seo_practice_faq_node() {
+	if ( ! buckleup_seo_is_practice_hub() ) {
+		return null;
+	}
+
+	// Single source of truth: the quiz plugin owns the hub FAQ copy so the visible
+	// accordion and this FAQPage schema can never drift. Fall back to a minimal
+	// inline set only if the plugin helper is unavailable.
+	if ( function_exists( 'buckleup_quiz_hub_faqs' ) ) {
+		$faqs = buckleup_quiz_hub_faqs();
+	} else {
+		$full_total = function_exists( 'buckleup_quiz_cfg' ) ? (int) buckleup_quiz_cfg( 'full_total', 50 ) : 50;
+		$pass_pct   = function_exists( 'buckleup_quiz_cfg' ) ? (int) buckleup_quiz_cfg( 'pass_pct', 80 ) : 80;
+		$faqs       = array(
+			array(
+				'question' => 'How many questions are on the ICBC Class 4 knowledge test?',
+				'answer'   => sprintf( 'The ICBC Class 4 knowledge test is a multiple-choice exam of roughly %d questions. Our free full practice test mirrors that length.', $full_total ),
+			),
+			array(
+				'question' => 'What score do I need to pass the ICBC Class 4 knowledge test?',
+				'answer'   => sprintf( 'You need %d%% to pass. This practice test shows your score and a topic breakdown instantly.', $pass_pct ),
+			),
+		);
+	}
+
+	$entities = array();
+	foreach ( $faqs as $item ) {
+		$entities[] = array(
+			'@type'          => 'Question',
+			'name'           => $item['question'],
+			'acceptedAnswer' => array(
+				'@type' => 'Answer',
+				'text'  => $item['answer'],
+			),
+		);
+	}
+
+	return array(
+		'@type'      => 'FAQPage',
+		'@id'        => buckleup_seo_current_url() . '#faq',
+		'mainEntity' => $entities,
+	);
+}
+
+/* -------------------------------------------------------------------------
  * WebSite node — enables the sitelinks searchbox + names the publisher
  * ---------------------------------------------------------------------- */
 
@@ -1111,6 +1425,18 @@ function buckleup_seo_print_head() {
 	$article = buckleup_seo_icbc_article_node();
 	if ( $article ) {
 		$graph[] = $article;
+	}
+
+	// ICBC Class 4 practice test: a Quiz (visible samples only) on the hub + 12
+	// category pages, and an FAQPage on the hub. Both are no-ops off those pages.
+	$practice_quiz = buckleup_seo_practice_quiz_node();
+	if ( $practice_quiz ) {
+		$graph[] = $practice_quiz;
+	}
+
+	$practice_faq = buckleup_seo_practice_faq_node();
+	if ( $practice_faq ) {
+		$graph[] = $practice_faq;
 	}
 
 	buckleup_seo_print_jsonld(

@@ -6,9 +6,11 @@
  *
  * Reproduces src/components/layout/Navbar.tsx (signed-out marketing state):
  * scroll-aware glass header (data-scrolled, set by navbar.js at scrollY>20), logo
- * theme-swap, desktop nav pill at min-[1100px] with a Locations dropdown, a 2-state
- * theme toggle, the mobile hamburger + slide-down menu, and the signed-out mobile
- * bottom tab bar + WhatsApp FAB. Heights h-16 min-[1100px]:h-32 (the source/
+ * theme-swap, the full inline nav pill at min-[1680px] with a Locations dropdown
+ * (below that — 1100–1679 laptops — a compact header keeps both CTAs visible and
+ * folds the nav + Sign In into the hamburger, so the bar never wraps/overflows), a
+ * 2-state theme toggle, the mobile hamburger + slide-down menu, and the signed-out
+ * mobile bottom tab bar + WhatsApp FAB. Heights h-16 min-[1100px]:h-32 (the source/
  * Image #11 value — gives the h-16 logo ~32px balanced top/bottom clearance) with
  * the 500ms transition; logo h-8 min-[1100px]:h-16. The fixed-header spacer below
  * mirrors the same height. Each nav item carries a lucide icon (gap-1.5 before the
@@ -23,6 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 $nav        = buckleup_nav_items();
 $locations  = buckleup_location_items();
+$quiz_cta    = function_exists( 'buckleup_quiz_nav_cta' ) ? buckleup_quiz_nav_cta() : null;
 $wa         = function_exists( 'buckleup_get_setting' ) ? buckleup_get_setting( 'whatsapp', '16044413677' ) : '16044413677';
 // Generic CTAs carry a prefilled message (production parity).
 $wa_link    = 'https://wa.me/' . preg_replace( '/\D/', '', $wa ) . '?text=' . rawurlencode( "Hi, I'm interested in driving lessons." );
@@ -45,8 +48,14 @@ $logout_url     = wp_logout_url( home_url() );
 				<?php echo buckleup_logo(); // phpcs:ignore WordPress.Security.EscapeOutput — escaped within ?>
 			</a>
 
-			<!-- Desktop nav pill (min-[1100px]) -->
-			<nav aria-label="<?php esc_attr_e( 'Primary', 'buckleup' ); ?>" class="hidden min-[1100px]:flex items-center">
+			<!-- Desktop nav pill. The full 8-item inline nav + theme toggle + Sign In +
+			     the two CTAs only fit without overflow from ~1680px; below that we show
+			     the compact header (logo + theme toggle + both CTAs + hamburger) so
+			     1280–1600 laptops get a clean, intentional bar instead of a wrapping /
+			     overflowing one. The CTAs (emerald pill + Book) stay visible from
+			     min-[1100px]; only the inline nav, Sign In + user-menu, and hamburger
+			     toggle flip at 1680. Header HEIGHT stays keyed off min-[1100px]. -->
+			<nav aria-label="<?php esc_attr_e( 'Primary', 'buckleup' ); ?>" class="hidden min-[1680px]:flex items-center">
 				<div class="flex items-center gap-0.5 px-1.5 py-1 rounded-2xl bg-muted/60 backdrop-blur-sm border border-border/50">
 					<?php
 					foreach ( $nav as $item ) :
@@ -101,8 +110,9 @@ $logout_url     = wp_logout_url( home_url() );
 				</button>
 
 				<?php if ( $is_logged_in ) : ?>
-					<!-- Logged-in: user menu (Dashboard + Sign out) -->
-					<div data-dropdown class="relative hidden min-[1100px]:block">
+					<!-- Logged-in: user menu (Dashboard + Sign out). Folds into the
+					     hamburger below 1680 (where the inline nav also lives). -->
+					<div data-dropdown class="relative hidden min-[1680px]:block">
 						<button type="button" data-dropdown-trigger aria-expanded="false" aria-haspopup="true"
 							class="flex items-center gap-2 p-1.5 pr-3 rounded-full text-sm font-medium text-foreground hover:bg-muted transition-colors border border-border/50">
 							<span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary"><?php echo buckleup_icon( 'user', 'size-4' ); // phpcs:ignore ?></span>
@@ -120,14 +130,25 @@ $logout_url     = wp_logout_url( home_url() );
 						</div>
 					</div>
 				<?php else : ?>
-					<!-- Logged-out: Sign In link -->
+					<!-- Logged-out: Sign In link. whitespace-nowrap so it never breaks to
+					     two lines; folds into the hamburger below 1680. -->
 					<a href="<?php echo esc_url( home_url( '/login/' ) ); ?>"
-						class="hidden min-[1100px]:inline-flex items-center px-4 py-2 rounded-full text-sm font-medium text-foreground hover:bg-muted transition-colors border border-border/50">
+						class="hidden min-[1680px]:inline-flex items-center whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium text-foreground hover:bg-muted transition-colors border border-border/50">
 						<?php esc_html_e( 'Sign In', 'buckleup' ); ?>
 					</a>
 				<?php endif; ?>
 
-				<div class="hidden min-[1100px]:block">
+					<?php if ( $quiz_cta ) : ?>
+						<!-- Free Practice Test — solid emerald pill (single line), distinct from the red Book button. -->
+						<a href="<?php echo esc_url( $quiz_cta['href'] ); ?>" data-active="<?php echo $quiz_cta['active'] ? 'true' : 'false'; ?>"
+							class="hidden min-[1100px]:inline-flex items-center gap-2 h-10 px-4 rounded-full text-sm font-semibold whitespace-nowrap text-accent-foreground bg-accent hover:bg-accent/90 transition-colors shadow-sm"
+							<?php echo $quiz_cta['active'] ? 'aria-current="page"' : ''; ?>>
+							<?php echo buckleup_icon( 'graduation-cap', 'w-4 h-4 shrink-0' ); // phpcs:ignore ?>
+							<span class="whitespace-nowrap"><?php echo esc_html( $quiz_cta['label'] ); ?></span>
+						</a>
+					<?php endif; ?>
+
+					<div class="hidden min-[1100px]:block">
 					<?php
 					buckleup_button( array(
 						'label'   => __( 'Book a Lesson', 'buckleup' ),
@@ -141,7 +162,7 @@ $logout_url     = wp_logout_url( home_url() );
 				</div>
 
 				<button type="button" data-nav-toggle aria-expanded="false" aria-label="<?php esc_attr_e( 'Open menu', 'buckleup' ); ?>"
-					class="min-[1100px]:hidden p-2 rounded-xl hover:bg-muted transition-colors border border-border/50">
+					class="min-[1680px]:hidden p-2 rounded-xl hover:bg-muted transition-colors border border-border/50">
 					<?php echo buckleup_icon( 'menu', 'size-6' ); // phpcs:ignore ?>
 				</button>
 			</div>
@@ -150,8 +171,17 @@ $logout_url     = wp_logout_url( home_url() );
 
 	<!-- Mobile slide-down menu -->
 	<div data-nav-mobile data-state="closed" hidden
-		class="min-[1100px]:hidden bg-background/98 backdrop-blur-2xl border-b border-border overflow-hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-top-2">
+		class="min-[1680px]:hidden bg-background/98 backdrop-blur-2xl border-b border-border overflow-hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-top-2">
 		<nav aria-label="<?php esc_attr_e( 'Mobile', 'buckleup' ); ?>" class="container mx-auto px-4 py-4 flex flex-col gap-1">
+			<?php if ( $quiz_cta ) : ?>
+				<!-- Free Practice Test — full-width emerald CTA, pinned at the top of the mobile menu. -->
+				<a href="<?php echo esc_url( $quiz_cta['href'] ); ?>" data-active="<?php echo $quiz_cta['active'] ? 'true' : 'false'; ?>"
+					class="flex items-center justify-center gap-2 px-4 py-3 mb-2 rounded-xl text-base font-semibold text-accent bg-accent/10 border border-accent/30 hover:bg-accent/15 transition-colors data-[active=true]:bg-accent data-[active=true]:text-accent-foreground"
+					<?php echo $quiz_cta['active'] ? 'aria-current="page"' : ''; ?>>
+					<?php echo buckleup_icon( 'graduation-cap', 'w-5 h-5' ); // phpcs:ignore ?>
+					<span><?php echo esc_html( $quiz_cta['label'] ); ?></span>
+				</a>
+			<?php endif; ?>
 			<?php
 			foreach ( $nav as $item ) :
 				$m_active = ! empty( $item['active'] );

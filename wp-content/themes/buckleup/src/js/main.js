@@ -13,6 +13,7 @@
 //   lightbox.js  — graduates shared-element lightbox
 //   overlays.js  — Dialog / DropdownMenu / Select (data-state/data-side)
 //   forms.js     — Switch + FAQ accordion
+//   quiz.js      — ICBC Class 4 practice-test runner (REST-driven, [data-quiz])
 
 import { initTheme } from './modules/theme.js';
 import { initReveals } from './modules/reveal.js';
@@ -23,6 +24,7 @@ import { initLightbox } from './modules/lightbox.js';
 import { initOverlays } from './modules/overlays.js';
 import { initForms } from './modules/forms.js';
 import { initAuth } from './modules/auth.js';
+import { initQuiz } from './modules/quiz.js';
 import { initConsole } from './modules/console.js';
 import { initConsoleReviews } from './modules/console-reviews.js';
 import { initConsoleProfile } from './modules/console-profile.js';
@@ -46,6 +48,7 @@ function boot() {
   initOverlays();
   initForms();
   initAuth();
+  initQuiz();
   initConsole();
   initConsoleReviews();
   initConsoleProfile();

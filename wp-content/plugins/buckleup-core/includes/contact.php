@@ -65,37 +65,14 @@ function buckleup_contact_validate( $raw ) {
 }
 
 /**
- * Resolve the brand logo URL for emails: the theme's light logo attachment, then
- * a 'logo' attachment, then the theme custom logo, then the site icon.
+ * Resolve the brand logo URL for emails. Back-compat alias for the shared
+ * helper (the logic now lives in buckleup_email_logo_url() so all transactional
+ * emails resolve the logo identically).
  *
  * @return string Absolute URL (or '' if nothing resolves).
  */
 function buckleup_contact_logo_url() {
-	foreach ( array( 'buckleup-driving-school-logo-light', 'logo' ) as $slug ) {
-		$ids = get_posts(
-			array(
-				'name'        => $slug,
-				'post_type'   => 'attachment',
-				'post_status' => 'inherit',
-				'numberposts' => 1,
-				'fields'      => 'ids',
-			)
-		);
-		if ( $ids ) {
-			$url = wp_get_attachment_image_url( $ids[0], 'full' );
-			if ( $url ) {
-				return $url;
-			}
-		}
-	}
-	$custom = get_theme_mod( 'custom_logo' );
-	if ( $custom ) {
-		$url = wp_get_attachment_image_url( $custom, 'full' );
-		if ( $url ) {
-			return $url;
-		}
-	}
-	return (string) get_site_icon_url( 192 );
+	return function_exists( 'buckleup_email_logo_url' ) ? buckleup_email_logo_url() : (string) get_site_icon_url( 192 );
 }
 
 /**
@@ -107,15 +84,12 @@ function buckleup_contact_logo_url() {
  * @return string HTML document.
  */
 function buckleup_contact_email_html( $data, $full_name ) {
-	$logo   = esc_url( buckleup_contact_logo_url() );
-	$site   = esc_html( get_bloginfo( 'name' ) );
 	$home   = esc_url( home_url( '/' ) );
 	$accent = '#dc2626';
 	$ink    = '#111827';
 	$muted  = '#6b7280';
 	$border = '#e5e7eb';
 	$panel  = '#f9fafb';
-	$page   = '#f3f4f6';
 
 	$name_e    = esc_html( $full_name );
 	$email_e   = esc_html( $data['email'] );
@@ -138,22 +112,12 @@ function buckleup_contact_email_html( $data, $full_name ) {
 		);
 	};
 
-	$logo_html = $logo
-		? sprintf( '<a href="%1$s"><img src="%2$s" alt="%3$s" height="44" style="height:44px;width:auto;display:block;border:0;"></a>', $home, $logo, $site )
-		: sprintf( '<a href="%1$s" style="font:700 22px/1 Arial,Helvetica,sans-serif;color:%2$s;text-decoration:none;">%3$s</a>', $home, $ink, $site );
-
 	$rows  = $row( 'Name', $name_e );
 	$rows .= $row( 'Email', sprintf( '<a href="mailto:%1$s" style="color:%2$s;text-decoration:none;">%1$s</a>', $email_e, $accent ) );
 	$rows .= $row( 'Phone', $phone_e );
 	$rows .= $row( 'Subject', $subject_e );
 
-	return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
-		. '<meta name="viewport" content="width=device-width,initial-scale=1"><title>' . $subject_e . '</title></head>'
-		. '<body style="margin:0;padding:0;background:' . $page . ';">'
-		. '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:' . $page . ';padding:24px 12px;"><tr><td align="center">'
-		. '<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border:1px solid ' . $border . ';border-radius:12px;overflow:hidden;">'
-		. '<tr><td align="center" style="padding:28px 24px 22px;border-bottom:3px solid ' . $accent . ';">' . $logo_html . '</td></tr>'
-		. '<tr><td style="padding:30px 32px 8px;">'
+	$inner = '<tr><td style="padding:30px 32px 8px;">'
 		. '<h1 style="margin:0 0 6px;font:700 20px/1.3 Arial,Helvetica,sans-serif;color:' . $ink . ';">New contact form submission</h1>'
 		. '<p style="margin:0 0 22px;font:400 14px/1.5 Arial,Helvetica,sans-serif;color:' . $muted . ';">You&rsquo;ve received a new message from the website.</p>'
 		. '<table role="presentation" width="100%" cellpadding="0" cellspacing="0">' . $rows . '</table></td></tr>'
@@ -161,10 +125,21 @@ function buckleup_contact_email_html( $data, $full_name ) {
 		. '<div style="font:600 12px/1.4 Arial,Helvetica,sans-serif;color:' . $muted . ';text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px;">Message</div>'
 		. '<div style="background:' . $panel . ';border-left:3px solid ' . $accent . ';border-radius:6px;padding:16px 18px;font:400 15px/1.6 Arial,Helvetica,sans-serif;color:' . $ink . ';">' . $message_e . '</div></td></tr>'
 		. '<tr><td style="padding:24px 32px 32px;">'
-		. '<a href="' . $reply . '" style="display:inline-block;background:' . $ink . ';color:#ffffff;text-decoration:none;font:600 14px/1 Arial,Helvetica,sans-serif;padding:13px 22px;border-radius:8px;">Reply to ' . $first_e . '</a></td></tr>'
-		. '<tr><td style="padding:18px 32px;background:' . $panel . ';border-top:1px solid ' . $border . ';">'
-		. '<p style="margin:0;font:400 12px/1.5 Arial,Helvetica,sans-serif;color:' . $muted . ';">Sent from the contact form at <a href="' . $home . '" style="color:' . $muted . ';">buckleupdriving.ca</a> on ' . $sent_e . '.</p>'
-		. '</td></tr></table></td></tr></table></body></html>';
+		. '<a href="' . $reply . '" style="display:inline-block;background:' . $ink . ';color:#ffffff;text-decoration:none;font:600 14px/1 Arial,Helvetica,sans-serif;padding:13px 22px;border-radius:8px;">Reply to ' . $first_e . '</a></td></tr>';
+
+	$footer = 'Sent from the contact form at <a href="' . $home . '" style="color:' . $muted . ';">buckleupdriving.ca</a> on ' . $sent_e . '.';
+
+	// Shared chrome (logo header + white card + footer) lives in core helpers so
+	// the quiz result email reuses the exact house style.
+	if ( function_exists( 'buckleup_email_shell' ) ) {
+		return buckleup_email_shell( $subject_e, $inner, $footer );
+	}
+
+	// Fallback shell (kept minimal) if the helper is unavailable.
+	return '<!DOCTYPE html><html><body style="margin:0;background:#f3f4f6;">'
+		. '<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">'
+		. '<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;background:#fff;">'
+		. $inner . '</table></td></tr></table></body></html>';
 }
 
 /**

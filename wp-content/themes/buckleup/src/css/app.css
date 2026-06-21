@@ -497,6 +497,47 @@ html.dark {
   opacity: 1;
 }
 
+/* ICBC practice-center category palette — a stable 12-colour wheel keyed off the
+ * category INDEX (0..11, from buckleup_quiz_category_index_map()) via a single
+ * `data-cat="N"` attribute. This is the purge-safe alternative to building
+ * `bg-cat-${slug}` Tailwind strings: PHP/JS only ever set data-cat + the literal
+ * `.cat-*` classes below, so nothing here can be tree-shaken. Hues are tuned to
+ * read AA against --card in both themes; the colour is exposed as the `--cat` HSL
+ * channel triplet so the helpers can mix alpha the same way the tokens do. */
+[data-cat="0"]  { --cat: 217 91% 50%; }
+[data-cat="1"]  { --cat: 12 83% 52%; }
+[data-cat="2"]  { --cat: 160 84% 36%; }
+[data-cat="3"]  { --cat: 84 64% 40%; }
+[data-cat="4"]  { --cat: 35 92% 47%; }
+[data-cat="5"]  { --cat: 265 70% 56%; }
+[data-cat="6"]  { --cat: 190 80% 40%; }
+[data-cat="7"]  { --cat: 234 70% 56%; }
+[data-cat="8"]  { --cat: 178 70% 36%; }
+[data-cat="9"]  { --cat: 340 75% 52%; }
+[data-cat="10"] { --cat: 25 90% 50%; }
+[data-cat="11"] { --cat: 205 30% 45%; }
+
+.cat-dot { background: hsl(var(--cat)); }
+.cat-bar-fill { background: hsl(var(--cat)); }
+.cat-rail-active { border-color: hsl(var(--cat)); background: hsl(var(--cat) / 0.08); }
+.cat-rail-active .cat-label { color: hsl(var(--cat)); font-weight: 600; }
+.cat-accent-text { color: hsl(var(--cat)); }
+.cat-accent-border { border-color: hsl(var(--cat) / 0.4); }
+.cat-accent-soft { background: hsl(var(--cat) / 0.1); }
+
+/* Practice Exam Center timer chip — bespoke LITERAL state classes (NOT Tailwind
+ * amber-* variants, so they're never purged). The chrome timer carries data-timer
+ * (calm|warn|urgent|expired); quiz.js swaps in exactly one of these on each tick.
+ * Calm/urgent read off the design tokens; warn is a fixed amber that stays AA on
+ * either theme (the destructive token already covers urgent). The urgent pulse is
+ * gated behind prefers-reduced-motion below (.exam-pulse). */
+.timer-calm    { background: hsl(var(--muted)); color: hsl(var(--foreground)); }
+.timer-warn    { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+.timer-urgent  { background: hsl(var(--destructive) / 0.10); color: hsl(var(--destructive)); border-color: hsl(var(--destructive) / 0.30); }
+.timer-expired { background: hsl(var(--destructive) / 0.10); color: hsl(var(--destructive)); }
+/* Gentle attention pulse for the final minute; reuses the pulse-glow keyframe. */
+.exam-pulse    { animation: pulse-glow 1.4s ease-in-out infinite; }
+
 /* Typography enhancements */
 .text-balance {
   text-wrap: balance;

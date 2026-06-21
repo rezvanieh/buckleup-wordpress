@@ -274,6 +274,27 @@ function buckleup_nav_items(): array {
 }
 
 /**
+ * The differentiated header CTA → the free ICBC Class 4 practice-test hub. Uses
+ * the EMERALD accent (not the red "Book a Lesson" primary) so the two CTAs read
+ * as distinct actions. Returns null when the quiz plugin is inactive (graceful
+ * absence). `active` is true on any practice-center page (hub or category), set
+ * from the plugin's own page-context detection.
+ *
+ * @return array{href:string,label:string,active:bool}|null
+ */
+function buckleup_quiz_nav_cta(): ?array {
+	if ( ! function_exists( 'buckleup_quiz_hub_url' ) || ! function_exists( 'buckleup_quiz_page_context' ) ) {
+		return null;
+	}
+	$ctx = buckleup_quiz_page_context();
+	return array(
+		'href'   => buckleup_quiz_hub_url(),
+		'label'  => __( 'Free Practice Test', 'buckleup' ),
+		'active' => '' !== $ctx['type'],
+	);
+}
+
+/**
  * Whether the current request path matches a top-level page slug — mirrors the
  * source's `pathname === href` (exact) / `pathname.startsWith(href)` (prefix, for
  * Blog so posts count). Compares the request path, not WP conditionals, so it
@@ -336,6 +357,8 @@ function buckleup_sections(): array {
 		'home-hero', 'home-graduates', 'home-pricing', 'home-testimonials', 'home-faq', 'home-blog',
 		'location-hero',
 		'page-instructors', 'page-services', 'page-contact', 'page-about', 'page-resources', 'page-icbc',
+		'practice-test', // ICBC Class 4 knowledge practice-test hub + category pages (buckleup-quiz).
+		'exam',          // Distraction-free timed Practice Exam Center (one page, ?mode=).
 	);
 }
 

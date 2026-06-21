@@ -59,6 +59,8 @@ add_filter(
 add_filter(
 	'wp_mail_from_name',
 	function ( $name ) {
-		return $name ? $name : 'BuckleUp Driving School';
+		// WordPress passes its default 'WordPress' here (truthy), so only keep a
+		// name that's been genuinely customised — otherwise force the brand name.
+		return ( $name && 'WordPress' !== $name ) ? $name : 'BuckleUp Driving School';
 	}
 );
