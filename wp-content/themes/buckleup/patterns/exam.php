@@ -171,7 +171,7 @@ if ( $bu_is_cat ) {
 						</div>
 						<div class="flex items-center justify-between gap-3">
 							<span class="text-sm text-muted-foreground"><?php esc_html_e( 'Going back', 'buckleup' ); ?></span>
-							<span class="font-bold text-foreground"><?php esc_html_e( 'Not allowed', 'buckleup' ); ?></span>
+							<span class="font-bold text-foreground"><?php esc_html_e( 'Allowed', 'buckleup' ); ?></span>
 						</div>
 						<div class="flex items-center justify-between gap-3 sm:col-span-2">
 							<span class="text-sm text-muted-foreground"><?php esc_html_e( 'Attempts left', 'buckleup' ); ?></span>
@@ -190,7 +190,7 @@ if ( $bu_is_cat ) {
 					<ul class="space-y-3">
 						<?php
 						$bu_conditions = array(
-							__( "One question at a time — once you move on, you can't return to a previous question.", 'buckleup' ),
+							__( 'One question at a time — you can go back to review or change your earlier answers before you submit.', 'buckleup' ),
 							sprintf( /* translators: %d: time-limit minutes */ __( "The %d-minute timer starts when you press Begin and can't be paused.", 'buckleup' ), $bu_time_words ),
 							__( 'When the time runs out, your exam is submitted automatically and scored.', 'buckleup' ),
 							__( 'Leaving, refreshing, or closing this page ends the attempt — your progress will be lost.', 'buckleup' ),

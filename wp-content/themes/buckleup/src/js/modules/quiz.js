@@ -1,6 +1,7 @@
 // ICBC Class 4 practice-center runner. Enhances the server-rendered
 // patterns/practice-test.php mount ([data-quiz]) into an interactive,
-// single-question, forward-only test driven by the buckleup-quiz REST API. The
+// single-question test (with a Back button to revisit already-seen questions)
+// driven by the buckleup-quiz REST API. The
 // static SEO body (sample questions, category grid, FAQ) stays in the DOM for
 // crawlers / no-JS; only the [data-quiz] block's panels are swapped.
 //
@@ -532,8 +533,13 @@ export function initQuiz(root = document) {
       // question
       `<h2 data-quiz-focus tabindex="-1" class="text-lg md:text-xl font-semibold text-foreground leading-snug mb-5 outline-none">${esc(q.question)}</h2>` +
       `<div role="radiogroup" aria-label="Answer options" class="space-y-3 mb-8">${opts}</div>` +
-      // nav: forward-only — the button is hidden until an option is chosen.
-      `<div class="flex items-center justify-end gap-3">` +
+      // nav: a Back button to revisit earlier (already-seen) questions on the left,
+      // and the forward button on the right (hidden until an option is chosen). Back
+      // only ever moves over loaded questions — future categories stay unfetched.
+      `<div class="flex items-center justify-between gap-3">` +
+      (cursor > 0
+        ? `<button type="button" data-quiz-back class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-200 h-11 px-6 border-2 border-border bg-background text-foreground shadow-sm hover:bg-secondary"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Back</button>`
+        : `<span></span>`) +
       (isLast
         ? `<button type="button" data-quiz-next data-final="true" ${answered ? '' : 'hidden'} class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-200 h-11 px-8 bg-primary text-primary-foreground shadow-md hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50">See my results</button>`
         : `<button type="button" data-quiz-next ${answered ? '' : 'hidden'} class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-200 h-11 px-8 bg-primary text-primary-foreground shadow-md hover:bg-primary/90">Next<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>`) +
@@ -655,10 +661,23 @@ export function initQuiz(root = document) {
     }
   };
 
+  // Step back to the previous (already-seen) question. Loaded questions only; the
+  // saved answer is re-selected by renderCard, and the timer keeps running.
+  const goBack = () => {
+    if (cursor > 0) {
+      cursor -= 1;
+      goToCard();
+    }
+  };
+
   const onRunningClick = (e) => {
     const opt = e.target.closest('[data-quiz-option]');
     if (opt) {
       selectOption(Number(opt.getAttribute('data-quiz-option')));
+      return;
+    }
+    if (e.target.closest('[data-quiz-back]')) {
+      goBack();
       return;
     }
     if (e.target.closest('[data-quiz-next]')) {
