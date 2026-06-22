@@ -75,6 +75,11 @@ export function initQuiz(root = document) {
   // slug → 0..11 index, for data-cat colour mapping (purge-safe).
   const catIndex = cfg.catIndex && typeof cfg.catIndex === 'object' ? cfg.catIndex : {};
   const idxFor = (slug) => (slug in catIndex ? Number(catIndex[slug]) : 0);
+  // slug → inline SVG (from the config) so the rail / card / results show each
+  // category's icon (coloured via .cat-accent-text on an ancestor with data-cat),
+  // consistent with the server-rendered landing pages.
+  const catIcons = cfg.catIcons && typeof cfg.catIcons === 'object' ? cfg.catIcons : {};
+  const catIcon = (slug, cls) => `<span class="cat-accent-text inline-flex items-center justify-center shrink-0 ${cls || 'w-4 h-4'}">${catIcons[slug] || ''}</span>`;
 
   const auth = window.buckleupAuth || {};
   const apiBase = auth.restUrl || '/wp-json/buckleup/v1/';
@@ -398,7 +403,7 @@ export function initQuiz(root = document) {
         return (
           `<li data-cat="${ci}" data-state="${state}" class="group rounded-xl border px-3 py-2 transition-colors ${rowCls}">` +
           `<div class="flex items-center gap-2.5">` +
-          `<span class="cat-dot w-2 h-2 rounded-full shrink-0 group-data-[state=todo]:opacity-40"></span>` +
+          `${catIcon(c.slug, 'w-4 h-4 group-data-[state=todo]:opacity-40')}` +
           `<span class="cat-label flex-1 text-sm leading-tight text-foreground">${esc(c.short || c.label || '')}</span>` +
           `<span class="text-xs font-medium text-muted-foreground tabular-nums">${ans}/${tot}</span>` +
           `</div>` +
@@ -443,6 +448,8 @@ export function initQuiz(root = document) {
     const head = mount.querySelector('[data-quiz-railhead]');
     if (head) {
       head.setAttribute('data-cat', String(active < 0 ? 0 : active));
+      const iconEl = head.querySelector('[data-quiz-railhead-icon]');
+      if (iconEl) iconEl.innerHTML = cat ? (catIcons[cat.slug] || '') : '';
       const nameEl = head.querySelector('[data-quiz-railhead-name]');
       if (nameEl) nameEl.textContent = cat ? cat.short || cat.label || '' : '';
       const bar = head.querySelector('[data-quiz-railhead-bar]');
@@ -462,7 +469,7 @@ export function initQuiz(root = document) {
       // Mobile drawer trigger + sticky mini-header (current category + overall bar).
       `<div class="lg:hidden mb-4">` +
       `<div data-quiz-railhead data-cat="0" class="glass rounded-2xl border border-border p-3 flex items-center gap-3">` +
-      `<span class="cat-dot w-3 h-3 rounded-full shrink-0"></span>` +
+      `<span data-quiz-railhead-icon class="cat-accent-text inline-flex items-center justify-center shrink-0 w-5 h-5"></span>` +
       `<div class="flex-1 min-w-0">` +
       `<div class="flex items-center justify-between gap-2 mb-1"><span data-quiz-railhead-name class="text-sm font-semibold text-foreground truncate"></span><span data-quiz-railhead-count class="text-xs text-muted-foreground tabular-nums"></span></div>` +
       `<div class="h-1.5 w-full rounded-full bg-muted overflow-hidden"><div data-quiz-railhead-bar class="h-full bg-primary rounded-full transition-all duration-300" style="width:0%"></div></div>` +
@@ -525,7 +532,7 @@ export function initQuiz(root = document) {
       `<div data-cat="${q.categoryIndex}" class="glass rounded-3xl border border-border p-6 md:p-8">` +
       // header: category tag + question counter
       `<div class="flex items-center justify-between gap-3 mb-5">` +
-      `<span class="inline-flex items-center gap-2 px-3 py-1 rounded-full cat-accent-soft text-xs font-semibold"><span class="cat-dot w-2 h-2 rounded-full"></span><span class="cat-accent-text">${esc(catName)}</span></span>` +
+      `<span class="inline-flex items-center gap-2 px-3 py-1 rounded-full cat-accent-soft text-xs font-semibold">${catIcon(q.category, 'w-3.5 h-3.5')}<span class="cat-accent-text">${esc(catName)}</span></span>` +
       `<span class="text-sm font-medium text-muted-foreground tabular-nums">Question ${num} of ${total}</span>` +
       `</div>` +
       // aria-live category announce (visually hidden)
@@ -865,7 +872,7 @@ export function initQuiz(root = document) {
         const weak = w < passPct;
         return (
           `<tr data-cat="${idxForSlug(slug)}" data-state="${weak ? 'weak' : 'ok'}" class="data-[state=weak]:bg-destructive/5">` +
-          `<td class="py-2.5 pr-3 align-middle"><span class="inline-flex items-center gap-2"><span class="cat-dot w-2 h-2 rounded-full shrink-0"></span><span class="text-sm font-medium text-foreground">${esc(labelFor(slug))}</span></span></td>` +
+          `<td class="py-2.5 pr-3 align-middle"><span class="inline-flex items-center gap-2">${catIcon(slug, 'w-4 h-4')}<span class="text-sm font-medium text-foreground">${esc(labelFor(slug))}</span></span></td>` +
           `<td class="py-2.5 px-3 align-middle w-1/2"><div class="h-2 w-full rounded-full bg-muted overflow-hidden"><div class="cat-bar-fill h-full rounded-full" style="width:${w}%"></div></div></td>` +
           `<td class="py-2.5 pl-3 align-middle text-right text-sm text-muted-foreground tabular-nums">${corr}/${tot}</td>` +
           `</tr>`
@@ -892,7 +899,7 @@ export function initQuiz(root = document) {
       .map(
         (r) =>
           `<a href="${esc(hubUrl + r.slug + '/')}" data-cat="${idxForSlug(r.slug)}" class="group flex items-center gap-2.5 rounded-xl border border-border bg-background px-4 py-3 hover:bg-secondary transition-colors">` +
-          `<span class="cat-dot w-2.5 h-2.5 rounded-full shrink-0"></span>` +
+          `${catIcon(r.slug, 'w-4 h-4')}` +
           `<span class="flex-1 text-sm font-medium text-foreground">${esc(labelFor(r.slug))}</span>` +
           `<span class="cat-accent-text text-xs font-semibold">${Math.round(r.ratio * 100)}%</span>` +
           `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>` +
