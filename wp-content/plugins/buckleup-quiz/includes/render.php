@@ -214,6 +214,14 @@ function buckleup_quiz_category_index_map() {
  * @return array<string,mixed>
  */
 function buckleup_quiz_js_config( $mode = 'full' ) {
+	// slug → inline SVG (currentColor, sized by the runner) so the JS rail/card
+	// can show each category's icon, matching the server-rendered landing pages.
+	$cat_icons = array();
+	foreach ( array_keys( buckleup_quiz_categories() ) as $slug ) {
+		$cat_icons[ $slug ] = function_exists( 'buckleup_icon' )
+			? buckleup_icon( buckleup_quiz_category_icon( $slug ), 'w-full h-full' )
+			: '';
+	}
 	return array(
 		'mode'          => buckleup_quiz_is_category( $mode ) ? $mode : 'full',
 		'fullTotal'     => buckleup_quiz_cfg( 'full_total', 50 ),
@@ -221,6 +229,7 @@ function buckleup_quiz_js_config( $mode = 'full' ) {
 		'passPct'       => buckleup_quiz_cfg( 'pass_pct', 80 ),
 		'hubUrl'        => buckleup_quiz_hub_url(),
 		'catIndex'      => buckleup_quiz_category_index_map(),
+		'catIcons'      => $cat_icons,
 	);
 }
 

@@ -118,6 +118,39 @@ function buckleup_quiz_category_label( $slug ) {
 }
 
 /**
+ * Distinct icon (theme `buckleup_icon` name) for each category — used everywhere
+ * a category is shown (hub topic grid, category hero, the runner rail/card) so the
+ * topics are recognisable at a glance instead of relying on a colour dot alone.
+ *
+ * @param string $slug
+ * @return string Icon name.
+ */
+function buckleup_quiz_category_icon( $slug ) {
+	$map = array(
+		'getting-your-licence'           => 'id-card',
+		'heavy-vehicle-braking'          => 'gauge',
+		'basic-driving-skills'           => 'car',
+		'fuel-efficient-driving'         => 'fuel',
+		'trucks-and-trailers'            => 'truck',
+		'buses-taxis-limos-ride-hailing' => 'bus',
+		'hours-of-service'               => 'clock',
+		'air-brakes'                     => 'wind',
+		'air-brake-adjustment'           => 'wrench',
+		'pre-trip-inspections'           => 'clipboard-check',
+		'signs-signals-and-markings'     => 'octagon',
+		'industrial-roads'               => 'construction',
+	);
+	$icon = isset( $map[ $slug ] ) ? $map[ $slug ] : 'check-circle';
+	/**
+	 * Filter the icon for a category slug.
+	 *
+	 * @param string $icon
+	 * @param string $slug
+	 */
+	return (string) apply_filters( 'buckleup_quiz_category_icon', $icon, $slug );
+}
+
+/**
  * Engine tunables. Filter individual keys via `buckleup_quiz_config`.
  *
  * - full_total        : questions in a full mock exam (~real ICBC length).
