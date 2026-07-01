@@ -1272,7 +1272,7 @@ function buckleup_seo_practice_quiz_node() {
 		$quiz_name = sprintf( 'ICBC Class 4 %s Practice Test', $label );
 		$about     = sprintf( 'ICBC Class 4 %s knowledge test (British Columbia)', $label );
 	} else {
-		$quiz_name = 'ICBC Class 4 Knowledge Test — Free Practice Questions';
+		$quiz_name = 'ICBC Class 4 Knowledge Test: Free Practice Questions';
 		$about     = 'ICBC Class 4 commercial driver knowledge test (British Columbia)';
 	}
 

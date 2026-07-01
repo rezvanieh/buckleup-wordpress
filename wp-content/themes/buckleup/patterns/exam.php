@@ -65,9 +65,9 @@ $bu_time_words = (int) round( $bu_time / 60 );
 
 // Subtitle + timer-helper phrasing differ between full and category.
 if ( $bu_is_cat ) {
-	$bu_subtitle = sprintf( /* translators: %s: category label */ __( 'ICBC Class 4 — %s Practice', 'buckleup' ), $bu_cat_label );
+	$bu_subtitle = sprintf( /* translators: %s: category label */ __( 'ICBC Class 4: %s Practice', 'buckleup' ), $bu_cat_label );
 } else {
-	$bu_subtitle = __( 'ICBC Class 4 Knowledge — Full Practice Exam', 'buckleup' );
+	$bu_subtitle = __( 'ICBC Class 4 Knowledge: Full Practice Exam', 'buckleup' );
 }
 ?>
 <!-- wp:html -->
@@ -91,7 +91,7 @@ if ( $bu_is_cat ) {
 			<!-- Center: exam title + (running only) the live timer chip. -->
 			<div class="flex-1 min-w-0 flex items-center justify-center gap-3">
 				<span class="hidden sm:block text-sm font-semibold text-foreground text-center truncate">
-					<?php esc_html_e( 'ICBC Class 4 Knowledge Test — Practice Exam', 'buckleup' ); ?>
+					<?php esc_html_e( 'ICBC Class 4 Knowledge Test: Practice Exam', 'buckleup' ); ?>
 				</span>
 				<?php if ( $bu_time > 0 ) : ?>
 					<!-- Timer chip — hidden until the exam is running (JS reveals + ticks it).
@@ -147,7 +147,7 @@ if ( $bu_is_cat ) {
 				</div>
 
 				<p class="text-muted-foreground leading-relaxed text-center max-w-2xl mx-auto mb-8">
-					<?php esc_html_e( "Give the conditions below a quick read. Once you hit Begin, the clock starts — so make sure you've got a quiet stretch of time before you tap it.", 'buckleup' ); ?>
+					<?php esc_html_e( "Give the conditions below a quick read. Once you hit Begin, the clock starts, so make sure you've got a quiet stretch of time before you tap it.", 'buckleup' ); ?>
 				</p>
 
 				<!-- Test details card. The time-limit row is the elevated eye-anchor. -->
@@ -180,7 +180,7 @@ if ( $bu_is_cat ) {
 						</div>
 					</div>
 					<p class="text-sm text-muted-foreground mt-5 pt-5 border-t border-border leading-relaxed">
-						<?php esc_html_e( "Finish up and you'll get your score right away, a breakdown by topic, a study report in your inbox, and — if you pass — a certificate you can keep.", 'buckleup' ); ?>
+						<?php esc_html_e( "Finish up and you'll get your score right away, a breakdown by topic, a study report in your inbox, and (if you pass) a certificate you can keep.", 'buckleup' ); ?>
 					</p>
 				</div>
 
@@ -191,9 +191,9 @@ if ( $bu_is_cat ) {
 						<?php
 						$bu_conditions = array(
 							__( 'One question at a time. You can go back and change an earlier answer any time before you submit.', 'buckleup' ),
-							sprintf( /* translators: %d: time-limit minutes */ __( "The %d-minute timer starts the second you press Begin, and it can't be paused — so don't step away.", 'buckleup' ), $bu_time_words ),
-							__( "Time runs out, and the exam submits itself — no do-overs.", 'buckleup' ),
-							__( "Leave the page, refresh it, or close the tab, and the attempt's over — whatever you'd answered is gone.", 'buckleup' ),
+							sprintf( /* translators: %d: time-limit minutes */ __( "The %d-minute timer starts the second you press Begin, and it can't be paused, so don't step away.", 'buckleup' ), $bu_time_words ),
+							__( "Time runs out, and the exam submits itself. No do-overs.", 'buckleup' ),
+							__( "Leave the page, refresh it, or close the tab, and the attempt's over. Whatever you'd answered is gone.", 'buckleup' ),
 						);
 						foreach ( $bu_conditions as $bu_cond ) :
 							?>
@@ -228,14 +228,14 @@ if ( $bu_is_cat ) {
 				<!-- Out-of-attempts CTA — hidden until the status probe detects remaining===0. -->
 				<div data-quiz-locked hidden class="glass rounded-2xl border border-border p-6 md:p-8 mt-6 text-center">
 					<p class="text-muted-foreground mb-5 max-w-xl mx-auto">
-						<?php esc_html_e( "You've used all your free attempts — nice work putting in the prep. Want unlimited practice and a real instructor in your corner? Create a free account to keep going, or book a lesson with a BuckleUp instructor and walk into your ICBC test ready.", 'buckleup' ); ?>
+						<?php esc_html_e( "You've used all your free attempts. Nice work putting in the prep. Want unlimited practice and a real instructor in your corner? Create a free account to keep going, or book a lesson with a BuckleUp instructor and walk into your ICBC test ready.", 'buckleup' ); ?>
 					</p>
 					<div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-						<a href="<?php echo esc_url( home_url( '/register/' ) ); ?>" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-200 h-12 px-6 bg-primary text-primary-foreground shadow-md hover:bg-primary/90">
+						<a href="<?php echo esc_url( home_url( '/register/' ) ); ?>" class="no-underline! inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-200 h-12 px-6 bg-primary text-primary-foreground shadow-md hover:bg-primary/90">
 							<?php echo buckleup_icon( 'user', 'w-5 h-5' ); // phpcs:ignore ?>
 							<?php esc_html_e( 'Create a free account', 'buckleup' ); ?>
 						</a>
-						<a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-200 h-12 px-6 border-2 border-border bg-background text-foreground shadow-sm hover:bg-secondary">
+						<a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>" class="no-underline! inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-200 h-12 px-6 border-2 border-border bg-background text-foreground shadow-sm hover:bg-secondary">
 							<?php echo buckleup_icon( 'calendar', 'w-5 h-5' ); // phpcs:ignore ?>
 							<?php esc_html_e( 'Book a lesson', 'buckleup' ); ?>
 						</a>
@@ -263,7 +263,7 @@ if ( $bu_is_cat ) {
 					<div>
 						<label for="bu-exam-name" class="<?php echo esc_attr( buckleup_label_class( 'mb-2 block' ) ); ?>">
 							<?php esc_html_e( 'Full name', 'buckleup' ); ?>
-							<span class="font-normal text-muted-foreground"><?php esc_html_e( '(optional — for your certificate)', 'buckleup' ); ?></span>
+							<span class="font-normal text-muted-foreground"><?php esc_html_e( '(optional, for your certificate)', 'buckleup' ); ?></span>
 						</label>
 						<input type="text" id="bu-exam-name" name="name" autocomplete="name" placeholder="<?php esc_attr_e( 'Jane Driver', 'buckleup' ); ?>" class="<?php echo esc_attr( buckleup_input_class() ); ?>">
 					</div>

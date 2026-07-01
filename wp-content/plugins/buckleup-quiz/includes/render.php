@@ -161,21 +161,21 @@ function buckleup_quiz_hub_faqs() {
 			'question' => __( 'What score do I need to pass the ICBC Class 4 knowledge test?', 'buckleup-quiz' ),
 			'answer'   => sprintf(
 				/* translators: %d: passing percentage. */
-				__( "%d%%. That's the number ICBC actually uses, and it's what we score against here too — instantly, with a topic-by-topic breakdown, so you know what to brush up on before you book.", 'buckleup-quiz' ),
+				__( "%d%%. That's the number ICBC actually uses, and it's what we score against here too. You'll see your result instantly, with a topic-by-topic breakdown, so you know what to brush up on before you book.", 'buckleup-quiz' ),
 				$pass_pct
 			),
 		),
 		array(
 			'question' => __( 'Who needs an ICBC Class 4 licence in BC?', 'buckleup-quiz' ),
-			'answer'   => __( "If you're driving a taxi, limo, ride-hailing vehicle, ambulance, or a small bus or shuttle (up to 25 seats) anywhere in BC, you'll need a Class 4. There's an unrestricted version (4U) and a restricted one (4R) — which one applies depends on the vehicle.", 'buckleup-quiz' ),
+			'answer'   => __( "If you're driving a taxi, limo, ride-hailing vehicle, ambulance, or a small bus or shuttle (up to 25 seats) anywhere in BC, you'll need a Class 4. There's an unrestricted version (4U) and a restricted one (4R); which one applies depends on the vehicle.", 'buckleup-quiz' ),
 		),
 		array(
 			'question' => __( 'Is the Class 4 knowledge test the same as the Class 5 test?', 'buckleup-quiz' ),
-			'answer'   => __( "No — it builds on it. You still need your Class 5 rules of the road, but Class 4 adds commercial-driving topics on top: heavy-vehicle braking, air brakes, pre-trip inspections, hours of service, carrying passengers safely, and more. We've split those into the 12 categories above.", 'buckleup-quiz' ),
+			'answer'   => __( "No, it builds on it. You still need your Class 5 rules of the road, but Class 4 adds commercial-driving topics on top: heavy-vehicle braking, air brakes, pre-trip inspections, hours of service, carrying passengers safely, and more. We've split those into the 12 categories above.", 'buckleup-quiz' ),
 		),
 		array(
 			'question' => __( 'Is this ICBC Class 4 practice test free?', 'buckleup-quiz' ),
-			'answer'   => __( "Yes, completely — the sample questions and the full timed test, no cost either way. Honestly, the best thing you can do before test day is keep practising until you're scoring comfortably above the pass mark, not just barely over it.", 'buckleup-quiz' ),
+			'answer'   => __( "Yes, completely: the sample questions and the full timed test, no cost either way. Honestly, the best thing you can do before test day is keep practising until you're scoring comfortably above the pass mark, not just barely over it.", 'buckleup-quiz' ),
 		),
 		array(
 			'question' => __( 'Where do I take the ICBC Class 4 knowledge test near Vancouver?', 'buckleup-quiz' ),
@@ -183,7 +183,7 @@ function buckleup_quiz_hub_faqs() {
 		),
 		array(
 			'question' => __( 'How should I use this practice test to study?', 'buckleup-quiz' ),
-			'answer'   => __( "Start with whatever makes you nervous — for a lot of people that's air brakes or pre-trip inspections — then move on to full mixed tests until you're consistently clearing the pass mark, not just scraping by. And actually read the explanation after each question; that's what makes the rules stick, not just staring at the correct answer.", 'buckleup-quiz' ),
+			'answer'   => __( "Start with whatever makes you nervous (for a lot of people, that's air brakes or pre-trip inspections), then move on to full mixed tests until you're consistently clearing the pass mark, not just scraping by. And actually read the explanation after each question; that's what makes the rules stick, not just staring at the correct answer.", 'buckleup-quiz' ),
 		),
 	);
 

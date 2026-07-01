@@ -56,10 +56,10 @@ add_action( 'template_redirect', function () {
  */
 function buckleup_quiz_mode_label( $mode ) {
 	if ( 'full' === $mode || '' === $mode ) {
-		return __( 'ICBC Class 4 Knowledge — Full Practice Test', 'buckleup-quiz' );
+		return __( 'ICBC Class 4 Knowledge: Full Practice Test', 'buckleup-quiz' );
 	}
 	/* translators: %s: category name. */
-	return sprintf( __( 'ICBC Class 4 — %s Practice Test', 'buckleup-quiz' ), buckleup_quiz_category_label( $mode ) );
+	return sprintf( __( 'ICBC Class 4: %s Practice Test', 'buckleup-quiz' ), buckleup_quiz_category_label( $mode ) );
 }
 
 /**
@@ -91,7 +91,7 @@ function buckleup_quiz_render_certificate_page( $result ) {
 <meta charset="<?php bloginfo( 'charset' ); ?>">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title><?php echo esc_html( $not_available ? __( 'Certificate unavailable', 'buckleup-quiz' ) : __( 'Certificate of Completion — BuckleUp', 'buckleup-quiz' ) ); ?></title>
+<title><?php echo esc_html( $not_available ? __( 'Certificate unavailable', 'buckleup-quiz' ) : __( 'BuckleUp Certificate of Completion', 'buckleup-quiz' ) ); ?></title>
 <style>
 	*{box-sizing:border-box}
 	body{margin:0;background:#f3f4f6;color:<?php echo esc_attr( $ink ); ?>;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -136,7 +136,7 @@ function buckleup_quiz_render_certificate_page( $result ) {
 			<h1 style="margin:0 0 10px;font-size:22px;"><?php esc_html_e( 'Certificate not available', 'buckleup-quiz' ); ?></h1>
 			<p style="color:<?php echo esc_attr( $muted ); ?>;line-height:1.6;">
 				<?php echo $result
-					? esc_html__( 'This attempt didn’t reach the pass mark, so there’s no certificate to show — but every practice run gets you closer. Try again!', 'buckleup-quiz' )
+					? esc_html__( 'This attempt didn’t reach the pass mark, so there’s no certificate to show. But every practice run gets you closer. Try again!', 'buckleup-quiz' )
 					: esc_html__( 'We couldn’t find a certificate for that link.', 'buckleup-quiz' ); ?>
 			</p>
 			<p style="margin-top:20px;"><a class="btn btn-primary" href="<?php echo esc_url( $hub ); ?>"><?php esc_html_e( 'Take the practice test', 'buckleup-quiz' ); ?></a></p>
@@ -169,7 +169,7 @@ function buckleup_quiz_render_certificate_page( $result ) {
 					<div class="tile"><div class="v" style="font-size:18px;"><?php echo esc_html( $date ); ?></div><div class="l"><?php esc_html_e( 'Date', 'buckleup-quiz' ); ?></div></div>
 				</div>
 				<?php /* translators: %d: pass percentage. */ ?>
-				<div class="badge">✦ <?php printf( esc_html__( 'PASSED — above the %d%% pass mark', 'buckleup-quiz' ), $pass_pct ); ?></div>
+				<div class="badge">✦ <?php printf( esc_html__( 'PASSED: above the %d%% pass mark', 'buckleup-quiz' ), $pass_pct ); ?></div>
 			</div>
 			<div class="cert-foot">
 				<div class="sig"><?php echo esc_html( get_bloginfo( 'name' ) ); ?><small>buckleupdriving.ca · <?php esc_html_e( 'ICBC-certified instructors', 'buckleup-quiz' ); ?></small></div>

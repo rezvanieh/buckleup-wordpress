@@ -49,7 +49,7 @@ function bu_quiz_upsert_page( $slug, $title, $content, $parent_id = 0, $full_pat
 // Hub.
 $hub_id = bu_quiz_upsert_page(
 	$base,
-	'ICBC Class 4 Knowledge Test — Free Practice Test (BC)',
+	'ICBC Class 4 Knowledge Test: Free Practice Test (BC)',
 	$content,
 	0,
 	$base
@@ -59,7 +59,7 @@ WP_CLI::log( "Hub page #{$hub_id} -> /{$base}/" );
 // Category children.
 $created = 0;
 foreach ( buckleup_quiz_categories() as $slug => $cat ) {
-	$title = $cat['label'] . ' — ICBC Class 4 Practice Test';
+	$title = $cat['label'] . ': ICBC Class 4 Practice Test';
 	$pid   = bu_quiz_upsert_page( $slug, $title, $content, $hub_id, $base . '/' . $slug );
 	if ( $pid ) {
 		++$created;
@@ -71,7 +71,7 @@ foreach ( buckleup_quiz_categories() as $slug => $cat ) {
 // Uses the 'page-exam' template (no site header/footer) + a noindex robots meta.
 $exam_id = bu_quiz_upsert_page(
 	'exam',
-	'Practice Exam — ICBC Class 4 Knowledge Test',
+	'Practice Exam: ICBC Class 4 Knowledge Test',
 	"<!-- wp:buckleup/section {\"name\":\"exam\"} /-->",
 	$hub_id,
 	$base . '/exam',

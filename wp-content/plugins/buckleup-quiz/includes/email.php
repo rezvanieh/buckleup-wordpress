@@ -48,14 +48,14 @@ function buckleup_quiz_result_email_html( $result ) {
 		$track      = '#dcfce7';
 		$badge_text = esc_html__( 'YOU PASSED 🎉', 'buckleup-quiz' );
 		/* translators: %d: pass percentage. */
-		$opening = sprintf( esc_html__( 'Nice work — you cleared the %d%% pass mark on your ICBC Class 4 practice test. Keep this up and you’ll walk into the real thing ready.', 'buckleup-quiz' ), $pass_pct );
+		$opening = sprintf( esc_html__( 'Nice work, you cleared the %d%% pass mark on your ICBC Class 4 practice test. Keep this up and you’ll walk into the real thing ready.', 'buckleup-quiz' ), $pass_pct );
 	} elseif ( $pct >= 60 ) {
 		$state_bg   = '#fffbeb';
 		$state_col  = $amber;
 		$track      = '#fef3c7';
 		$badge_text = esc_html__( 'SO CLOSE', 'buckleup-quiz' );
 		/* translators: %d: pass percentage. */
-		$opening = sprintf( esc_html__( 'So close — you’re just shy of the %d%% pass mark. One more focused round on the topic below and you’ll clear it.', 'buckleup-quiz' ), $pass_pct );
+		$opening = sprintf( esc_html__( 'So close, you’re just shy of the %d%% pass mark. One more focused round on the topic below and you’ll clear it.', 'buckleup-quiz' ), $pass_pct );
 	} else {
 		$state_bg   = '#fef2f2';
 		$state_col  = $red;
@@ -248,7 +248,7 @@ function buckleup_quiz_send_result_email( $email, $result ) {
 	$pct = (int) $result['pct'];
 	if ( ! empty( $result['passed'] ) ) {
 		/* translators: %d: percentage. */
-		$subject = sprintf( __( '🎓 You passed your ICBC Class 4 practice test — %d%%', 'buckleup-quiz' ), $pct );
+		$subject = sprintf( __( '🎓 You passed your ICBC Class 4 practice test: %d%%', 'buckleup-quiz' ), $pct );
 	} else {
 		$subject = sprintf(
 			/* translators: 1: score, 2: total, 3: percentage. */

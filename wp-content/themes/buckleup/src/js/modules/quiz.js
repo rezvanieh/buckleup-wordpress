@@ -146,7 +146,7 @@ export function initQuiz(root = document) {
 
   // Keep the chrome in step with the screen: the logo is UNLINKED while running
   // (a click-away is an exit); the Exit action reads "Exit exam" while running and
-  // "Done — back to site" on results.
+  // "Back to site" on results.
   const syncExamChrome = (step) => {
     const running = step === 'running';
     const link = examEls.logoLink;
@@ -163,7 +163,7 @@ export function initQuiz(root = document) {
     }
     const exitLabel = examEls.exitBtn ? examEls.exitBtn.querySelector('[data-quiz-exit-label]') : null;
     if (exitLabel) {
-      exitLabel.textContent = step === 'results' ? 'Done — back to site' : 'Exit exam';
+      exitLabel.textContent = step === 'results' ? 'Back to site' : 'Exit exam';
     }
   };
 
@@ -536,7 +536,7 @@ export function initQuiz(root = document) {
       `<span class="text-sm font-medium text-muted-foreground tabular-nums">Question ${num} of ${total}</span>` +
       `</div>` +
       // aria-live category announce (visually hidden)
-      `<p data-quiz-announce aria-live="polite" class="sr-only">${esc(catName)} — question ${num} of ${total}</p>` +
+      `<p data-quiz-announce aria-live="polite" class="sr-only">${esc(catName)}, question ${num} of ${total}</p>` +
       // question
       `<h2 data-quiz-focus tabindex="-1" class="text-lg md:text-xl font-semibold text-foreground leading-snug mb-5 outline-none">${esc(q.question)}</h2>` +
       `<div role="radiogroup" aria-label="Answer options" class="space-y-3 mb-8">${opts}</div>` +
@@ -881,7 +881,7 @@ export function initQuiz(root = document) {
       .join('');
     const bdTable = bdRows
       ? `<div class="glass rounded-3xl border border-border p-6 md:p-8 mb-8"><h3 class="text-lg font-semibold text-foreground mb-1">Score by topic</h3>` +
-        `<p class="text-sm text-muted-foreground mb-5">Here's exactly where the real exam would trip you up — ranked from weakest to strongest, so you know what to fix first.</p>` +
+        `<p class="text-sm text-muted-foreground mb-5">Here's exactly where the real exam would trip you up, ranked from weakest to strongest, so you know what to fix first.</p>` +
         `<table class="w-full border-collapse"><tbody>${bdRows}</tbody></table></div>`
       : '';
 
@@ -898,7 +898,7 @@ export function initQuiz(root = document) {
     const focusLinks = ranked
       .map(
         (r) =>
-          `<a href="${esc(hubUrl + r.slug + '/')}" data-cat="${idxForSlug(r.slug)}" class="group flex items-center gap-2.5 rounded-xl border border-border bg-background px-4 py-3 hover:bg-secondary transition-colors">` +
+          `<a href="${esc(hubUrl + r.slug + '/')}" data-cat="${idxForSlug(r.slug)}" class="no-underline! group flex items-center gap-2.5 rounded-xl border border-border bg-background px-4 py-3 hover:bg-secondary transition-colors">` +
           `${catIcon(r.slug, 'w-4 h-4')}` +
           `<span class="flex-1 text-sm font-medium text-foreground">${esc(labelFor(r.slug))}</span>` +
           `<span class="cat-accent-text text-xs font-semibold">${Math.round(r.ratio * 100)}%</span>` +
@@ -908,7 +908,7 @@ export function initQuiz(root = document) {
       .join('');
     const focusBlock = focusLinks
       ? `<div class="glass rounded-3xl border border-border p-6 md:p-8 mb-8"><h3 class="text-lg font-semibold text-foreground mb-1">Focus your study</h3>` +
-        `<p class="text-sm text-muted-foreground mb-5">These are costing you the most points right now — start here.</p>` +
+        `<p class="text-sm text-muted-foreground mb-5">These are costing you the most points right now. Start here.</p>` +
         `<div class="grid gap-2.5 sm:grid-cols-2">${focusLinks}</div></div>`
       : '';
 
@@ -917,7 +917,7 @@ export function initQuiz(root = document) {
     let certCard = '';
     if (passed) {
       const claimedBtn = result.certificateUrl
-        ? `<a href="${esc(result.certificateUrl)}" data-quiz-cert-link class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-200 h-12 px-7 bg-accent text-accent-foreground shadow-md hover:bg-accent/90"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>View your certificate</a>`
+        ? `<a href="${esc(result.certificateUrl)}" data-quiz-cert-link class="no-underline! inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-200 h-12 px-7 bg-accent text-accent-foreground shadow-md hover:bg-accent/90"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>View your certificate</a>`
         : '';
       const claimForm = !hasName
         ? `<form data-quiz-claim-form novalidate class="mt-5 flex flex-col sm:flex-row items-stretch gap-2.5 max-w-md mx-auto">` +
@@ -928,7 +928,7 @@ export function initQuiz(root = document) {
       certCard =
         `<div data-quiz-cert class="glass rounded-3xl border border-accent/30 bg-accent/5 p-7 md:p-9 text-center mb-8">` +
         `<span class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-accent/15 text-accent mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></span>` +
-        `<h3 class="text-xl md:text-2xl font-bold text-foreground mb-2">Nice work — you passed!</h3>` +
+        `<h3 class="text-xl md:text-2xl font-bold text-foreground mb-2">Nice work, you passed!</h3>` +
         `<p class="text-muted-foreground max-w-md mx-auto">${hasName ? `Your certificate of completion is ready, ${esc(result.name)}.` : "Add your name and we'll get your certificate ready to print."}</p>` +
         `<div data-quiz-cert-action class="mt-5 flex justify-center">${claimedBtn}</div>` +
         claimForm +
@@ -943,7 +943,7 @@ export function initQuiz(root = document) {
       `<div class="text-center sm:text-left flex-1">` +
       `<div class="mb-3">${badge}</div>` +
       `<h2 data-quiz-focus tabindex="-1" class="text-2xl md:text-3xl font-bold text-foreground mb-2 outline-none">${passed ? "You're test-ready!" : 'Keep practising'}</h2>` +
-      `<p class="text-muted-foreground">Here's how it went — your score, plus a topic-by-topic breakdown so you know exactly what to brush up on before the real ICBC exam.</p>` +
+      `<p class="text-muted-foreground">Here's how it went: your score, plus a topic-by-topic breakdown so you know exactly what to brush up on before the real ICBC exam.</p>` +
       emailNote +
       `</div>` +
       `</div>` +
@@ -954,8 +954,8 @@ export function initQuiz(root = document) {
       // CTAs
       `<div class="flex flex-col sm:flex-row items-center justify-center gap-3">` +
       `<button type="button" data-quiz-retake class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-200 h-12 px-6 bg-primary text-primary-foreground shadow-md hover:bg-primary/90"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Take another test</button>` +
-      `<a href="${esc(hubUrl)}" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-200 h-12 px-6 border-2 border-border bg-background text-foreground shadow-sm hover:bg-secondary">Practise a topic</a>` +
-      `<a href="/contact/" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-200 h-12 px-6 border-2 border-border bg-background text-foreground shadow-sm hover:bg-secondary">Book a lesson</a>` +
+      `<a href="${esc(hubUrl)}" class="no-underline! inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-200 h-12 px-6 border-2 border-border bg-background text-foreground shadow-sm hover:bg-secondary">Practise a topic</a>` +
+      `<a href="/contact/" class="no-underline! inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-200 h-12 px-6 border-2 border-border bg-background text-foreground shadow-sm hover:bg-secondary">Book a lesson</a>` +
       `</div>`;
 
     // Animate the donut from full offset to its final value (skip under reduced motion).
@@ -1146,7 +1146,7 @@ export function initQuiz(root = document) {
       }, 6000);
     };
     if (left <= WARN_AT && left > URGENT_AT) push('5', '5 minutes remaining.');
-    if (left <= URGENT_AT) push('1', '1 minute remaining — finish up.');
+    if (left <= URGENT_AT) push('1', '1 minute remaining. Finish up.');
   };
 
   /* ---- auto-submit overlay at 0:00 ---- */
