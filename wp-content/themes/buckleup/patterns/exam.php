@@ -146,7 +146,7 @@ if ( $bu_is_cat ) {
 					<p class="text-base md:text-lg text-muted-foreground"><?php echo esc_html( $bu_subtitle ); ?></p>
 				</div>
 
-				<p class="text-muted-foreground leading-relaxed text-center max-w-2xl mx-auto mb-8">
+				<p class="text-muted-foreground leading-relaxed text-justify max-w-2xl mx-auto mb-8">
 					<?php esc_html_e( "Give the conditions below a quick read. Once you hit Begin, the clock starts, so make sure you've got a quiet stretch of time before you tap it.", 'buckleup' ); ?>
 				</p>
 
@@ -179,7 +179,7 @@ if ( $bu_is_cat ) {
 							<span data-quiz-attempts class="font-bold text-foreground tabular-nums"><?php echo esc_html( sprintf( /* translators: %d: max free attempts */ __( '%d free attempts', 'buckleup' ), $bu_max_att ) ); ?></span>
 						</div>
 					</div>
-					<p class="text-sm text-muted-foreground mt-5 pt-5 border-t border-border leading-relaxed">
+					<p class="text-sm text-muted-foreground mt-5 pt-5 border-t border-border leading-relaxed text-justify">
 						<?php esc_html_e( "Finish up and you'll get your score right away, a breakdown by topic, a study report in your inbox, and (if you pass) a certificate you can keep.", 'buckleup' ); ?>
 					</p>
 				</div>
@@ -227,7 +227,7 @@ if ( $bu_is_cat ) {
 
 				<!-- Out-of-attempts CTA — hidden until the status probe detects remaining===0. -->
 				<div data-quiz-locked hidden class="glass rounded-2xl border border-border p-6 md:p-8 mt-6 text-center">
-					<p class="text-muted-foreground mb-5 max-w-xl mx-auto">
+					<p class="text-muted-foreground text-justify mb-5 max-w-xl mx-auto">
 						<?php esc_html_e( "You've used all your free attempts. Nice work putting in the prep. Want unlimited practice and a real instructor in your corner? Create a free account to keep going, or book a lesson with a BuckleUp instructor and walk into your ICBC test ready.", 'buckleup' ); ?>
 					</p>
 					<div class="flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -298,7 +298,7 @@ if ( $bu_is_cat ) {
 		<div class="absolute inset-0 flex items-center justify-center p-4">
 			<div role="dialog" aria-modal="true" aria-labelledby="bu-exam-exit-title" data-state="closed" class="relative w-full max-w-md bg-card border border-border rounded-3xl shadow-2xl p-6 md:p-8 data-[state=closed]:opacity-0 data-[state=closed]:scale-95 transition-all duration-200">
 				<h2 id="bu-exam-exit-title" class="text-xl font-bold text-foreground mb-2"><?php esc_html_e( 'Leave the exam?', 'buckleup' ); ?></h2>
-				<p class="text-sm text-muted-foreground leading-relaxed mb-6">
+				<p class="text-sm text-muted-foreground leading-relaxed text-justify mb-6">
 					<?php esc_html_e( "Your progress won't be saved and this attempt is gone for good. You can always start fresh, but the timer resets from zero.", 'buckleup' ); ?>
 				</p>
 				<div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
