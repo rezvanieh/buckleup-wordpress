@@ -10,7 +10,7 @@
  * landing pages are marketing + SEO + navigation, and their CTAs LINK into the
  * exam (one page, ?mode-switched).
  *
- * HUB layout (the conversion page): centred hero → social-proof stats bar →
+ * HUB layout (the conversion page): centred hero →
  * "two ways to practise" (Full Mock Exam vs Practice by Topic) → a 3-column grid
  * of all 12 topics (each links to its category page) → crawlable sample
  * questions + FAQ (kept below for the Quiz/FAQPage JSON-LD — schema == visible).
@@ -51,20 +51,6 @@ $bu_cat_count = ( $bu_is_cat && isset( $bu_counts[ $bu_cat ] ) ) ? (int) $bu_cou
 $bu_samples = buckleup_quiz_sample_questions( $bu_cat, 6 );
 
 $bu_exam_url = add_query_arg( 'mode', $bu_is_cat ? $bu_cat : 'full', trailingslashit( $bu_hub_url ) . 'exam/' );
-
-/**
- * Social-proof stat tiles for the hub. Illustrative marketing figures — fully
- * filterable so the client can set real numbers without a code edit.
- */
-$bu_hub_stats = apply_filters(
-	'buckleup_quiz_hub_stats',
-	array(
-		array( 'value' => '142,800+', 'label' => __( 'Tests taken', 'buckleup' ) ),
-		array( 'value' => '~98%',     'label' => __( 'First-time pass rate', 'buckleup' ) ),
-		array( 'value' => '4.9★',     'label' => __( 'Rated by learners', 'buckleup' ), 'hide_mobile' => true ),
-		array( 'value' => '37 now',   'label' => __( 'Taking it live', 'buckleup' ), 'accent' => true ),
-	)
-);
 
 // The 3 featured topics shown on the "Practice by Topic" card.
 $bu_featured = array( 'air-brakes', 'pre-trip-inspections', 'hours-of-service' );
@@ -131,7 +117,7 @@ $bu_render_sample = static function ( array $q, int $n ) {
 	<?php if ( ! $bu_is_cat ) : /* ============================ HUB ============================ */ ?>
 
 		<!-- HERO — centred. -->
-		<div class="text-center max-w-3xl mx-auto mb-10 md:mb-12">
+		<div class="text-center max-w-3xl mx-auto mb-14 md:mb-20">
 			<span class="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold tracking-wide text-primary mb-6">
 				<span class="w-1.5 h-1.5 rounded-full bg-primary"></span><?php esc_html_e( 'FREE · NO SIGNUP TO START', 'buckleup' ); ?>
 			</span>
@@ -139,20 +125,8 @@ $bu_render_sample = static function ( array $q, int $n ) {
 				<?php esc_html_e( 'Pass your ICBC Class 4 knowledge test the first time.', 'buckleup' ); ?>
 			</h1>
 			<p class="text-lg md:text-xl text-muted-foreground leading-relaxed text-pretty max-w-2xl mx-auto">
-				<?php esc_html_e( 'A free practice test that mirrors the real exam — same length, same 12 commercial topics, instant scoring at the 80% pass mark.', 'buckleup' ); ?>
+				<?php esc_html_e( 'Same length as the real ICBC exam, the same 12 commercial topics, and a score the moment you finish — so test day feels familiar, not scary.', 'buckleup' ); ?>
 			</p>
-		</div>
-
-		<!-- SOCIAL-PROOF STATS BAR. -->
-		<div class="max-w-4xl mx-auto mb-14 md:mb-20">
-			<div class="grid grid-cols-3 md:grid-cols-4 rounded-2xl border border-border bg-card shadow-lg shadow-black/5 overflow-hidden">
-				<?php foreach ( $bu_hub_stats as $bu_si => $bu_stat ) : ?>
-					<div class="text-center px-3 py-6 md:py-7 border-border <?php echo ! empty( $bu_stat['hide_mobile'] ) ? 'hidden md:block' : ''; ?> <?php echo $bu_si > 0 ? 'border-l' : ''; ?>">
-						<div class="text-2xl md:text-[28px] font-bold leading-none <?php echo ! empty( $bu_stat['accent'] ) ? 'text-accent' : 'text-foreground'; ?>"><?php echo esc_html( $bu_stat['value'] ); ?></div>
-						<div class="text-xs md:text-sm text-muted-foreground mt-2 leading-tight"><?php echo esc_html( $bu_stat['label'] ); ?></div>
-					</div>
-				<?php endforeach; ?>
-			</div>
 		</div>
 
 		<!-- TWO WAYS TO PRACTISE. -->
@@ -170,7 +144,7 @@ $bu_render_sample = static function ( array $q, int $n ) {
 					</div>
 				</div>
 				<p class="text-[15px] text-muted-foreground leading-relaxed mb-5">
-					<?php /* translators: 1: questions, 2: minutes, 3: pass pct */ printf( esc_html__( 'The complete ICBC simulation — %1$d mixed questions, a %2$d-minute timer, the real %3$d%% pass mark. The closest thing to test day.', 'buckleup' ), (int) $bu_full, (int) $bu_mins, (int) $bu_pass_pct ); ?>
+					<?php /* translators: 1: questions, 2: minutes, 3: pass pct */ printf( esc_html__( '%1$d mixed questions, a %2$d-minute clock, the same %3$d%% pass mark ICBC uses. If you can handle this, you can handle the real thing.', 'buckleup' ), (int) $bu_full, (int) $bu_mins, (int) $bu_pass_pct ); ?>
 				</p>
 				<div class="flex flex-wrap gap-2 mb-6">
 					<?php
@@ -203,7 +177,7 @@ $bu_render_sample = static function ( array $q, int $n ) {
 					</div>
 				</div>
 				<p class="text-[15px] text-muted-foreground leading-relaxed mb-5">
-					<?php esc_html_e( 'Drill any single topic at your own pace — see the correct answer and a plain-English explanation after every question. Great for your weak spots.', 'buckleup' ); ?>
+					<?php esc_html_e( 'Work through one topic at a time, at your own speed. Every question comes with the right answer and a plain-English explanation, so you actually understand it instead of just memorizing it.', 'buckleup' ); ?>
 				</p>
 				<div class="flex flex-wrap items-center gap-x-4 gap-y-2 mb-6 text-sm">
 					<?php foreach ( $bu_featured as $bu_fslug ) : ?>
@@ -241,7 +215,7 @@ $bu_render_sample = static function ( array $q, int $n ) {
 			<div class="mb-16 md:mb-20">
 				<div class="text-center max-w-2xl mx-auto mb-8">
 					<h2 data-reveal class="text-2xl md:text-3xl font-bold text-foreground mb-3"><?php esc_html_e( 'Try a few sample questions', 'buckleup' ); ?></h2>
-					<p data-reveal class="text-muted-foreground"><?php esc_html_e( 'A preview with the correct answer and a plain-English explanation. Start a test above for a full randomized set.', 'buckleup' ); ?></p>
+					<p data-reveal class="text-muted-foreground"><?php esc_html_e( 'A quick look at the kind of questions you\'ll actually get — answer shown, plus why. Scroll up when you\'re ready for the full set.', 'buckleup' ); ?></p>
 				</div>
 				<div data-reveal-stagger="0.05" class="grid gap-5 md:grid-cols-2">
 					<?php foreach ( $bu_samples as $bu_i => $bu_q ) : ?>
@@ -298,7 +272,7 @@ $bu_render_sample = static function ( array $q, int $n ) {
 				<?php /* translators: %s: category label */ echo esc_html( sprintf( __( '%s — ICBC Class 4 Practice Questions', 'buckleup' ), $bu_cat_label ) ); ?>
 			</h1>
 			<p class="text-base md:text-lg text-muted-foreground leading-relaxed text-pretty max-w-2xl">
-				<?php /* translators: %s: category label */ printf( esc_html__( 'Master %s before test day — practise the exact kind of questions ICBC asks, score instantly, and see where to focus.', 'buckleup' ), esc_html( $bu_cat_label ) ); ?>
+				<?php /* translators: %s: category label */ printf( esc_html__( 'Get comfortable with %s before test day. Same style of questions ICBC actually asks, an instant score, and a clear look at where you need more practice.', 'buckleup' ), esc_html( $bu_cat_label ) ); ?>
 			</p>
 		</div>
 
@@ -310,7 +284,7 @@ $bu_render_sample = static function ( array $q, int $n ) {
 					<?php /* translators: %s: category label */ echo esc_html( sprintf( __( 'Practise %s', 'buckleup' ), $bu_cat_label ) ); ?>
 				</h2>
 				<p class="text-muted-foreground mb-8 max-w-xl mx-auto">
-					<?php /* translators: 1: number of questions, 2: pass percentage */ printf( esc_html__( 'Focused questions on this topic, one at a time. Answer them all, then see your score and a full explained review — %1$d%% is a pass. %2$d questions in the bank.', 'buckleup' ), (int) $bu_pass_pct, (int) $bu_cat_count ); ?>
+					<?php /* translators: 1: number of questions, 2: pass percentage */ printf( esc_html__( 'One question at a time, just on this topic. Once you\'re done, you\'ll get your score and a full breakdown of every answer — %1$d%% is a pass, and there are %2$d questions in the bank to draw from.', 'buckleup' ), (int) $bu_pass_pct, (int) $bu_cat_count ); ?>
 				</p>
 				<a href="<?php echo esc_url( $bu_exam_url ); ?>" class="<?php echo esc_attr( buckleup_button_class( 'default', 'lg', 'h-14 px-8 rounded-full text-lg shadow-xl shadow-primary/20' ) ); ?>">
 					<?php echo buckleup_icon( 'graduation-cap', 'w-5 h-5' ); // phpcs:ignore ?>
@@ -321,7 +295,7 @@ $bu_render_sample = static function ( array $q, int $n ) {
 			<?php if ( ! empty( $bu_samples ) ) : ?>
 				<div>
 					<h2 data-reveal class="text-2xl md:text-3xl font-bold text-foreground mb-3"><?php esc_html_e( 'Sample questions', 'buckleup' ); ?></h2>
-					<p data-reveal class="text-muted-foreground mb-8 max-w-2xl"><?php esc_html_e( 'A preview with the correct answer and an explanation. Start the practice above for a full set.', 'buckleup' ); ?></p>
+					<p data-reveal class="text-muted-foreground mb-8 max-w-2xl"><?php esc_html_e( 'A taste of what\'s in this category — with the answer and why. Hit practise above for the full set.', 'buckleup' ); ?></p>
 					<div data-reveal-stagger="0.05" class="grid gap-5 md:grid-cols-2">
 						<?php foreach ( $bu_samples as $bu_i => $bu_q ) : ?>
 							<?php $bu_render_sample( $bu_q, (int) $bu_i + 1 ); ?>

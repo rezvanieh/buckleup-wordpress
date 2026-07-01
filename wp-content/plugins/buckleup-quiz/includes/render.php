@@ -153,7 +153,7 @@ function buckleup_quiz_hub_faqs() {
 			'question' => __( 'How many questions are on the ICBC Class 4 knowledge test?', 'buckleup-quiz' ),
 			'answer'   => sprintf(
 				/* translators: %d: number of questions in the full practice test. */
-				__( "The ICBC Class 4 knowledge test is a multiple-choice exam of roughly %d questions drawn from ICBC's Driving Commercial Vehicles manual. Our free full practice test mirrors that length so you know exactly what to expect on test day.", 'buckleup-quiz' ),
+				__( "You'll get roughly %d multiple-choice questions, all pulled from ICBC's Driving Commercial Vehicles manual. Our free practice test runs the same length, so the format won't catch you off guard on test day.", 'buckleup-quiz' ),
 				$full_total
 			),
 		),
@@ -161,29 +161,29 @@ function buckleup_quiz_hub_faqs() {
 			'question' => __( 'What score do I need to pass the ICBC Class 4 knowledge test?', 'buckleup-quiz' ),
 			'answer'   => sprintf(
 				/* translators: %d: passing percentage. */
-				__( 'You need %d%% to pass the ICBC knowledge test. On this practice test you will see your score instantly and a breakdown by topic, so you know which categories to study before you book.', 'buckleup-quiz' ),
+				__( "%d%%. That's the number ICBC actually uses, and it's what we score against here too — instantly, with a topic-by-topic breakdown, so you know what to brush up on before you book.", 'buckleup-quiz' ),
 				$pass_pct
 			),
 		),
 		array(
 			'question' => __( 'Who needs an ICBC Class 4 licence in BC?', 'buckleup-quiz' ),
-			'answer'   => __( 'A Class 4 licence is required in British Columbia to drive taxis, limousines, ride-hailing vehicles, ambulances, and small passenger buses or shuttles with seating for up to 25 people. There are unrestricted (Class 4U) and restricted (Class 4R) variants depending on the vehicle.', 'buckleup-quiz' ),
+			'answer'   => __( "If you're driving a taxi, limo, ride-hailing vehicle, ambulance, or a small bus or shuttle (up to 25 seats) anywhere in BC, you'll need a Class 4. There's an unrestricted version (4U) and a restricted one (4R) — which one applies depends on the vehicle.", 'buckleup-quiz' ),
 		),
 		array(
 			'question' => __( 'Is the Class 4 knowledge test the same as the Class 5 test?', 'buckleup-quiz' ),
-			'answer'   => __( 'No. The Class 4 knowledge test covers everything in the Class 5 material plus commercial-driving topics such as heavy-vehicle braking, air brakes, pre-trip inspections, hours of service, and carrying passengers safely. This practice test is organised into those 12 commercial-specific categories.', 'buckleup-quiz' ),
+			'answer'   => __( "No — it builds on it. You still need your Class 5 rules of the road, but Class 4 adds commercial-driving topics on top: heavy-vehicle braking, air brakes, pre-trip inspections, hours of service, carrying passengers safely, and more. We've split those into the 12 categories above.", 'buckleup-quiz' ),
 		),
 		array(
 			'question' => __( 'Is this ICBC Class 4 practice test free?', 'buckleup-quiz' ),
-			'answer'   => __( 'Yes. You can take the sample questions and a full timed practice test for free. Practising the real question style until you score well above the pass mark is the single best way to pass on your first attempt.', 'buckleup-quiz' ),
+			'answer'   => __( "Yes, completely — the sample questions and the full timed test, no cost either way. Honestly, the best thing you can do before test day is keep practising until you're scoring comfortably above the pass mark, not just barely over it.", 'buckleup-quiz' ),
 		),
 		array(
 			'question' => __( 'Where do I take the ICBC Class 4 knowledge test near Vancouver?', 'buckleup-quiz' ),
-			'answer'   => __( 'You can take the Class 4 knowledge test at any ICBC Driver Licensing office, including the Coquitlam office that serves Port Moody, Coquitlam, and Port Coquitlam in the Tri-Cities. BuckleUp Driving School is based in Port Moody and offers in-car Class 4 commercial training to go with your knowledge-test prep.', 'buckleup-quiz' ),
+			'answer'   => __( "Any ICBC Driver Licensing office runs the Class 4 knowledge test. In the Tri-Cities, that's the Coquitlam office, which covers Port Moody, Coquitlam, and Port Coquitlam. We're based right in Port Moody, and once you've got the knowledge test sorted, our instructors can take you through the in-car Class 4 training too.", 'buckleup-quiz' ),
 		),
 		array(
 			'question' => __( 'How should I use this practice test to study?', 'buckleup-quiz' ),
-			'answer'   => __( 'Start with the categories you are least confident in — for example air brakes or pre-trip inspections — then take full mixed practice tests until you are consistently scoring above the pass mark. Read the explanation after every question; that active recall is what makes the rules stick.', 'buckleup-quiz' ),
+			'answer'   => __( "Start with whatever makes you nervous — for a lot of people that's air brakes or pre-trip inspections — then move on to full mixed tests until you're consistently clearing the pass mark, not just scraping by. And actually read the explanation after each question; that's what makes the rules stick, not just staring at the correct answer.", 'buckleup-quiz' ),
 		),
 	);
 

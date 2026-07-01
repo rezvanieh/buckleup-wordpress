@@ -48,21 +48,21 @@ function buckleup_quiz_result_email_html( $result ) {
 		$track      = '#dcfce7';
 		$badge_text = esc_html__( 'YOU PASSED 🎉', 'buckleup-quiz' );
 		/* translators: %d: pass percentage. */
-		$opening = sprintf( esc_html__( 'Congratulations — you cleared the %d%% pass mark on your ICBC Class 4 practice test. That’s exactly the kind of preparation that turns into a first-time pass on the real thing.', 'buckleup-quiz' ), $pass_pct );
+		$opening = sprintf( esc_html__( 'Nice work — you cleared the %d%% pass mark on your ICBC Class 4 practice test. Keep this up and you’ll walk into the real thing ready.', 'buckleup-quiz' ), $pass_pct );
 	} elseif ( $pct >= 60 ) {
 		$state_bg   = '#fffbeb';
 		$state_col  = $amber;
 		$track      = '#fef3c7';
 		$badge_text = esc_html__( 'SO CLOSE', 'buckleup-quiz' );
 		/* translators: %d: pass percentage. */
-		$opening = sprintf( esc_html__( 'So close — you’re nearly at the %d%% pass mark. One focused round on the topic below and you’ll be over the line.', 'buckleup-quiz' ), $pass_pct );
+		$opening = sprintf( esc_html__( 'So close — you’re just shy of the %d%% pass mark. One more focused round on the topic below and you’ll clear it.', 'buckleup-quiz' ), $pass_pct );
 	} else {
 		$state_bg   = '#fef2f2';
 		$state_col  = $red;
 		$track      = '#fee2e2';
 		$badge_text = esc_html__( 'KEEP PRACTISING', 'buckleup-quiz' );
 		/* translators: %d: pass percentage. */
-		$opening = sprintf( esc_html__( 'Good effort — you’re not quite at the %d%% pass mark yet, and that’s exactly what practice is for. A focused round or two on the topic below and you’ll be ready.', 'buckleup-quiz' ), $pass_pct );
+		$opening = sprintf( esc_html__( 'You’re not at the %d%% pass mark yet, and that’s exactly what this practice test is for. Spend some focused time on the topic below and you’ll get there.', 'buckleup-quiz' ), $pass_pct );
 	}
 
 	$greeting = $first

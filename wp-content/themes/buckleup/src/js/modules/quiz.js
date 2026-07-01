@@ -881,7 +881,7 @@ export function initQuiz(root = document) {
       .join('');
     const bdTable = bdRows
       ? `<div class="glass rounded-3xl border border-border p-6 md:p-8 mb-8"><h3 class="text-lg font-semibold text-foreground mb-1">Score by topic</h3>` +
-        `<p class="text-sm text-muted-foreground mb-5">Find and fix your mistakes before the real exam — here's exactly which topics cost you points, ranked weakest-first.</p>` +
+        `<p class="text-sm text-muted-foreground mb-5">Here's exactly where the real exam would trip you up — ranked from weakest to strongest, so you know what to fix first.</p>` +
         `<table class="w-full border-collapse"><tbody>${bdRows}</tbody></table></div>`
       : '';
 
@@ -908,7 +908,7 @@ export function initQuiz(root = document) {
       .join('');
     const focusBlock = focusLinks
       ? `<div class="glass rounded-3xl border border-border p-6 md:p-8 mb-8"><h3 class="text-lg font-semibold text-foreground mb-1">Focus your study</h3>` +
-        `<p class="text-sm text-muted-foreground mb-5">Brush up on these topics first — they cost you the most points.</p>` +
+        `<p class="text-sm text-muted-foreground mb-5">These are costing you the most points right now — start here.</p>` +
         `<div class="grid gap-2.5 sm:grid-cols-2">${focusLinks}</div></div>`
       : '';
 
@@ -928,8 +928,8 @@ export function initQuiz(root = document) {
       certCard =
         `<div data-quiz-cert class="glass rounded-3xl border border-accent/30 bg-accent/5 p-7 md:p-9 text-center mb-8">` +
         `<span class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-accent/15 text-accent mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></span>` +
-        `<h3 class="text-xl md:text-2xl font-bold text-foreground mb-2">Congratulations — You Passed the Practice Test!</h3>` +
-        `<p class="text-muted-foreground max-w-md mx-auto">${hasName ? `Your certificate of completion is ready, ${esc(result.name)}.` : 'Add your name to claim your printable certificate of completion.'}</p>` +
+        `<h3 class="text-xl md:text-2xl font-bold text-foreground mb-2">Nice work — you passed!</h3>` +
+        `<p class="text-muted-foreground max-w-md mx-auto">${hasName ? `Your certificate of completion is ready, ${esc(result.name)}.` : "Add your name and we'll get your certificate ready to print."}</p>` +
         `<div data-quiz-cert-action class="mt-5 flex justify-center">${claimedBtn}</div>` +
         claimForm +
         `</div>`;
@@ -943,7 +943,7 @@ export function initQuiz(root = document) {
       `<div class="text-center sm:text-left flex-1">` +
       `<div class="mb-3">${badge}</div>` +
       `<h2 data-quiz-focus tabindex="-1" class="text-2xl md:text-3xl font-bold text-foreground mb-2 outline-none">${passed ? "You're test-ready!" : 'Keep practising'}</h2>` +
-      `<p class="text-muted-foreground">Here's how you did — your score, plus a topic-by-topic breakdown so you know exactly what to brush up before the real ICBC exam.</p>` +
+      `<p class="text-muted-foreground">Here's how it went — your score, plus a topic-by-topic breakdown so you know exactly what to brush up on before the real ICBC exam.</p>` +
       emailNote +
       `</div>` +
       `</div>` +

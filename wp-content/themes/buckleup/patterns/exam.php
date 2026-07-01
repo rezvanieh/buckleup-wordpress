@@ -147,7 +147,7 @@ if ( $bu_is_cat ) {
 				</div>
 
 				<p class="text-muted-foreground leading-relaxed text-center max-w-2xl mx-auto mb-8">
-					<?php esc_html_e( "Read the conditions below. The timer starts the moment you press Begin, so make sure you're ready and won't be interrupted.", 'buckleup' ); ?>
+					<?php esc_html_e( "Give the conditions below a quick read. Once you hit Begin, the clock starts — so make sure you've got a quiet stretch of time before you tap it.", 'buckleup' ); ?>
 				</p>
 
 				<!-- Test details card. The time-limit row is the elevated eye-anchor. -->
@@ -180,7 +180,7 @@ if ( $bu_is_cat ) {
 						</div>
 					</div>
 					<p class="text-sm text-muted-foreground mt-5 pt-5 border-t border-border leading-relaxed">
-						<?php esc_html_e( "When you finish you'll get an instant score, a topic-by-topic breakdown, an emailed study report, and a certificate of completion if you pass.", 'buckleup' ); ?>
+						<?php esc_html_e( "Finish up and you'll get your score right away, a breakdown by topic, a study report in your inbox, and — if you pass — a certificate you can keep.", 'buckleup' ); ?>
 					</p>
 				</div>
 
@@ -190,10 +190,10 @@ if ( $bu_is_cat ) {
 					<ul class="space-y-3">
 						<?php
 						$bu_conditions = array(
-							__( 'One question at a time — you can go back to review or change your earlier answers before you submit.', 'buckleup' ),
-							sprintf( /* translators: %d: time-limit minutes */ __( "The %d-minute timer starts when you press Begin and can't be paused.", 'buckleup' ), $bu_time_words ),
-							__( 'When the time runs out, your exam is submitted automatically and scored.', 'buckleup' ),
-							__( 'Leaving, refreshing, or closing this page ends the attempt — your progress will be lost.', 'buckleup' ),
+							__( 'One question at a time. You can go back and change an earlier answer any time before you submit.', 'buckleup' ),
+							sprintf( /* translators: %d: time-limit minutes */ __( "The %d-minute timer starts the second you press Begin, and it can't be paused — so don't step away.", 'buckleup' ), $bu_time_words ),
+							__( "Time runs out, and the exam submits itself — no do-overs.", 'buckleup' ),
+							__( "Leave the page, refresh it, or close the tab, and the attempt's over — whatever you'd answered is gone.", 'buckleup' ),
 						);
 						foreach ( $bu_conditions as $bu_cond ) :
 							?>
@@ -257,7 +257,7 @@ if ( $bu_is_cat ) {
 						<?php echo buckleup_icon( 'mail', 'w-6 h-6' ); // phpcs:ignore ?>
 					</span>
 					<h2 data-quiz-focus tabindex="-1" class="text-2xl font-bold text-foreground mb-2 outline-none"><?php esc_html_e( 'Almost there!', 'buckleup' ); ?></h2>
-					<p class="text-muted-foreground text-sm"><?php esc_html_e( 'Enter your email to see your results and get a study report.', 'buckleup' ); ?></p>
+					<p class="text-muted-foreground text-sm"><?php esc_html_e( "Pop in your email and we'll show you your results plus send over a study report.", 'buckleup' ); ?></p>
 				</div>
 				<form data-quiz-gate-form novalidate class="space-y-4">
 					<div>
@@ -299,7 +299,7 @@ if ( $bu_is_cat ) {
 			<div role="dialog" aria-modal="true" aria-labelledby="bu-exam-exit-title" data-state="closed" class="relative w-full max-w-md bg-card border border-border rounded-3xl shadow-2xl p-6 md:p-8 data-[state=closed]:opacity-0 data-[state=closed]:scale-95 transition-all duration-200">
 				<h2 id="bu-exam-exit-title" class="text-xl font-bold text-foreground mb-2"><?php esc_html_e( 'Leave the exam?', 'buckleup' ); ?></h2>
 				<p class="text-sm text-muted-foreground leading-relaxed mb-6">
-					<?php esc_html_e( "Your progress won't be saved and this attempt will be lost. You can start a new exam afterward, but the timer will reset.", 'buckleup' ); ?>
+					<?php esc_html_e( "Your progress won't be saved and this attempt is gone for good. You can always start fresh, but the timer resets from zero.", 'buckleup' ); ?>
 				</p>
 				<div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
 					<button type="button" data-quiz-exit-cancel class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-200 h-11 px-6 border-2 border-border bg-background text-foreground shadow-sm hover:bg-secondary">
