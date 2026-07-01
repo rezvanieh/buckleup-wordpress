@@ -271,7 +271,7 @@ $bu_render_sample = static function ( array $q, int $n ) {
 			<h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-3 text-foreground text-balance">
 				<?php /* translators: %s: category label */ echo esc_html( sprintf( __( '%s: ICBC Class 4 Practice Questions', 'buckleup' ), $bu_cat_label ) ); ?>
 			</h1>
-			<p class="text-base md:text-lg text-muted-foreground leading-relaxed text-pretty text-justify max-w-2xl">
+			<p class="text-base md:text-lg text-muted-foreground leading-relaxed text-pretty text-justify">
 				<?php /* translators: %s: category label */ printf( esc_html__( 'Get comfortable with %s before test day. Same style of questions ICBC actually asks, an instant score, and a clear look at where you need more practice.', 'buckleup' ), esc_html( $bu_cat_label ) ); ?>
 			</p>
 		</div>
@@ -295,7 +295,7 @@ $bu_render_sample = static function ( array $q, int $n ) {
 			<?php if ( ! empty( $bu_samples ) ) : ?>
 				<div>
 					<h2 data-reveal class="text-2xl md:text-3xl font-bold text-foreground mb-3"><?php esc_html_e( 'Sample questions', 'buckleup' ); ?></h2>
-					<p data-reveal class="text-muted-foreground text-justify mb-8 max-w-2xl"><?php esc_html_e( 'A taste of what\'s in this category, with the answer and why. Hit practise above for the full set.', 'buckleup' ); ?></p>
+					<p data-reveal class="text-muted-foreground text-justify mb-8"><?php esc_html_e( 'A taste of what\'s in this category, with the answer and why. Hit practise above for the full set.', 'buckleup' ); ?></p>
 					<div data-reveal-stagger="0.05" class="grid gap-5 md:grid-cols-2">
 						<?php foreach ( $bu_samples as $bu_i => $bu_q ) : ?>
 							<?php $bu_render_sample( $bu_q, (int) $bu_i + 1 ); ?>
