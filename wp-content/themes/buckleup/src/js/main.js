@@ -3,17 +3,25 @@
 // module is prefers-reduced-motion aware (see lib/motion-prefs.js) and driven by
 // data-* attributes the PHP partials/patterns emit, so markup stays declarative.
 //
-// Modules:
+// Marketing modules (statically imported — needed on every front-end view):
 //   theme.js     — light/dark/system toggle, logo swap, no-flash (paired w/ the
 //                  blocking inline <head> script in functions.php)
-//   reveal.js    — Motion One inView fade-in-up scroll reveals (+ stagger)
+//   reveal.js    — IntersectionObserver + CSS fade-in-up scroll reveals (+ stagger)
 //   magic-move.js— FLIP "magic-move" tab/nav pill indicator
 //   navbar.js    — scroll-aware header (data-scrolled) + mobile menu
 //   tilt.js      — hero 3D mouse-tilt card (lg only)
 //   lightbox.js  — graduates shared-element lightbox
 //   overlays.js  — Dialog / DropdownMenu / Select (data-state/data-side)
 //   forms.js     — Switch + FAQ accordion
-//   quiz.js      — ICBC Class 4 practice-test runner (REST-driven, [data-quiz])
+//   auth.js      — login/register enhancements (login pages aren't [data-console])
+//
+// Lazy modules (dynamic-imported only when their surface is on the page, so they
+// stay out of the marketing bundle):
+//   quiz.js           — ICBC practice-test/exam runner, gated on [data-quiz]
+//   console-bundle.js — the 11 Student/Instructor/Admin console modules, gated on
+//                       [data-console] (see inc/console.php). Vite splits each of
+//                       these into its own hashed lazy chunk; base:'./' makes them
+//                       resolve relative to build/assets/.
 
 import { initTheme } from './modules/theme.js';
 import { initReveals } from './modules/reveal.js';
@@ -24,18 +32,6 @@ import { initLightbox } from './modules/lightbox.js';
 import { initOverlays } from './modules/overlays.js';
 import { initForms } from './modules/forms.js';
 import { initAuth } from './modules/auth.js';
-import { initQuiz } from './modules/quiz.js';
-import { initConsole } from './modules/console.js';
-import { initConsoleReviews } from './modules/console-reviews.js';
-import { initConsoleProfile } from './modules/console-profile.js';
-import { initConsoleTags } from './modules/console-tags.js';
-import { initConsoleSchedule } from './modules/console-schedule.js';
-import { initConsoleAvailability } from './modules/console-availability.js';
-import { initConsoleStudents } from './modules/console-students.js';
-import { initConsoleAdminStudents } from './modules/console-admin-students.js';
-import { initConsoleGraduates } from './modules/console-graduates.js';
-import { initConsoleAdminReviews } from './modules/console-admin-reviews.js';
-import { initConsoleAvatar } from './modules/console-avatar.js';
 
 function boot() {
   // Theme first so the resolved class/logo are correct before anything paints
@@ -48,19 +44,18 @@ function boot() {
   initOverlays();
   initForms();
   initAuth();
-  initQuiz();
-  initConsole();
-  initConsoleReviews();
-  initConsoleProfile();
-  initConsoleTags();
-  initConsoleSchedule();
-  initConsoleAvailability();
-  initConsoleStudents();
-  initConsoleAdminStudents();
-  initConsoleGraduates();
-  initConsoleAdminReviews();
-  initConsoleAvatar();
   initReveals();
+
+  // Lazy, DOM-gated: fetch + boot the quiz/console chunks only where they mount,
+  // keeping them (and Motion-free reveal aside, ~all the console/quiz weight) out
+  // of the marketing entry. Failures are swallowed so a missing chunk never breaks
+  // the (already-booted) marketing interactions.
+  if (document.querySelector('[data-quiz]')) {
+    import('./modules/quiz.js').then((m) => m.initQuiz()).catch(() => {});
+  }
+  if (document.querySelector('[data-console]')) {
+    import('./console-bundle.js').then((m) => m.initConsole()).catch(() => {});
+  }
 }
 
 // Contact form: NO JS by design (v1). The form is a plain server-rendered

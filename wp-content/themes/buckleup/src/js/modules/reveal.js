@@ -1,5 +1,6 @@
 // Scroll reveals — the ~48 framer-motion fade-in-up scroll animations from the
-// source landing sections, reproduced with Motion One's `inView`.
+// source landing sections, reproduced with a native IntersectionObserver +
+// CSS transitions (no Motion One dependency).
 //
 // Source pattern (e.g. Pricing.tsx, Features.tsx, BentoGrid.tsx):
 //   initial={{ opacity: 0, y: 20 }}
@@ -12,13 +13,14 @@
 // (matching the source's per-index stagger). Honor prefers-reduced-motion by
 // showing the end state immediately.
 
-import { inView, animate, stagger } from 'motion';
 import { prefersReducedMotion } from '../lib/motion-prefs.js';
 
 const DEFAULT_Y = 20;
 const DEFAULT_DURATION = 0.5;
 const DEFAULT_AMOUNT = 0.2;
 const STAGGER_STEP = 0.05; // seconds — source uses index*0.05 (some index*0.1)
+// The exact easing the Motion One port used (animate easing:[0.16,1,0.3,1]).
+const EASE = 'cubic-bezier(0.16, 1, 0.3, 1)';
 
 function num(el, attr, fallback) {
   const v = el.getAttribute(attr);
@@ -51,7 +53,7 @@ export function initReveals(root = document) {
 
   items.forEach((el) => {
     const y = num(el, 'data-reveal-y', DEFAULT_Y);
-    // Set the initial (pre-reveal) state so there's no flash before inView fires.
+    // Set the initial (pre-reveal) state so there's no flash before it scrolls in.
     el.style.opacity = '0';
     el.style.transform = `translateY(${y}px)`;
     el.style.willChange = 'opacity, transform';
@@ -61,23 +63,34 @@ export function initReveals(root = document) {
     const duration = num(el, 'data-reveal-duration', DEFAULT_DURATION);
     const delay = num(el, 'data-reveal-delay', 0);
     const amount = num(el, 'data-reveal-amount', DEFAULT_AMOUNT);
+    // Clamp to a valid IntersectionObserver threshold (matches Motion One's
+    // numeric-amount → threshold mapping for all real values; 0.2 default).
+    const threshold = Math.min(1, Math.max(0, amount));
 
-    inView(
-      el,
-      () => {
-        animate(
-          el,
-          { opacity: [0, 1], transform: ['translateY(' + num(el, 'data-reveal-y', DEFAULT_Y) + 'px)', 'translateY(0px)'] },
-          { duration, delay, easing: [0.16, 1, 0.3, 1] }
-        ).finished.then(() => {
+    // One observer per element (mirrors the old per-element inView): each carries
+    // its own threshold/duration/delay. isIntersecting + unobserve replicates
+    // Motion One's inView with `once` (return-nothing → stop observing on enter).
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        obs.unobserve(el); // once: true — reveal exactly once, then stop observing.
+        // The initial (opacity:0 / translateY) state was already committed and
+        // painted before this async callback, so setting the end state here
+        // transitions rather than snapping — same as the old animate() call.
+        el.style.transition =
+          `opacity ${duration}s ${EASE} ${delay}s, transform ${duration}s ${EASE} ${delay}s`;
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0px)';
+        // After the animation finishes: drop the will-change hint AND the inline
+        // transition, so the element falls back to the global 150ms color
+        // transition (matches Motion One's WAAPI, which never set el.style.transition).
+        window.setTimeout(() => {
           el.style.willChange = 'auto';
-        });
-        // once: true — return nothing so inView stops observing after first entry.
-      },
-      { amount }
-    );
+          el.style.transition = '';
+        }, (delay + duration) * 1000 + 50);
+      });
+    }, { threshold });
+
+    observer.observe(el);
   });
 }
-
-// Re-export stagger in case a caller wants Motion One's native stagger directly.
-export { stagger };

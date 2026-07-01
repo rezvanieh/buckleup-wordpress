@@ -1669,6 +1669,24 @@ add_filter( 'rank_math/opengraph/facebook/image', 'buckleup_seo_og_image_fallbac
 add_filter( 'rank_math/opengraph/twitter/image', 'buckleup_seo_og_image_fallback', 20 );
 
 /**
+ * Prefer the dedicated 1200x630 social card over the wide brand logo.
+ *
+ * The brand logo is a wide wordmark (~5:1) that letterboxes badly in a Facebook/
+ * LinkedIn/X/iMessage card. This swaps the logo (or an empty image) for a purpose-
+ * built 1200x630 card, but leaves pages that supply their OWN real image (e.g. the
+ * 5 location landmark heroes) untouched. Runs at priority 30 — AFTER the fallback
+ * (20) and host-normalise (25) — so it emits the canonical www card URL directly.
+ */
+function buckleup_seo_og_card_image( $image ) {
+	if ( ! is_string( $image ) || '' === $image || false !== stripos( $image, 'logo' ) ) {
+		return BUCKLEUP_SEO_BASE_URL . '/wp-content/uploads/2026/06/buckleup-og-card.jpg';
+	}
+	return $image;
+}
+add_filter( 'rank_math/opengraph/facebook/image', 'buckleup_seo_og_card_image', 30 );
+add_filter( 'rank_math/opengraph/twitter/image', 'buckleup_seo_og_card_image', 30 );
+
+/**
  * Normalise any absolute URL Rank Math emits (og:url, og:image, twitter:*,
  * og:image, etc.) from the dev/apex host onto the canonical www origin, so the
  * social cards advertise production URLs even while the site is served from

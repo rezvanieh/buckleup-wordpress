@@ -13,9 +13,9 @@
  *
  * So this file no longer dequeues anything. It still:
  *   - provides [buckleup_elementor id="N"] to embed a library template, and
- *   - force-enqueues Elementor's own frontend CSS/JS site-wide (so Elementor
- *     Containers/widgets + ElementsKit nav init work on every view, including
- *     non-Elementor pages that embed an Elementor template), and
+ *   - force-enqueues Elementor's own frontend CSS (styles only, not JS) site-wide
+ *     so the embedded footer Container lays out correctly on every view, including
+ *     non-Elementor pages (consoles, blog) that render the shared footer, and
  *   - enqueues the tiny .bu-pill/.bu-hug helper overrides, and
  *   - keeps a defensive Geist @font-face fallback for the (rare) case where the
  *     Tailwind bundle didn't build — the bundle already ships @font-face, so on
@@ -206,22 +206,28 @@ add_shortcode( 'buckleup_contact_form', function (): string {
 } );
 
 /**
- * The shared header/footer render on every front-end view via the shortcode in
- * parts/header.html + parts/footer.html, but on a NON-Elementor page (a console,
- * the blog) Elementor wouldn't otherwise decide the page "needs" its frontend
- * assets. Force-enqueue Elementor's core frontend CSS *and JS* site-wide so the
- * embedded header/footer Containers + widgets render AND initialize everywhere.
+ * The shared footer renders on every front-end view via the shortcode in
+ * parts/footer.html, but on a NON-Elementor page (a console, the blog) Elementor
+ * wouldn't otherwise decide the page "needs" its frontend assets. Force-enqueue
+ * Elementor's core frontend *CSS* site-wide so the embedded footer Container +
+ * its widgets lay out correctly everywhere.
  *
- * The JS matters specifically for the ElementsKit nav-menu widget: ElementsKit
- * registers its framework/widget scripts (ekit-widget-scripts, which runs the
- * nav-menu init that makes the menu horizontal + drives the responsive toggle)
- * on Elementor's `elementor/frontend/after_(register|enqueue)_scripts` actions —
- * those only fire when Elementor enqueues its frontend scripts. Calling
- * ->enqueue_scripts() here triggers that chain on consoles/blog too, so the
- * shared nav initializes off an Elementor page.
+ * CSS ONLY — we deliberately do NOT force-enqueue Elementor's frontend JS
+ * (elementor-frontend.js / frontend-modules / webpack.runtime) site-wide. The
+ * embedded footer (Elementor post 164) is static columns/links (the Trustindex
+ * review widget was removed), so it needs Elementor's CSS to lay out but no JS to
+ * behave. Real Elementor pages (the marketing page bodies) still auto-enqueue
+ * their OWN frontend JS via Elementor's normal render path — this closure only
+ * covers the site-wide footer, which doesn't need it.
+ *
+ * The old reason for also calling ->enqueue_scripts() here — kicking off the
+ * ElementsKit nav-menu widget's init chain (ekit-widget-scripts, hooked on
+ * Elementor's `after_(register|enqueue)_scripts`) — is now VESTIGIAL: the shared
+ * header is native theme markup + the theme's own vanilla-JS navbar, not an
+ * ElementsKit nav widget, so no Elementor JS is needed for the chrome to work.
  *
  * No-op when Elementor is inactive. On true Elementor pages Elementor enqueues
- * these itself; calling again is idempotent. Priority 9 keeps it ahead of our
+ * the CSS itself; calling again is idempotent. Priority 9 keeps it ahead of our
  * dequeue at 100, which only touches the theme's own buckleup-* handles, never
  * Elementor's/ElementsKit's.
  */
@@ -234,11 +240,11 @@ add_action( 'wp_enqueue_scripts', function () {
 		if ( method_exists( $frontend, 'enqueue_styles' ) ) {
 			$frontend->enqueue_styles();
 		}
-		// Pulls in elementor-frontend.js + the after_(register|enqueue)_scripts
-		// chain ElementsKit hooks onto (nav-menu init / responsive toggle).
-		if ( method_exists( $frontend, 'enqueue_scripts' ) ) {
-			$frontend->enqueue_scripts();
-		}
+		// NOTE: intentionally NOT calling $frontend->enqueue_scripts() here. The
+		// site-wide footer is static and needs no Elementor JS; real Elementor
+		// marketing pages still auto-enqueue their own frontend JS via Elementor's
+		// render path. (See the docblock above re: the now-vestigial ElementsKit
+		// nav-init reason — the header is native theme markup + JS.)
 	}
 
 	// Tiny overrides for things free-Elementor controls can't express (e.g. the
