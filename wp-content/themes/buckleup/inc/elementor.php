@@ -66,18 +66,16 @@ function buckleup_is_elementor_page(): bool {
 add_action( 'wp_enqueue_scripts', function () {
 	$sans = buckleup_vite_asset( 'src/fonts/Geist-Variable.woff2' )
 		?: get_theme_file_uri( 'assets/fonts/Geist-Variable.woff2' );
-	$mono = buckleup_vite_asset( 'src/fonts/GeistMono-Variable.woff2' )
-		?: get_theme_file_uri( 'assets/fonts/GeistMono-Variable.woff2' );
 
 	wp_register_style( 'buckleup-geist-fonts', false, array(), BUCKLEUP_VERSION );
 	wp_enqueue_style( 'buckleup-geist-fonts' );
 
-	// Variable fonts (full 100..900 axis), display:swap — mirrors src/css/app.css.
+	// Geist Sans only (variable, full 100..900 axis), display:swap — mirrors
+	// src/css/app.css. Geist Mono is no longer self-hosted (font-mono is unused);
+	// --font-geist-mono maps to a system monospace stack in the Tailwind bundle.
 	$css = sprintf(
-		'@font-face{font-family:"Geist";src:url("%s") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}'
-		. '@font-face{font-family:"Geist Mono";src:url("%s") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}',
-		esc_url( $sans ),
-		esc_url( $mono )
+		'@font-face{font-family:"Geist";src:url("%s") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}',
+		esc_url( $sans )
 	);
 	wp_add_inline_style( 'buckleup-geist-fonts', $css );
 }, 5 );

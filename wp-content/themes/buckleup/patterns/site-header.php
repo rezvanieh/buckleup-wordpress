@@ -120,14 +120,10 @@ $logout_url     = wp_logout_url( home_url() );
 				</div>
 			</nav>
 
-			<!-- Right cluster: theme toggle + primary CTA (desktop) + hamburger (mobile) -->
+			<!-- Right cluster: primary CTA (desktop) + hamburger (mobile).
+			     The dark-mode sun/moon toggle was removed — the site is light-only
+			     (dark mode was broken and unwanted). -->
 			<div class="flex items-center gap-1.5">
-				<button type="button" data-theme-toggle aria-label="<?php esc_attr_e( 'Toggle theme', 'buckleup' ); ?>"
-					class="p-2.5 min-[1280px]:p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors border border-border/50">
-					<span class="hidden dark:inline"><?php echo buckleup_icon( 'sun', 'size-5' ); // phpcs:ignore ?></span>
-					<span class="inline dark:hidden"><?php echo buckleup_icon( 'moon', 'size-5' ); // phpcs:ignore ?></span>
-				</button>
-
 				<?php if ( $is_logged_in ) : ?>
 					<!-- Logged-in: user menu (Dashboard + Sign out). Folds into the
 					     hamburger below 1280 (where the inline nav also lives). -->

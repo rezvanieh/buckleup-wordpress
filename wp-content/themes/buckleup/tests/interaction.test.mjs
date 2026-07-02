@@ -156,23 +156,29 @@ function click(el) {
   ok('Select closes after pick', content.getAttribute('data-state') === 'closed');
 }
 
-// --- Theme (theme.js) -----------------------------------------------------
+// --- Theme (theme.js) — site is LIGHT-ONLY; dark mode was removed ----------
 {
   const win = setupDom(`
-    <img data-logo data-logo-light="/logo.png" data-logo-dark="/logo-dark.png" src="/logo.png">
+    <img data-logo data-logo-light="/logo.png" data-logo-dark="/logo-dark.png" src="/logo-dark.png">
     <button data-theme-toggle></button>
     <button data-theme-set="light"></button>
     <button data-theme-set="dark"></button>
     <button data-theme-set="system"></button>`);
+  // Simulate a returning visitor who was stranded in (now-removed) dark mode.
+  win.document.documentElement.classList.add('dark');
+  try { win.localStorage.setItem('buckleup-theme', 'dark'); } catch (e) { /* noop */ }
   const { initTheme } = await import('../src/js/modules/theme.js');
   initTheme();
 
+  ok('Theme forces light on init (no .dark)', !win.document.documentElement.classList.contains('dark'));
+  ok('Theme clears the stored dark preference', !win.localStorage.getItem('buckleup-theme'));
+  ok('Theme resolves to the light logo', win.document.querySelector('[data-logo]').getAttribute('src') === '/logo.png');
+  ok('Theme marks light chooser selected', win.document.querySelector('[data-theme-set="light"]').getAttribute('aria-pressed') === 'true');
+  // A stray "dark" chooser or old toggle click can NEVER re-apply dark.
   click(win.document.querySelector('[data-theme-set="dark"]'));
-  ok('Theme set=dark adds .dark', win.document.documentElement.classList.contains('dark'));
-  ok('Theme swaps logo to dark src', win.document.querySelector('[data-logo]').getAttribute('src') === '/logo-dark.png');
-  ok('Theme set=dark marked selected', win.document.querySelector('[data-theme-set="dark"]').getAttribute('aria-pressed') === 'true');
+  ok('Clicking dark chooser never applies .dark', !win.document.documentElement.classList.contains('dark'));
   click(win.document.querySelector('[data-theme-toggle]'));
-  ok('Theme toggle flips dark->light', !win.document.documentElement.classList.contains('dark'));
+  ok('Clicking old toggle never applies .dark', !win.document.documentElement.classList.contains('dark'));
 }
 
 // --- Navbar (navbar.js) ---------------------------------------------------

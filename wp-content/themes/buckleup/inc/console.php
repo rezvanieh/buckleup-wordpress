@@ -150,10 +150,9 @@ function buckleup_console_shell( string $role, string $active, string $content )
 		<div class="md:hidden fixed top-0 left-0 right-0 z-40 glass border-b border-border px-4 py-3 flex items-center justify-between">
 			<button type="button" data-console-toggle aria-label="<?php esc_attr_e( 'Open menu', 'buckleup' ); ?>" class="p-2 rounded-lg hover:bg-muted"><?php echo buckleup_icon( 'menu', 'w-6 h-6' ); // phpcs:ignore ?></button>
 			<span class="font-bold text-foreground"><?php echo esc_html( $cfg['label'] ); ?></span>
-			<button type="button" data-theme-toggle aria-label="<?php esc_attr_e( 'Toggle theme', 'buckleup' ); ?>" class="p-2 rounded-lg hover:bg-muted">
-				<span class="hidden dark:inline"><?php echo buckleup_icon( 'sun', 'w-5 h-5' ); // phpcs:ignore ?></span>
-				<span class="inline dark:hidden"><?php echo buckleup_icon( 'moon', 'w-5 h-5' ); // phpcs:ignore ?></span>
-			</button>
+			<!-- Theme toggle removed (site is light-only). Empty spacer keeps the
+			     centered title balanced against the hamburger on the left. -->
+			<span class="w-10" aria-hidden="true"></span>
 		</div>
 
 		<!-- Mobile drawer -->

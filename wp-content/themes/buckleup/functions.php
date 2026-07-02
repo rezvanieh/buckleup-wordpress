@@ -129,11 +129,12 @@ add_filter( 'script_loader_tag', function ( $tag, $handle, $src ) {
 	return $tag;
 }, 10, 3 );
 
-// Prevent a flash of wrong theme: resolve and apply .dark BEFORE first paint from
-// the stored preference (cookie/localStorage, "system" honored). Also add the
-// .no-transitions guard so the 150ms global color transition doesn't animate the
-// initial light->dark swap; src/js/main.js removes it on load. Priority 1 keeps
-// this ahead of any enqueued <head> CSS/JS.
+// Dark mode was removed (client request — it was broken). Force LIGHT before first
+// paint and proactively clear any previously-stored "dark" preference (localStorage
+// + cookie) so returning visitors aren't stranded in broken dark with no toggle to
+// escape. The .no-transitions guard keeps the 150ms global color transition from
+// animating on first paint; src/js/main.js removes it on load. Priority 1 keeps this
+// ahead of any enqueued <head> CSS/JS.
 add_action( 'wp_head', function () {
-	echo "<script>(function(){var e=document.documentElement;e.classList.add('no-transitions');try{var s=localStorage.getItem('buckleup-theme')||'system';var d=s==='dark'||(s==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);if(d){e.classList.add('dark');e.style.colorScheme='dark';}}catch(err){}})();</script>\n";
+	echo "<script>(function(){var e=document.documentElement;e.classList.add('no-transitions');e.classList.remove('dark');e.style.colorScheme='light';try{localStorage.removeItem('buckleup-theme');document.cookie='buckleup-theme=; path=/; max-age=0';}catch(err){}})();</script>\n";
 }, 1 );

@@ -10,7 +10,9 @@
  *
  * Two deliberate additions vs. the source (the source consumed Geist via
  * next/font/google; we self-host the OFL variable woff2 instead):
- *   1. @font-face for self-hosted Geist / Geist Mono variable fonts.
+ *   1. @font-face for the self-hosted Geist Sans variable font (subset to the
+ *      Latin glyphs the site renders). Geist Mono is dropped — font-mono is
+ *      unused, so --font-geist-mono is a system monospace stack.
  *   2. --font-geist-sans / --font-geist-mono are defined here in :root rather
  *      than injected by next/font.
  * Everything else matches the source byte-for-byte in intent.
@@ -34,19 +36,18 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Self-hosted Geist + Geist Mono (OFL). The woff2 live in ../fonts (src/fonts/),
- * which Vite hashes into build/assets/ at build time. Variable fonts so the full
- * 100..900 weight axis is available — matching next/font's variable behavior. */
+/* Self-hosted Geist Sans (OFL). The woff2 lives in ../fonts (src/fonts/), which
+ * Vite hashes into build/assets/ at build time. A variable font so the full
+ * 100..900 weight axis is available — matching next/font's variable behavior.
+ * The woff2 is subset to a generous static Latin set (Basic/Latin-1/Latin-Ext-A/B,
+ * Latin Extended Additional, combining marks, General Punctuation, currency,
+ * letterlike, arrows + a few math relations) — every glyph the site renders,
+ * with the unused Greek/Cyrillic/etc. scripts dropped (~70KB -> ~45KB).
+ * Geist Mono is NOT self-hosted: font-mono is unused by every template, so it
+ * maps to a system monospace stack (see --font-geist-mono below). */
 @font-face {
   font-family: "Geist";
   src: url("../fonts/Geist-Variable.woff2") format("woff2");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Geist Mono";
-  src: url("../fonts/GeistMono-Variable.woff2") format("woff2");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -104,7 +105,9 @@
 :root {
   /* Self-hosted Geist font stacks (source got these from next/font). */
   --font-geist-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-geist-mono: "Geist Mono", ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
+  /* font-mono is used by ZERO templates, so we no longer self-host Geist Mono —
+   * this maps to a system monospace stack (any stray <code>/<pre> still reads well). */
+  --font-geist-mono: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
   --radius: 0.75rem;
 
