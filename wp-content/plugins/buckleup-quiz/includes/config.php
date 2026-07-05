@@ -156,7 +156,10 @@ function buckleup_quiz_category_icon( $slug ) {
  * - full_total        : questions in a full mock exam (~real ICBC length).
  * - category_total    : questions in a single-category quiz.
  * - pass_pct          : passing percentage (ICBC knowledge test is 80%).
- * - max_attempts      : attempts allowed for ANONYMOUS identities (logged-in = unlimited).
+ * - max_attempts      : FREE attempts allowed for ANONYMOUS identities (logged-in = unlimited).
+ *                       Admin-editable in wp-admin (Settings → Practice Test); the saved
+ *                       value is layered over this default via the `buckleup_quiz_config`
+ *                       filter in includes/admin.php.
  * - session_ttl       : seconds a started test session lives (Redis/transient).
  * - min_fill_seconds  : minimum plausible time to complete (bot guard on submit).
  * - sample_count      : sample questions rendered (crawlable) on each landing page.
@@ -168,7 +171,7 @@ function buckleup_quiz_config() {
 		'full_total'          => 50,
 		'category_total'      => 10,
 		'pass_pct'            => 80,
-		'max_attempts'        => 3,
+		'max_attempts'        => 15,
 		'session_ttl'         => 2 * HOUR_IN_SECONDS,
 		'min_fill_seconds'    => 10,
 		'sample_count'        => 6,

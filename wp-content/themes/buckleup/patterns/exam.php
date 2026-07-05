@@ -52,7 +52,7 @@ $bu_pass_pct  = (int) buckleup_quiz_cfg( 'pass_pct', 80 );
 $bu_total     = $bu_is_cat
 	? (int) buckleup_quiz_cfg( 'category_total', 10 )
 	: (int) buckleup_quiz_cfg( 'full_total', 50 );
-$bu_max_att   = (int) buckleup_quiz_cfg( 'max_attempts', 3 );
+$bu_max_att   = (int) buckleup_quiz_cfg( 'max_attempts', 15 );
 $bu_hub_url   = buckleup_quiz_hub_url();
 $bu_cat_label = $bu_is_cat ? buckleup_quiz_category_label( $bu_mode ) : '';
 

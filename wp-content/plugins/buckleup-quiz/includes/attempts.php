@@ -4,7 +4,8 @@
  *
  * Policy (locked with the business):
  *   - Logged-in users: UNLIMITED practice attempts.
- *   - Anonymous users: capped at `max_attempts` (default 3), tracked by three
+ *   - Anonymous users: capped at `max_attempts` (default 15, admin-editable in
+ *     Settings → Practice Test), tracked by three
  *     soft signals — email hash, IP hash, and a signed first-party cookie. The
  *     limit is enforced if ANY signal is at the cap. Acknowledged soft (emails,
  *     IPs and cookies can all be evaded); it nudges sign-up, it isn't auth.
@@ -24,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  * @return int
  */
 function buckleup_quiz_max_attempts() {
-	return (int) apply_filters( 'buckleup_quiz_max_attempts', buckleup_quiz_cfg( 'max_attempts', 3 ) );
+	return (int) apply_filters( 'buckleup_quiz_max_attempts', buckleup_quiz_cfg( 'max_attempts', 15 ) );
 }
 
 /**

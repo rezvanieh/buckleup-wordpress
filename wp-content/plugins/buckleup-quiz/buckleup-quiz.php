@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       BuckleUp Quiz
  * Plugin URI:        https://www.buckleupdriving.ca
- * Description:        ICBC Class 4 knowledge practice-test engine. Public/anonymous-first: a question bank (bu_questions), randomized server-graded attempts (bu_quiz_attempts), REST endpoints under buckleup/v1/quiz/*, attempt-limiting (anon 3 / logged-in unlimited), a branded HTML result email, and SEO-ready hub + category landing pages. No third-party quiz plugin, no jQuery.
+ * Description:        ICBC Class 4 knowledge practice-test engine. Public/anonymous-first: a question bank (bu_questions), randomized server-graded attempts (bu_quiz_attempts), REST endpoints under buckleup/v1/quiz/*, attempt-limiting (anon 15 / logged-in unlimited, admin-editable in Settings → Practice Test), a branded HTML result email, and SEO-ready hub + category landing pages. No third-party quiz plugin, no jQuery.
  * Version:           0.1.0
  * Requires at least: 6.7
  * Requires PHP:      8.1
@@ -41,6 +41,7 @@ $buckleup_quiz_includes = array(
 	'includes/certificate.php',// pass-only print-to-PDF certificate page + verify route
 	'includes/results.php',    // detailed results page (score + full answer review) by token
 	'includes/privacy.php',    // attempt retention cron + GDPR exporter/eraser (email is PII)
+	'includes/admin.php',      // Settings → Practice Test: admin-editable free-attempt cap (buckleup_quiz_config filter)
 );
 foreach ( $buckleup_quiz_includes as $buckleup_quiz_rel ) {
 	$buckleup_quiz_path = BUCKLEUP_QUIZ_PATH . $buckleup_quiz_rel;
