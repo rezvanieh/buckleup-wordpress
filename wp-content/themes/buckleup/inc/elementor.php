@@ -91,8 +91,16 @@ add_action( 'wp_enqueue_scripts', function () {
  * (see below) so the layout/typography render correctly off an Elementor page.
  */
 add_shortcode( 'buckleup_elementor', function ( $atts ): string {
-	$atts = shortcode_atts( array( 'id' => 0 ), $atts, 'buckleup_elementor' );
+	$atts = shortcode_atts( array( 'id' => 0, 'slug' => '' ), $atts, 'buckleup_elementor' );
 	$id   = (int) $atts['id'];
+	// Prefer slug: library-template ids are assigned at build time and differ between
+	// installs, so a hard-coded id silently renders nothing on a rebuilt database.
+	if ( $atts['slug'] ) {
+		$tpl = get_page_by_path( $atts['slug'], OBJECT, 'elementor_library' );
+		if ( $tpl ) {
+			$id = (int) $tpl->ID;
+		}
+	}
 	if ( ! $id || ! class_exists( '\\Elementor\\Plugin' ) ) {
 		return '';
 	}

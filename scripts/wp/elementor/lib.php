@@ -534,6 +534,72 @@ function el_spacer( $px = 32 ) {
 }
 
 /* --------------------------------------------------------------------------
+ * Target resolution
+ *
+ * Post IDs are NOT stable across installs. A fresh `make provision` numbers posts
+ * in seed order, so anything that shifts the seed (e.g. going from 5 placeholder
+ * testimonials to the 17 real Google reviews) renumbers every page after it —
+ * Home was 38 on the original build and is 49 on a current rebuild. The builders
+ * therefore resolve their targets by SLUG, the way build-locations.php always has.
+ * ----------------------------------------------------------------------- */
+
+/**
+ * Resolve a post id by slug, or 0 when it doesn't exist (caller reports + skips).
+ *
+ * @param string $slug      Post slug (post_name).
+ * @param string $post_type Post type to look in.
+ * @return int Post id, or 0.
+ */
+function el_post_id( $slug, $post_type = 'page' ) {
+	// get_page_by_path() matches a full hierarchical PATH, so a bare slug misses any
+	// child page (e.g. icbc-road-test-failures lives under resources/). Accept either
+	// a full path or a bare slug — slugs are unique enough within these seeds.
+	$post = get_page_by_path( $slug, OBJECT, $post_type );
+	if ( $post ) {
+		return (int) $post->ID;
+	}
+	$found = get_posts( array(
+		'post_type'        => $post_type,
+		'name'             => $slug,
+		'post_status'      => 'any',
+		'numberposts'      => 1,
+		'suppress_filters' => false,
+	) );
+	return $found ? (int) $found[0]->ID : 0;
+}
+
+/**
+ * Resolve an Elementor library template by slug, CREATING it if absent.
+ *
+ * Unlike pages (seeded by provision.sh), the header/footer library templates only
+ * exist because build-chrome.php made them — on a fresh DB there is nothing to
+ * resolve, and writing meta to a non-existent id silently produced an orphaned row
+ * and then fataled in Elementor's CSS generator.
+ *
+ * @param string $slug  Template slug.
+ * @param string $title Human title, used when creating.
+ * @return int Post id (never 0).
+ */
+function el_library_id( $slug, $title ) {
+	$id = el_post_id( $slug, 'elementor_library' );
+	if ( $id ) {
+		return $id;
+	}
+	$id = wp_insert_post( array(
+		'post_type'   => 'elementor_library',
+		'post_name'   => $slug,
+		'post_title'  => $title,
+		'post_status' => 'publish',
+	) );
+	if ( is_wp_error( $id ) ) {
+		echo "ERROR: could not create library template '$slug': " . $id->get_error_message() . "\n";
+		return 0;
+	}
+	echo "Created Elementor library template '$slug' (id $id).\n";
+	return (int) $id;
+}
+
+/* --------------------------------------------------------------------------
  * Save runner
  * ----------------------------------------------------------------------- */
 
@@ -546,6 +612,12 @@ function el_spacer( $px = 32 ) {
  * @param array $opts     template(string|false)=>'page-elementor', hide_title(bool).
  */
 function el_save_page( $post_id, array $elements, array $opts = array() ) {
+	// Never write meta to a non-existent post: that used to leave orphaned rows and
+	// then fatal inside Elementor's CSS generator (which needs a real document).
+	if ( ! $post_id || ! get_post( $post_id ) ) {
+		echo "SKIP: no post with id " . var_export( $post_id, true ) . " — nothing saved.\n";
+		return;
+	}
 	$json = wp_json_encode( array_values( $elements ) );
 	// Mirror Elementor's own save: wp_slash counteracts update_metadata's unslash,
 	// preserving the JSON's escaped slashes/unicode.

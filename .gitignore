@@ -59,3 +59,9 @@ debug.log
 
 # Claude Code runtime (not project source)
 .claude/scheduled_tasks.lock
+
+# SSH keys — never commit (Bluehost deploy key lives in ~/.ssh)
+buckleup_bluehost
+buckleup_bluehost.pub
+id_*
+*.pem
