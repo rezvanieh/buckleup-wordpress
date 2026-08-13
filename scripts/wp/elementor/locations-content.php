@@ -12,7 +12,7 @@
  * on each location page, so the visible FAQ and the structured data never drift.
  *
  * Brand facts are verbatim from the live site (inc/site.php, home-hero.php,
- * 10-buckleup-seo.php): ICBC-certified; 4.98★ on 200+ reviews; 98% pass rate;
+ * 10-buckleup-seo.php): ICBC-certified; 4.98★ on 200+ reviews;
  * lead instructor Farhad Sanaeifar; (604) 441-3677; WhatsApp 16044413677;
  * Class 7L / 7N / 5 / 4 training in modern Toyota vehicles; founded 2014
  * (→ "10+ years" is conservative/accurate as of 2026). NO fabricated reviews,
@@ -37,19 +37,18 @@ return array(
 		'hero_subtitle'  => 'From the Town Centre core by Lafarge Lake to the climbs of Westwood Plateau, BuckleUp\'s ICBC-certified instructors know every Coquitlam road test route. Learn in a modern Toyota and pass with confidence.',
 		'hero_stats'     => array(
 			array( 'value' => '4.98★', 'label' => '200+ Google reviews' ),
-			array( 'value' => '98%',   'label' => 'ICBC pass rate' ),
 			array( 'value' => '10+',   'label' => 'years on local roads' ),
 		),
 		'intro_heading'  => 'Learn to Drive in Coquitlam with Confidence',
 		'intro_body'     => array(
 			'Coquitlam is one of the most varied places in Metro Vancouver to learn to drive, and that is exactly why local students choose BuckleUp. In a single lesson you can move from the busy Town Centre grid around Lafarge Lake and Coquitlam Centre to the steep, winding residential streets of Westwood Plateau, then onto the high-speed merges of the Lougheed and Barnet Highways. Mastering that range is what makes a Coquitlam-trained driver test-ready anywhere in the Lower Mainland.',
 			'Our instructors live and teach on these roads every day. We tailor each lesson to where you are — total beginners start with vehicle control and parking in quiet Burquitlam and Maillardville side streets, while road-test candidates drill the exact intersections, lane changes, and hill starts the ICBC examiner is likely to use. Lessons run in calm, reliable Toyota training vehicles with a patient, ICBC-certified instructor beside you.',
-			'With a 98% first-time pass rate and a 4.98★ rating from 200+ reviews, BuckleUp has helped Coquitlam learners earn their Class 7 and Class 5 licences for over a decade. Whether you are a nervous new driver, a teen working toward your L or N, or a newcomer converting a licence, we build a plan around your goals.',
+			'With a 4.98★ rating from 200+ Google reviews, BuckleUp has helped Coquitlam learners earn their Class 7 and Class 5 licences for over a decade. Whether you are a nervous new driver, a teen working toward your L or N, or a newcomer converting a licence, we build a plan around your goals.',
 		),
 		'why_heading'    => 'Why Coquitlam Drivers Choose BuckleUp',
 		'why_items'      => array(
 			array( 'icon' => 'fas fa-map-location-dot', 'title' => 'We Know Coquitlam Roads',      'desc' => 'From Lougheed Highway merges to the Westwood Plateau hills and the Town Centre one-way grid, we train on the real routes you\'ll be tested on.' ),
-			array( 'icon' => 'fas fa-award',            'title' => 'ICBC-Certified Instructors',   'desc' => 'Led by senior instructor Farhad Sanaeifar, our team is fully ICBC-certified with a 98% first-time pass rate.' ),
+			array( 'icon' => 'fas fa-award',            'title' => 'ICBC-Certified Instructors',   'desc' => 'Led by senior instructor Farhad Sanaeifar, our team is fully ICBC-certified and teaches these roads every day.' ),
 			array( 'icon' => 'fas fa-car-side',         'title' => 'Modern Toyota Vehicles',       'desc' => 'Calm, reliable, dual-control Toyotas that are easy to handle — ideal for first-time and nervous drivers.' ),
 			array( 'icon' => 'fas fa-language',         'title' => 'English & Farsi Lessons',      'desc' => 'Clear instruction in English and Farsi so nothing gets lost — a real advantage for Coquitlam\'s diverse community.' ),
 		),
@@ -79,7 +78,7 @@ return array(
 		'cta_body'       => 'Book your first lesson today and train with ICBC-certified instructors who know every Coquitlam test route.',
 		// ---- SEO ----
 		'seo_title'      => 'Driving Lessons in Coquitlam | BuckleUp Driving School',
-		'seo_description' => 'Driving lessons in Coquitlam with ICBC-certified instructors and a 98% pass rate. Master test routes from Town Centre to Westwood Plateau. Book today!',
+		'seo_description' => 'Driving lessons in Coquitlam with ICBC-certified instructors rated 4.98★. Master test routes from Town Centre to Westwood Plateau. Book today!',
 		'geo'            => array( 'lat' => 49.2838, 'lng' => -122.7932 ),
 		'area_served'    => array( 'Coquitlam', 'Burquitlam', 'Westwood Plateau', 'Maillardville', 'Eagle Ridge' ),
 		'keywords'       => array( 'driving lessons coquitlam', 'driving school coquitlam', 'icbc road test coquitlam', 'driving instructor coquitlam' ),
@@ -97,21 +96,20 @@ return array(
 		'hero_subtitle'  => 'From the Lonsdale waterfront to the steep climbs toward Grouse Mountain and the Upper Levels Highway, BuckleUp prepares you for the North Shore\'s hills, bridges, and weather with ICBC-certified instructors.',
 		'hero_stats'     => array(
 			array( 'value' => '4.98★', 'label' => '200+ Google reviews' ),
-			array( 'value' => '98%',   'label' => 'ICBC pass rate' ),
 			array( 'value' => '10+',   'label' => 'years on local roads' ),
 		),
 		'intro_heading'  => 'Learn to Drive on the North Shore with Confidence',
 		'intro_body'     => array(
 			'Driving in North Vancouver is unlike anywhere else in Metro Vancouver. The North Shore rises sharply from the Lonsdale Quay and Shipyards waterfront up toward Grouse Mountain, so almost every route involves real hills, steep starts, and changing grades. Add the Upper Levels Highway, the bridge approaches to the Lions Gate and Ironworkers, and the wet, sometimes icy mountain weather, and you have a place where genuine local training makes all the difference.',
 			'BuckleUp\'s ICBC-certified instructors specialise in exactly these conditions. We teach confident hill starts and downhill braking on the Lonsdale and Lynn Valley grades, smooth merging onto the Upper Levels Highway, and calm, decisive handling of bridge traffic. Beginners build their foundations on quieter streets in Central and Lower Lonsdale before progressing to the busier corridors and the test routes themselves.',
-			'With a 4.98★ rating from 200+ reviews and a 98% first-time pass rate, we have helped North Vancouver students earn their Class 7 and Class 5 licences for more than a decade. Lessons run in modern, dual-control Toyota vehicles, and instruction is available in both English and Farsi.',
+			'With a 4.98★ rating from 200+ Google reviews, we have helped North Vancouver students earn their Class 7 and Class 5 licences for more than a decade. Lessons run in modern, dual-control Toyota vehicles, and instruction is available in both English and Farsi.',
 		),
 		'why_heading'    => 'Why North Vancouver Drivers Choose BuckleUp',
 		'why_items'      => array(
 			array( 'icon' => 'fas fa-mountain', 'title' => 'Hill & Mountain Expertise',  'desc' => 'We drill hill starts, downhill control, and steep-grade confidence on the real Lonsdale and Lynn Valley inclines.' ),
 			array( 'icon' => 'fas fa-bridge',   'title' => 'Bridge & Highway Ready',     'desc' => 'Master the Upper Levels Highway merges and the Lions Gate / Ironworkers bridge approaches that define North Shore driving.' ),
 			array( 'icon' => 'fas fa-cloud-rain', 'title' => 'Wet-Weather Skills',       'desc' => 'The North Shore gets the region\'s heaviest rain — we teach safe braking, following distance, and visibility habits for it.' ),
-			array( 'icon' => 'fas fa-award',    'title' => 'ICBC-Certified Instructors', 'desc' => 'Fully ICBC-certified, led by senior instructor Farhad Sanaeifar, with a 98% first-time pass rate.' ),
+			array( 'icon' => 'fas fa-award',    'title' => 'ICBC-Certified Instructors', 'desc' => 'Fully ICBC-certified, led by senior instructor Farhad Sanaeifar.' ),
 		),
 		'neighborhoods_heading' => 'Neighbourhoods We Serve in North Vancouver',
 		'neighborhoods'  => array( 'Lower Lonsdale', 'Central Lonsdale', 'Lynn Valley', 'Lynn Creek', 'Deep Cove', 'Capilano', 'Edgemont Village', 'Pemberton Heights', 'Norgate', 'Seymour', 'Grand Boulevard', 'Blueridge' ),
@@ -139,7 +137,7 @@ return array(
 		'cta_body'       => 'Book your first North Vancouver lesson and train on the hills, bridges, and routes that matter most.',
 		// ---- SEO ----
 		'seo_title'      => 'Driving Lessons in North Vancouver | BuckleUp School',
-		'seo_description' => 'Master North Shore hills, bridges & test routes with ICBC-certified instructors and a 98% pass rate. Driving lessons in North Vancouver. Book today!',
+		'seo_description' => 'Master North Shore hills, bridges & test routes with ICBC-certified instructors rated 4.98★. Driving lessons in North Vancouver. Book today!',
 		'geo'            => array( 'lat' => 49.3200, 'lng' => -123.0724 ),
 		'area_served'    => array( 'North Vancouver', 'Lonsdale', 'Lynn Valley', 'Deep Cove', 'Capilano' ),
 		'keywords'       => array( 'driving lessons north vancouver', 'driving school north vancouver', 'icbc road test north vancouver', 'north shore driving instructor' ),
@@ -157,21 +155,20 @@ return array(
 		'hero_subtitle'  => 'From the Coast Meridian Overpass to the rail crossings and the Traboulay PoCo Trail neighbourhoods, BuckleUp\'s ICBC-certified instructors know every Port Coquitlam route. Learn in a modern Toyota and pass first time.',
 		'hero_stats'     => array(
 			array( 'value' => '4.98★', 'label' => '200+ Google reviews' ),
-			array( 'value' => '98%',   'label' => 'ICBC pass rate' ),
 			array( 'value' => '10+',   'label' => 'years on local roads' ),
 		),
 		'intro_heading'  => 'Learn to Drive in Port Coquitlam with Confidence',
 		'intro_body'     => array(
 			'Port Coquitlam has a driving character all its own. The white cable-stayed Coast Meridian Overpass connects the city across the rail yards, and railway crossings, the Lougheed Highway corridor, and tight residential grids around Downtown PoCo and the Traboulay PoCo Trail all feature in everyday driving here. Learning these specifics with a local instructor is what gets PoCo students confident and test-ready.',
 			'At BuckleUp we tailor every lesson to where you are. New drivers begin with vehicle control and parking on the quieter streets of Citadel Heights, Riverwood, and Mary Hill, then progress to the busier Shaughnessy Street and Lougheed Highway corridors and the rail crossings that demand careful, deliberate handling. Road-test candidates rehearse the exact manoeuvres and intersections examiners favour.',
-			'Backed by a 98% first-time pass rate and a 4.98★ rating from 200+ reviews, BuckleUp has guided Port Coquitlam learners through their Class 7 and Class 5 tests for over a decade. Lessons run in calm, dual-control Toyota vehicles with ICBC-certified instructors, and instruction is available in English and Farsi.',
+			'Backed by a 4.98★ rating from 200+ Google reviews, BuckleUp has guided Port Coquitlam learners through their Class 7 and Class 5 tests for over a decade. Lessons run in calm, dual-control Toyota vehicles with ICBC-certified instructors, and instruction is available in English and Farsi.',
 		),
 		'why_heading'    => 'Why Port Coquitlam Drivers Choose BuckleUp',
 		'why_items'      => array(
 			array( 'icon' => 'fas fa-train',            'title' => 'Rail-Crossing Confidence',    'desc' => 'PoCo has more level rail crossings than most cities — we teach the exact stopping and scanning habits examiners look for.' ),
 			array( 'icon' => 'fas fa-map-location-dot',  'title' => 'We Know PoCo Routes',         'desc' => 'From the Coast Meridian Overpass to Shaughnessy Street and the Lougheed corridor, we train on the roads you\'ll be tested on.' ),
 			array( 'icon' => 'fas fa-car-side',          'title' => 'Modern Toyota Vehicles',      'desc' => 'Reliable, dual-control Toyotas that are forgiving and easy to learn in for first-time and nervous drivers.' ),
-			array( 'icon' => 'fas fa-award',             'title' => 'ICBC-Certified Instructors',  'desc' => 'Fully ICBC-certified, led by senior instructor Farhad Sanaeifar, with a 98% first-time pass rate.' ),
+			array( 'icon' => 'fas fa-award',             'title' => 'ICBC-Certified Instructors',  'desc' => 'Fully ICBC-certified, led by senior instructor Farhad Sanaeifar.' ),
 		),
 		'neighborhoods_heading' => 'Neighbourhoods We Serve in Port Coquitlam',
 		'neighborhoods'  => array( 'Downtown PoCo', 'Citadel Heights', 'Mary Hill', 'Riverwood', 'Birchland Manor', 'Lincoln Park', 'Central PoCo', 'Oxford Heights', 'Glenwood', 'Woodland Acres', 'Sun Valley', 'Riverwood' ),
@@ -199,7 +196,7 @@ return array(
 		'cta_body'       => 'Book your first lesson today and train with instructors who know every PoCo route and rail crossing.',
 		// ---- SEO ----
 		'seo_title'      => 'Driving Lessons in Port Coquitlam | BuckleUp School',
-		'seo_description' => 'Driving lessons in Port Coquitlam with ICBC-certified instructors and a 98% pass rate. Master PoCo rail crossings and local test routes. Book today!',
+		'seo_description' => 'Driving lessons in Port Coquitlam with ICBC-certified instructors rated 4.98★. Master PoCo rail crossings and local test routes. Book today!',
 		'geo'            => array( 'lat' => 49.2620, 'lng' => -122.7811 ),
 		'area_served'    => array( 'Port Coquitlam', 'Citadel Heights', 'Mary Hill', 'Riverwood', 'Birchland Manor' ),
 		'keywords'       => array( 'driving lessons port coquitlam', 'driving school port coquitlam', 'icbc road test port coquitlam', 'poco driving instructor' ),
@@ -217,21 +214,20 @@ return array(
 		'hero_subtitle'  => 'Port Moody is our home. From Rocky Point Park and the Burrard Inlet shoreline to the Newport Village SkyTrain area and the Heritage Mountain climbs, BuckleUp\'s ICBC-certified instructors know every local route inside out.',
 		'hero_stats'     => array(
 			array( 'value' => '4.98★', 'label' => '200+ Google reviews' ),
-			array( 'value' => '98%',   'label' => 'ICBC pass rate' ),
 			array( 'value' => '10+',   'label' => 'years on local roads' ),
 		),
 		'intro_heading'  => 'Learn to Drive in Port Moody with Confidence',
 		'intro_body'     => array(
 			'Port Moody is where BuckleUp is based, and no one knows these streets better. The city wraps around the eastern end of Burrard Inlet, from the waterfront at Rocky Point Park up the steep grades of Heritage Mountain and College Park, with the busy St. Johns Street and Barnet Highway corridors carrying traffic through the middle. Add the Evergreen SkyTrain stations at Inlet Centre and Moody Centre, and you have a compact but genuinely challenging place to learn.',
 			'Because Port Moody is our home base, our instructors teach on these exact roads every single day. We start nervous and first-time drivers with vehicle control and parking on the quieter streets of Glenayre, College Park, and Heritage Woods, then build up to the Heritage Mountain hill starts, the St. Johns Street lane changes, and the Barnet and Ioco Road corridors. Road-test candidates rehearse the precise manoeuvres Port Moody examiners look for.',
-			'With a 98% first-time pass rate, a 4.98★ rating from 200+ reviews, and over a decade serving the community, BuckleUp is the trusted local choice for Class 7 and Class 5 training. Lessons run in modern, dual-control Toyota vehicles with ICBC-certified instructors, and we teach in both English and Farsi.',
+			'With a 4.98★ rating from 200+ Google reviews and over a decade serving the community, BuckleUp is the trusted local choice for Class 7 and Class 5 training. Lessons run in modern, dual-control Toyota vehicles with ICBC-certified instructors, and we teach in both English and Farsi.',
 		),
 		'why_heading'    => 'Why Port Moody Drivers Choose BuckleUp',
 		'why_items'      => array(
 			array( 'icon' => 'fas fa-house-chimney',     'title' => 'Your Local School',          'desc' => 'BuckleUp is based right here in Port Moody — we know every test route, hill, and tricky intersection in the city.' ),
 			array( 'icon' => 'fas fa-mountain',          'title' => 'Heritage Mountain Hills',    'desc' => 'We drill hill starts and downhill control on the real Heritage Mountain and College Park grades the examiner uses.' ),
 			array( 'icon' => 'fas fa-car-side',          'title' => 'Modern Toyota Vehicles',     'desc' => 'Calm, reliable, dual-control Toyotas that build confidence for first-time and nervous drivers.' ),
-			array( 'icon' => 'fas fa-award',             'title' => 'ICBC-Certified Instructors', 'desc' => 'Fully ICBC-certified, led by senior instructor Farhad Sanaeifar, with a 98% first-time pass rate.' ),
+			array( 'icon' => 'fas fa-award',             'title' => 'ICBC-Certified Instructors', 'desc' => 'Fully ICBC-certified, led by senior instructor Farhad Sanaeifar.' ),
 		),
 		'neighborhoods_heading' => 'Neighbourhoods We Serve in Port Moody',
 		'neighborhoods'  => array( 'Moody Centre', 'Inlet Centre', 'Newport Village', 'Heritage Mountain', 'Heritage Woods', 'College Park', 'Glenayre', 'Pleasantside', 'Anmore (nearby)', 'Ioco', 'Seaview', 'Mountain Meadows' ),
@@ -259,7 +255,7 @@ return array(
 		'cta_body'       => 'Book your first lesson today and learn from your local Port Moody driving school.',
 		// ---- SEO ----
 		'seo_title'      => 'Driving Lessons in Port Moody | BuckleUp Driving School',
-		'seo_description' => 'Your local Port Moody driving school. ICBC-certified instructors, 98% pass rate, and expert prep for Heritage Mountain hills and test routes. Book today!',
+		'seo_description' => 'Your local Port Moody driving school. ICBC-certified instructors rated 4.98★, and expert prep for Heritage Mountain hills and test routes. Book today!',
 		'geo'            => array( 'lat' => 49.2838, 'lng' => -122.8556 ),
 		'area_served'    => array( 'Port Moody', 'Moody Centre', 'Inlet Centre', 'Heritage Mountain', 'Newport Village' ),
 		'keywords'       => array( 'driving lessons port moody', 'driving school port moody', 'icbc road test port moody', 'port moody driving instructor' ),
@@ -277,20 +273,19 @@ return array(
 		'hero_subtitle'  => 'One trusted school for Coquitlam, Port Coquitlam, and Port Moody. With the mountains at your back and every local test route covered, BuckleUp\'s ICBC-certified instructors get Tri-Cities drivers ready for anything.',
 		'hero_stats'     => array(
 			array( 'value' => '4.98★', 'label' => '200+ Google reviews' ),
-			array( 'value' => '98%',   'label' => 'ICBC pass rate' ),
 			array( 'value' => '10+',   'label' => 'years on local roads' ),
 		),
 		'intro_heading'  => 'Driving Lessons Across the Tri-Cities',
 		'intro_body'     => array(
 			'The Tri-Cities — Coquitlam, Port Coquitlam, and Port Moody — sit together against a dramatic mountain backdrop at the eastern edge of Metro Vancouver, and together they offer just about every driving challenge a new BC driver can face. Steep climbs toward Westwood Plateau and Heritage Mountain, the high-speed Lougheed and Barnet Highway corridors, Port Coquitlam\'s level rail crossings, and the busy Town Centre and Newport Village cores all sit within a short drive of one another.',
 			'BuckleUp is the local school that ties the whole region together. Based in Port Moody and active across all three cities, our ICBC-certified instructors train you on the specific routes that matter wherever you live or test. Beginners build their foundations on quiet residential streets, then progress through hill starts, highway merges, rail crossings, and the exact manoeuvres examiners look for — all in calm, dual-control Toyota vehicles.',
-			'With a 98% first-time pass rate, a 4.98★ rating from 200+ reviews, and over a decade serving the Tri-Cities, we have helped thousands of local students earn their Class 7 and Class 5 licences. Lessons are available in English and Farsi, and we pick you up anywhere across Coquitlam, Port Coquitlam, and Port Moody.',
+			'With a 4.98★ rating from 200+ Google reviews and over a decade serving the Tri-Cities, we have helped thousands of local students earn their Class 7 and Class 5 licences. Lessons are available in English and Farsi, and we pick you up anywhere across Coquitlam, Port Coquitlam, and Port Moody.',
 		),
 		'why_heading'    => 'Why Tri-Cities Drivers Choose BuckleUp',
 		'why_items'      => array(
 			array( 'icon' => 'fas fa-map-location-dot',  'title' => 'Every Tri-Cities Route',     'desc' => 'From Westwood Plateau and Heritage Mountain hills to PoCo rail crossings and the Lougheed corridor, we train on them all.' ),
 			array( 'icon' => 'fas fa-location-dot',       'title' => 'One School, Three Cities',   'desc' => 'Coquitlam, Port Coquitlam, and Port Moody — one trusted, local school with pickup across the whole region.' ),
-			array( 'icon' => 'fas fa-award',              'title' => 'ICBC-Certified Instructors', 'desc' => 'Fully ICBC-certified, led by senior instructor Farhad Sanaeifar, with a 98% first-time pass rate.' ),
+			array( 'icon' => 'fas fa-award',              'title' => 'ICBC-Certified Instructors', 'desc' => 'Fully ICBC-certified, led by senior instructor Farhad Sanaeifar.' ),
 			array( 'icon' => 'fas fa-language',           'title' => 'English & Farsi Lessons',    'desc' => 'Clear instruction in English and Farsi to suit the Tri-Cities\' diverse community.' ),
 		),
 		'neighborhoods_heading' => 'Areas We Serve Across the Tri-Cities',
@@ -319,7 +314,7 @@ return array(
 		'cta_body'       => 'Book your first lesson today with the Tri-Cities\' trusted, ICBC-certified driving school.',
 		// ---- SEO ----
 		'seo_title'      => 'Driving Lessons in the Tri-Cities | BuckleUp School',
-		'seo_description' => 'ICBC-certified driving lessons across Coquitlam, Port Coquitlam & Port Moody. 98% pass rate and expert local route prep. Book a lesson today!',
+		'seo_description' => 'ICBC-certified driving lessons across Coquitlam, Port Coquitlam & Port Moody. Rated 4.98★ with expert local route prep. Book a lesson today!',
 		'geo'            => array( 'lat' => 49.2780, 'lng' => -122.7930 ),
 		'area_served'    => array( 'Tri-Cities', 'Coquitlam', 'Port Coquitlam', 'Port Moody' ),
 		'keywords'       => array( 'driving lessons tri-cities', 'driving school tri-cities', 'icbc road test tri-cities', 'tri cities driving instructor' ),

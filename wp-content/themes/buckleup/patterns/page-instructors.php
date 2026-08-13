@@ -32,9 +32,11 @@ $initials = static function ( $name ) {
 
 // Marketing stats row (kept from source for parity — see Services/PLAN).
 $stats = array(
-	array( 'value' => '10,000+', 'label' => __( 'Students Taught', 'buckleup' ) ),
-	array( 'value' => '94%',     'label' => __( 'Avg Pass Rate', 'buckleup' ) ),
-	array( 'value' => '4.8',     'label' => __( 'Avg Rating', 'buckleup' ) ),
+	// Was 10,000+ Students Taught / 94% Avg Pass Rate / 4.8 Avg Rating — unverifiable,
+	// and the 4.8 contradicted the 4.98 shown everywhere else. Replaced with the
+	// figures that come from the real Google reviews.
+	array( 'value' => '4.98★', 'label' => __( 'Google rating', 'buckleup' ) ),
+	array( 'value' => '200+',  'label' => __( 'Google reviews', 'buckleup' ) ),
 	array( 'value' => (string) max( 1, count( $instructors ) ), 'label' => __( 'Expert Instructors', 'buckleup' ) ),
 );
 

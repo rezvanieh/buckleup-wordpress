@@ -45,7 +45,7 @@ function build_hero( $hero_bg, $hero_card ) {
 		array(
 			el_pill( 'ICBC Certified', 'fas fa-shield-alt' ),
 			el_pill( '5-Star Rated', 'fas fa-star' ),
-			el_pill( '100% Pass Guarantee', 'fas fa-check-circle' ),
+			el_pill( 'Dual-Control Vehicles', 'fas fa-check-circle' ),
 		)
 	);
 
@@ -257,11 +257,14 @@ function build_practice() {
 			el_container(
 				array( 'content_width' => 'full', 'flex_direction' => 'row', 'flex_align_items' => 'center', 'flex_gap' => array( 'unit' => 'px', 'size' => 16, 'column' => '16', 'row' => '16' ) ),
 				array(
-					el_heading( '98%', array( 'tag' => 'div', 'size' => 48, 'weight' => 800, 'color_global' => 'secondary', 'line_height' => 1 ) ),
+					// Was "98% first-time pass rate" — an unverifiable claim. Replaced with a
+					// fact we can actually stand behind: the question bank really does hold
+					// 231 questions across the 12 official ICBC Class 4 topics.
+					el_heading( '231', array( 'tag' => 'div', 'size' => 48, 'weight' => 800, 'color_global' => 'secondary', 'line_height' => 1 ) ),
 					el_col(
 						array(
-							el_text( '<strong>First-time pass rate</strong>', array( 'raw' => true, 'size' => 17, 'color_global' => 'text' ) ),
-							el_text( 'for BuckleUp students who practise before the real exam', array( 'size' => 14, 'color_global' => 'mutedcol' ) ),
+							el_text( '<strong>Practice questions</strong>', array( 'raw' => true, 'size' => 17, 'color_global' => 'text' ) ),
+							el_text( 'across all 12 official ICBC Class 4 topics — free, no signup to start', array( 'size' => 14, 'color_global' => 'mutedcol' ) ),
 						),
 						array( 'gap' => 2, 'width' => 'grow', 'align' => 'flex-start' )
 					),

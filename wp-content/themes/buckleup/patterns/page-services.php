@@ -4,7 +4,7 @@
  * Slug: buckleup/page-services
  * Inserter: no
  *
- * Services page — matches the LIVE page's structure (hero w/ 98% pass-rate eyebrow,
+ * Services page — matches the LIVE page's structure (hero w/ ICBC-certified eyebrow,
  * 4 license-class tabs, pricing, a stats row, and a closing CTA) but with HONEST
  * data: the source's per-class price tiers ($699–$1799) are mock/placeholder and
  * contradict the client's real pricing, so per PLAN §4 ("don't clone source
@@ -28,10 +28,11 @@ $classes = array(
 );
 
 $stats = array(
-	array( 'value' => '98%',   'label' => __( 'Pass Rate', 'buckleup' ),        'icon' => 'shield-check' ),
-	array( 'value' => '5000+', 'label' => __( 'Graduates', 'buckleup' ),        'icon' => 'star' ),
-	array( 'value' => '15+',   'label' => __( 'Years Experience', 'buckleup' ), 'icon' => 'check' ),
-	array( 'value' => '50+',   'label' => __( 'Instructors', 'buckleup' ),      'icon' => 'shield-check' ),
+	// The stats band used to read 98% Pass Rate / 5000+ Graduates / 15+ Years /
+	// 50+ Instructors. None could be substantiated and they contradicted each other
+	// and the rest of the site, so they were removed rather than restated.
+	array( 'value' => '4.98★', 'label' => __( 'Google rating', 'buckleup' ),   'icon' => 'star' ),
+	array( 'value' => '200+',  'label' => __( 'Google reviews', 'buckleup' ),  'icon' => 'star' ),
 );
 
 $tabs = array_map( static function ( $c ) {
@@ -44,7 +45,7 @@ $tabs = array_map( static function ( $c ) {
 	<div class="container mx-auto px-4 max-w-3xl">
 		<div data-reveal class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-6">
 			<?php echo buckleup_icon( 'shield-check', 'w-4 h-4 text-primary' ); // phpcs:ignore ?>
-			<span class="text-sm font-medium text-primary"><?php esc_html_e( '98% First-Time Pass Rate', 'buckleup' ); ?></span>
+			<span class="text-sm font-medium text-primary"><?php esc_html_e( 'ICBC-Certified Instruction', 'buckleup' ); ?></span>
 		</div>
 		<h1 data-reveal class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight text-foreground">
 			<?php esc_html_e( 'Choose Your Path to', 'buckleup' ); ?> <span class="text-primary"><?php esc_html_e( 'Driving Success', 'buckleup' ); ?></span>

@@ -28,7 +28,7 @@ $values = array(
 	array( 'icon' => 'shield-check', 'title' => __( 'Student-Centered', 'buckleup' ), 'desc' => __( 'Every lesson is tailored to your pace, goals, and learning style.', 'buckleup' ) ),
 	array( 'icon' => 'shield-check', 'title' => __( 'Safety First', 'buckleup' ),      'desc' => __( 'Modern vehicles with safety primary features and comprehensive insurance coverage.', 'buckleup' ) ),
 	array( 'icon' => 'star',         'title' => __( 'Modern Approach', 'buckleup' ),   'desc' => __( 'Online booking, progress tracking, and flexible scheduling.', 'buckleup' ) ),
-	array( 'icon' => 'star',         'title' => __( 'Excellence', 'buckleup' ),        'desc' => __( '98% first-time pass rate speaks to our commitment to quality.', 'buckleup' ) ),
+	array( 'icon' => 'star',         'title' => __( 'Excellence', 'buckleup' ),        'desc' => __( 'Structured lesson plans and honest feedback after every drive.', 'buckleup' ) ),
 );
 ?>
 <!-- wp:html -->

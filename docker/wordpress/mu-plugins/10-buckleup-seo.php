@@ -101,7 +101,7 @@ function buckleup_seo_settings() {
 	$defaults = array(
 		'name'           => 'BuckleUp Driving School',
 		'alternate_name' => 'BuckleUp Driving School Ltd',
-		'description'    => 'Master the road with BuckleUp Driving School. ICBC certified instruction in Vancouver, Port Moody, Coquitlam & North Van. 98% pass rate. Book your lesson today!',
+		'description'    => 'Master the road with BuckleUp Driving School. ICBC certified instruction in Vancouver, Port Moody, Coquitlam & North Van. Book your lesson today!',
 		'phone'          => '+1-604-441-3677',
 		'phone_display'  => '(604) 441-3677',
 		'email'          => 'info@buckleupdriving.ca',
@@ -1057,7 +1057,7 @@ function buckleup_seo_icbc_article_node() {
 			'@id'   => $url,
 		),
 		'headline'         => 'Top 5 Reasons Students Fail the ICBC Road Test',
-		'description'      => 'Learn the exact reasons why Vancouver students fail their ICBC Class 5 and Class 7 road tests, and how BuckleUp Driving School helps you achieve a 98% pass rate.',
+		'description'      => 'Learn the exact reasons why Vancouver students fail their ICBC Class 5 and Class 7 road tests, and how BuckleUp Driving School helps you avoid them.',
 		'image'            => $s['logo'],
 		'author'           => array(
 			'@type' => 'Organization',

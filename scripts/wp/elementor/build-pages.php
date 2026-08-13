@@ -115,7 +115,7 @@ function build_about() {
 		array( 'fas fa-shield-alt', 'Student-Centered', 'Every lesson is tailored to your pace, goals, and learning style.' ),
 		array( 'fas fa-shield-alt', 'Safety First', 'Modern vehicles with safety features and comprehensive insurance coverage.' ),
 		array( 'fas fa-star', 'Modern Approach', 'Online booking, progress tracking, and flexible scheduling.' ),
-		array( 'fas fa-star', 'Excellence', '98% first-time pass rate speaks to our commitment to quality.' ),
+		array( 'fas fa-star', 'Excellence', 'Structured lesson plans and honest feedback after every drive.' ),
 	);
 
 	$mission_left = el_col( array(
@@ -331,12 +331,20 @@ function build_services() {
 function build_instructors() {
 	$instructors = function_exists( 'buckleup_get_instructors' ) ? buckleup_get_instructors() : array();
 	$wa = preg_replace( '/\D/', '', function_exists( 'buckleup_get_setting' ) ? buckleup_get_setting( 'whatsapp', '16044413677' ) : '16044413677' );
-	$stats = array( array( '10,000+', 'Students Taught' ), array( '94%', 'Avg Pass Rate' ), array( '4.8', 'Avg Rating' ), array( (string) max( 1, count( $instructors ) ), 'Expert Instructors' ) );
+	// Was "10,000+ Students Taught / 94% Avg Pass Rate / 4.8 Avg Rating" — all
+	// unverifiable, and the 4.8 contradicted the 4.98 shown everywhere else. These
+	// three are checkable: the instructor count comes from the CPT, and the rating
+	// and review count come from the real Google reviews the testimonials are seeded from.
+	$stats = array(
+		array( (string) max( 1, count( $instructors ) ), 'ICBC-Certified Instructors' ),
+		array( '4.98★', 'Google rating' ),
+		array( '200+', 'Google reviews' ),
+	);
 	$why = array(
 		array( 'fas fa-shield-alt', 'ICBC Certified', 'All instructors are ICBC-approved with clean driving records.' ),
 		array( 'fas fa-comment-dots', 'Multilingual', 'Lessons available in English, Farsi, French, and more.' ),
 		array( 'fas fa-star', 'Patient & Supportive', 'Specializing in nervous and first-time drivers.' ),
-		array( 'fas fa-check', 'Proven Results', 'Above-average pass rates with thousands of success stories.' ),
+		array( 'fas fa-check', 'Structured Lessons', 'A clear plan for each drive, with honest feedback afterwards.' ),
 	);
 
 	$stat_blocks = array();
@@ -510,13 +518,13 @@ function build_icbc() {
 	$cta = el_section( array( 'bg' => '#FFFFFF', 'pad_y' => 56, 'gap' => 16, 'content_width' => 920 ), array(
 		el_col( array(
 			el_heading( 'Ready to Pass on Your First Try?', array( 'tag' => 'h2', 'size' => 30, 'weight' => 800, 'align' => 'center', 'color_global' => 'text' ) ),
-			el_text( "Don't leave your license to chance. Join the 98% of BuckleUp students who pass their ICBC road test the very first time.", array( 'align' => 'center', 'size' => 16, 'color_global' => 'mutedcol', 'max_width' => 600 ) ),
+			el_text( "Don't leave your licence to chance. Work through these with an ICBC-certified instructor before test day.", array( 'align' => 'center', 'size' => 16, 'color_global' => 'mutedcol', 'max_width' => 600 ) ),
 			el_button( 'Book Road Test Prep', array( 'url' => home_url( '/#pricing' ), 'size' => 'lg', 'icon' => 'fas fa-chevron-right', 'bg_global' => 'primary' ) ),
 		), array( 'width' => 100, 'gap_px' => 14, 'align' => 'center', 'bg' => 'rgba(11,92,224,0.06)', 'pad' => 36, 'radius' => 24, 'border' => 'rgba(11,92,224,0.2)' ) ),
 	) );
 
 	return array(
-		page_hero( 'ICBC Road Test Guide', 'fas fa-shield-alt', 'Top 5 Reasons Students Fail the <span class="gradient-text">ICBC Road Test</span>', 'With a 98% first-time pass rate, we know exactly what ICBC examiners look for. Here is why most test-takers fail, and how we ensure you don\'t.', array( 'pill' => array( 'icon_color_global' => 'primary' ), 'size' => 44 ) ),
+		page_hero( 'ICBC Road Test Guide', 'fas fa-shield-alt', 'Top 5 Reasons Students Fail the <span class="gradient-text">ICBC Road Test</span>', 'ICBC examiners look for the same handful of habits every time. Here is why most test-takers fail, and how to make sure you don\'t.', array( 'pill' => array( 'icon_color_global' => 'primary' ), 'size' => 44 ) ),
 		$cards_section,
 		$cta,
 	);

@@ -69,7 +69,7 @@ $titles = array(
 	'homepage_title'           => 'Best Driving School Vancouver | BuckleUp Driving School',
 	'homepage_description'     => 'BuckleUp Driving School is a top driving school Vancouver learners trust. Driving lessons are available in Vancouver, Tri-Cities, Coquitlam, Port Moody, and North Vancouver. Book today!',
 	'homepage_facebook_title'  => 'BuckleUp Driving School - Vancouver\'s Premier Driving Academy',
-	'homepage_facebook_description' => 'Vancouver\'s premier driving academy with ICBC-certified instructors, modern vehicles, and a 98% first-time pass rate.',
+	'homepage_facebook_description' => 'Vancouver\'s premier driving academy with ICBC-certified instructors, modern dual-control vehicles, and patient one-on-one lessons.',
 	'homepage_custom_robots'   => 'on',
 	'homepage_robots'          => array( 'index', 'follow' ),
 
@@ -291,9 +291,9 @@ $page_meta = array(
 	'about'    => array(
 		'type'        => 'page',
 		'title'       => 'About Us - ICBC-Certified Driving Instructors Since 2014',
-		'description' => "Meet BuckleUp Driving School's ICBC-certified instructors with a 98% pass rate. Trusted by 5000+ graduates in Vancouver, Port Moody, Coquitlam & Burnaby since 2014. Modern vehicles & personalized training.",
+		'description' => "Meet BuckleUp Driving School's ICBC-certified instructors, rated 4.98★ on Google by learners in Vancouver, Port Moody, Coquitlam & Burnaby since 2014. Modern vehicles & personalized training.",
 		'og_title'    => 'About BuckleUp Driving School | ICBC-Certified Instructors',
-		'og_desc'     => 'Meet our ICBC-certified instructors with 98% pass rate. Serving Vancouver & Tri-Cities since 2014.',
+		'og_desc'     => 'Meet our ICBC-certified instructors, rated 4.98★ on Google. Serving Vancouver & Tri-Cities since 2014.',
 	),
 	'contact'  => array(
 		'type'        => 'page',
@@ -318,9 +318,9 @@ $page_meta = array(
 	'icbc-road-test-failures' => array(
 		'type'        => 'page',
 		'title'       => 'Top 5 Reasons Students Fail the ICBC Road Test | BuckleUp',
-		'description' => 'Learn the exact reasons why Vancouver students fail their ICBC Class 5 and Class 7 road tests, and how BuckleUp Driving School helps you achieve a 98% pass rate.',
+		'description' => 'Learn the exact reasons why Vancouver students fail their ICBC Class 5 and Class 7 road tests, and how BuckleUp Driving School helps you avoid them.',
 		'og_title'    => 'Top 5 Reasons Students Fail the ICBC Road Test | BuckleUp',
-		'og_desc'     => 'Learn why Vancouver students fail their ICBC road tests and how we help you achieve a 98% pass rate.',
+		'og_desc'     => 'Learn why Vancouver students fail their ICBC road tests and how we help you avoid them.',
 	),
 
 	// --- ICBC Class 4 knowledge/practice test: hub + 12 category Pages
@@ -431,27 +431,27 @@ $page_meta = array(
 	'port-moody' => array(
 		'type'        => 'location',
 		'title'       => 'Driving Lessons in Port Moody | BuckleUp Driving School',
-		'description' => 'Your local Port Moody driving school. ICBC-certified instructors, 98% pass rate, and expert prep for Heritage Mountain hills and test routes. Book today!',
+		'description' => 'Your local Port Moody driving school. ICBC-certified instructors rated 4.98★, and expert prep for Heritage Mountain hills and test routes. Book today!',
 	),
 	'coquitlam' => array(
 		'type'        => 'location',
 		'title'       => 'Driving Lessons in Coquitlam | BuckleUp Driving School',
-		'description' => 'Driving lessons in Coquitlam with ICBC-certified instructors and a 98% pass rate. Master test routes from Town Centre to Westwood Plateau. Book today!',
+		'description' => 'Driving lessons in Coquitlam with ICBC-certified instructors rated 4.98★. Master test routes from Town Centre to Westwood Plateau. Book today!',
 	),
 	'north-vancouver' => array(
 		'type'        => 'location',
 		'title'       => 'Driving Lessons in North Vancouver | BuckleUp School',
-		'description' => 'Master North Shore hills, bridges & test routes with ICBC-certified instructors and a 98% pass rate. Driving lessons in North Vancouver. Book today!',
+		'description' => 'Master North Shore hills, bridges & test routes with ICBC-certified instructors rated 4.98★. Driving lessons in North Vancouver. Book today!',
 	),
 	'port-coquitlam' => array(
 		'type'        => 'location',
 		'title'       => 'Driving Lessons in Port Coquitlam | BuckleUp School',
-		'description' => 'Driving lessons in Port Coquitlam with ICBC-certified instructors and a 98% pass rate. Master PoCo rail crossings and local test routes. Book today!',
+		'description' => 'Driving lessons in Port Coquitlam with ICBC-certified instructors rated 4.98★. Master PoCo rail crossings and local test routes. Book today!',
 	),
 	'tri-cities' => array(
 		'type'        => 'location',
 		'title'       => 'Driving Lessons in the Tri-Cities | BuckleUp School',
-		'description' => 'ICBC-certified driving lessons across Coquitlam, Port Coquitlam & Port Moody. 98% pass rate and expert local route prep. Book a lesson today!',
+		'description' => 'ICBC-certified driving lessons across Coquitlam, Port Coquitlam & Port Moody. Rated 4.98★ with expert local route prep. Book a lesson today!',
 	),
 );
 
@@ -463,7 +463,7 @@ if ( $front_id ) {
 	update_post_meta( $front_id, 'rank_math_title', 'Best Driving School Vancouver | BuckleUp Driving School' );
 	update_post_meta( $front_id, 'rank_math_description', 'BuckleUp Driving School is a top driving school Vancouver learners trust. Driving lessons are available in Vancouver, Tri-Cities, Coquitlam, Port Moody, and North Vancouver. Book today!' );
 	update_post_meta( $front_id, 'rank_math_facebook_title', 'BuckleUp Driving School - Vancouver\'s Premier Driving Academy' );
-	update_post_meta( $front_id, 'rank_math_facebook_description', 'Vancouver\'s premier driving academy with ICBC-certified instructors, modern vehicles, and a 98% first-time pass rate.' );
+	update_post_meta( $front_id, 'rank_math_facebook_description', 'Vancouver\'s premier driving academy with ICBC-certified instructors, modern dual-control vehicles, and patient one-on-one lessons.' );
 	update_post_meta( $front_id, 'rank_math_robots', array( 'index', 'follow' ) );
 	// OG image for the static front page (Rank Math reads the page's own
 	// facebook_image meta, not the homepage_facebook_image option, when the front

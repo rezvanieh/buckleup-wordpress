@@ -6,7 +6,7 @@
  *
  * Reproduces src/components/landing/Hero.tsx: full-bleed hero with the scenic
  * background (image2.png) + multi-layer gradient overlays, two ambient pulse-glow
- * blobs, the grid pattern, trust badges (ICBC Certified / 5-Star Rated / 100% Pass
+ * blobs, the grid pattern, trust badges (ICBC Certified / 5-Star Rated / Dual-Control
  * Guarantee), the H1 "Master the Road with Confidence" (gradient span) at the exact
  * type scale (text-5xl…lg:text-[5.5rem] xl:text-[6.5rem], tracking-tighter,
  * leading-[0.95]), the subtitle, the "Start Learning Today" → #most-popular CTA, and

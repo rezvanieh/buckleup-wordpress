@@ -170,7 +170,7 @@ function buckleup_asset_webp_url( string $filename ): string {
 
 /**
  * The hero trust badges. Defaults to the three production badges: ICBC Certified /
- * 5-Star Rated / 100% Pass Guarantee (production order).
+ * 5-Star Rated / Dual-Control Vehicles (production order).
  *
  * @param array|null $badges Optional. List of ['icon' => <buckleup_icon name>, 'text' => string].
  *                           null (the default) renders the three production badges;
@@ -183,7 +183,7 @@ function buckleup_hero_trust_badges( ?array $badges = null ): string {
 		$badges = array(
 			array( 'icon' => 'shield-check', 'text' => __( 'ICBC Certified', 'buckleup' ) ),
 			array( 'icon' => 'star',         'text' => __( '5-Star Rated', 'buckleup' ) ),
-			array( 'icon' => 'check',        'text' => __( '100% Pass Guarantee', 'buckleup' ) ),
+			array( 'icon' => 'check',        'text' => __( 'Dual-Control Vehicles', 'buckleup' ) ),
 		);
 	}
 	$out = '';

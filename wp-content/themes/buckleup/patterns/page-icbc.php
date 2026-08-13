@@ -6,7 +6,7 @@
  *
  * The /resources/icbc-road-test-failures guide, reproducing the source layout:
  * a red "ICBC Road Test Guide" badge, the H1 with a brand-colored "ICBC Road
- * Test" span, the 98%-pass-rate dek, the 5 failures as glass CARDS (red XCircle
+ * Test" span, the ICBC-certified dek, the 5 failures as glass CARDS (red XCircle
  * "The Mistake" / primary CheckCircle "The BuckleUp Fix" with a left accent bar),
  * and the tinted CTA box linking to /#pricing. The mistake/fix copy is verbatim
  * from the source guide (stable, low-churn content).
@@ -60,9 +60,9 @@ $causes = array(
 			<p data-reveal class="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
 				<?php
 				printf(
-					/* translators: %s: bolded "98% first-time pass rate" */
-					esc_html__( 'With a %s, we know exactly what ICBC examiners are looking for. Here is why most test-takers fail, and how we ensure you don\'t.', 'buckleup' ),
-					'<strong class="text-foreground">' . esc_html__( '98% first-time pass rate', 'buckleup' ) . '</strong>'
+					/* translators: %s: bolded "ICBC-certified instructors" */
+					esc_html__( 'Our %s know exactly what ICBC examiners are looking for. Here is why most test-takers fail, and how to make sure you don\'t.', 'buckleup' ),
+					'<strong class="text-foreground">' . esc_html__( 'ICBC-certified instructors', 'buckleup' ) . '</strong>'
 				);
 				?>
 			</p>
@@ -100,7 +100,7 @@ $causes = array(
 		<!-- Tinted CTA box -->
 		<div data-reveal class="bg-primary/10 rounded-3xl p-8 md:p-12 text-center border border-primary/20">
 			<h2 class="text-3xl font-bold mb-4 text-foreground"><?php esc_html_e( 'Ready to Pass on Your First Try?', 'buckleup' ); ?></h2>
-			<p class="text-lg text-muted-foreground mb-8 max-w-xl mx-auto"><?php esc_html_e( "Don't leave your license to chance. Join the 98% of BuckleUp students who pass their ICBC road test the very first time.", 'buckleup' ); ?></p>
+			<p class="text-lg text-muted-foreground mb-8 max-w-xl mx-auto"><?php esc_html_e( "Don't leave your licence to chance. Work through these with an ICBC-certified instructor before your road test.", 'buckleup' ); ?></p>
 			<a href="<?php echo esc_url( home_url( '/#pricing' ) ); ?>">
 				<?php
 				buckleup_button( array(

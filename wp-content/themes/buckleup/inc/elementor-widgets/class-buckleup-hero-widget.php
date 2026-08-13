@@ -142,7 +142,7 @@ class Buckleup_Hero_Widget extends Widget_Base {
 			'default'     => array(
 				array( 'badge_icon' => 'shield-check', 'badge_text' => __( 'ICBC Certified', 'buckleup' ) ),
 				array( 'badge_icon' => 'star',         'badge_text' => __( '5-Star Rated', 'buckleup' ) ),
-				array( 'badge_icon' => 'check',        'badge_text' => __( '100% Pass Guarantee', 'buckleup' ) ),
+				array( 'badge_icon' => 'check',        'badge_text' => __( 'Dual-Control Vehicles', 'buckleup' ) ),
 			),
 		) );
 

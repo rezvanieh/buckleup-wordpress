@@ -142,7 +142,7 @@ function loc_intro( array $d ) {
 		array(
 			el_heading( 'Why learn with BuckleUp', array( 'tag' => 'h3', 'size' => 19, 'weight' => 700, 'color_global' => 'text' ) ),
 			el_icon_list(
-				array( 'ICBC-certified instructors', '98% first-time pass rate', 'English &amp; Farsi lessons', 'Modern dual-control Toyotas', 'Free local pickup &amp; drop-off' ),
+				array( 'ICBC-certified instructors', 'Patient one-on-one instruction', 'English &amp; Farsi lessons', 'Modern dual-control Toyotas', 'Free local pickup &amp; drop-off' ),
 				array( 'icon' => 'fas fa-circle-check', 'color_global' => 'secondary' )
 			),
 			el_button( 'Book a Lesson', array( 'url' => '#pricing', 'size' => 'md', 'bg_global' => 'primary', 'icon' => 'fas fa-arrow-right' ) ),

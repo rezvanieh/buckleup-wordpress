@@ -156,7 +156,7 @@ if ( post_type_exists( 'location' ) ) {
 			'highlight' => 'Coquitlam',
 			'subtitle'  => 'Master the roads of Coquitlam and Port Coquitlam. From navigating Lougheed Highway to the local testing centers, our certified instructors will guide you every step of the way.',
 			'seo_title' => 'Driving Lessons in Coquitlam & Port Coquitlam',
-			'seo_desc'  => 'Looking for the best driving lessons in Coquitlam and Port Coquitlam? BuckleUp Driving School offers top-tier ICBC-certified training with a 98% pass rate.',
+			'seo_desc'  => 'Looking for the best driving lessons in Coquitlam and Port Coquitlam? BuckleUp Driving School offers top-tier ICBC-certified training rated 4.98★ on Google.',
 		),
 		array(
 			'slug'      => 'north-vancouver',
@@ -174,7 +174,7 @@ if ( post_type_exists( 'location' ) ) {
 			'highlight' => 'Port Coquitlam',
 			'subtitle'  => 'Master the roads of Port Coquitlam. From navigating local neighborhoods to the test center, our certified instructors will guide you every step of the way.',
 			'seo_title' => 'Driving Lessons in Port Coquitlam',
-			'seo_desc'  => 'Looking for the best driving lessons in Port Coquitlam? BuckleUp Driving School offers top-tier ICBC-certified training with a 98% pass rate.',
+			'seo_desc'  => 'Looking for the best driving lessons in Port Coquitlam? BuckleUp Driving School offers top-tier ICBC-certified training rated 4.98★ on Google.',
 		),
 		array(
 			'slug'      => 'port-moody',
@@ -192,7 +192,7 @@ if ( post_type_exists( 'location' ) ) {
 			'highlight' => 'Tri-Cities',
 			'subtitle'  => 'Master the roads across Coquitlam, Port Coquitlam, and Port Moody. Our certified instructors will guide you every step of the way to ensure you are ready for any condition.',
 			'seo_title' => 'Driving Lessons in the Tri-Cities',
-			'seo_desc'  => 'Looking for the best driving lessons in the Tri-Cities? BuckleUp Driving School offers top-tier ICBC-certified training with a 98% pass rate across Coquitlam, Port Coquitlam, and Port Moody.',
+			'seo_desc'  => 'Looking for the best driving lessons in the Tri-Cities? BuckleUp Driving School offers top-tier ICBC-certified training rated 4.98★ on Google, across Coquitlam, Port Coquitlam, and Port Moody.',
 		),
 	);
 	$order = 0;
@@ -272,7 +272,7 @@ if ( ! empty( $page_ids['blog'] ) ) {
  * ========================================================================= */
 if ( ! empty( $page_ids['resources'] ) ) {
 	$icbc_html = <<<'HTML'
-<p>With a <strong>98% first-time pass rate</strong>, we know exactly what ICBC examiners are looking for. Here is why most test-takers fail, and how we ensure you don't.</p>
+<p>Our instructors know exactly what ICBC examiners are looking for. Here is why most test-takers fail, and how we ensure you don't.</p>
 
 <h2>1. Rolling Through Stop Signs</h2>
 <p><strong>The Mistake:</strong> It sounds simple, but a complete stop means absolute zero forward momentum behind the line. A 'Hollywood roll' is an automatic failure.</p>
@@ -295,7 +295,7 @@ if ( ! empty( $page_ids['resources'] ) ) {
 <p><strong>The BuckleUp Fix:</strong> We teach precise positioning and the 'point of no return' framework so you never have to guess when it's safe to clear the intersection.</p>
 
 <h2>Ready to Pass on Your First Try?</h2>
-<p>Don't leave your license to chance. Join the 98% of BuckleUp students who pass their ICBC road test the very first time.</p>
+<p>Don't leave your licence to chance. Work through these with an ICBC-certified instructor before your road test the very first time.</p>
 HTML;
 
 	// CTA: the theme's primary Button look (default/lg variant) as a plain anchor
@@ -341,7 +341,7 @@ HTML;
 	} else {
 		// Rank Math per-page meta (verbatim source title/description).
 		update_post_meta( $icbc_id, 'rank_math_title', 'Top 5 Reasons Students Fail the ICBC Road Test | BuckleUp' );
-		update_post_meta( $icbc_id, 'rank_math_description', 'Learn the exact reasons why Vancouver students fail their ICBC Class 5 and Class 7 road tests, and how BuckleUp Driving School helps you achieve a 98% pass rate.' );
+		update_post_meta( $icbc_id, 'rank_math_description', 'Learn the exact reasons why Vancouver students fail their ICBC Class 5 and Class 7 road tests, and how BuckleUp Driving School helps you avoid them.' );
 		WP_CLI::log( "  resources article: icbc-road-test-failures (#{$icbc_id}) child of Resources #{$page_ids['resources']}" );
 	}
 }
