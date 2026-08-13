@@ -10,9 +10,15 @@
  */
 require __DIR__ . '/lib.php';
 
-$HEADER_ID = 163;
-$FOOTER_ID = 164;
-$MENU_ID   = 51;
+// Resolved by slug, created on first run — ids are not stable across installs
+// (see el_post_id()/el_library_id() in lib.php). parts/footer.html embeds the footer
+// by the same slug via [buckleup_elementor slug="site-footer"].
+$HEADER_ID = el_library_id( 'site-header', 'Site Header' );
+$FOOTER_ID = el_library_id( 'site-footer', 'Site Footer' );
+// The header template is retained but unused (the real theme header renders live),
+// so a missing menu is not fatal — the nav widget just renders empty.
+$menu    = wp_get_nav_menu_object( 'Primary' );
+$MENU_ID = $menu ? (int) $menu->term_id : 0;
 
 $get = static function ( $k, $d = '' ) {
 	return function_exists( 'buckleup_get_setting' ) ? buckleup_get_setting( $k, $d ) : $d;
@@ -25,6 +31,10 @@ $recent    = get_posts( array( 'numberposts' => 3, 'post_status' => 'publish', '
 
 /** Save an Elementor library template (no page template / title handling). */
 function el_save_template( $id, array $elements ) {
+	if ( ! $id || ! get_post( $id ) ) {
+		echo "SKIP: no library template with id " . var_export( $id, true ) . ".\n";
+		return;
+	}
 	update_post_meta( $id, '_elementor_data', wp_slash( wp_json_encode( array_values( $elements ) ) ) );
 	update_post_meta( $id, '_elementor_edit_mode', 'builder' );
 	update_post_meta( $id, '_elementor_template_type', 'section' );
@@ -204,4 +214,4 @@ function build_footer( $logo, $get, $locations, $recent, $wa_link ) {
 
 el_save_template( $HEADER_ID, array( build_header( $logo, $wa_link, $MENU_ID ) ) );
 el_save_template( $FOOTER_ID, array( build_footer( $logo, $get, $locations, $recent, $wa_link ) ) );
-echo "Header (163) + Footer (164) authored. Logo=" . ( $logo ? 'yes' : 'no' ) . ", locations=" . count( $locations ) . ", recent=" . count( $recent ) . "\n";
+echo "Header ($HEADER_ID) + Footer ($FOOTER_ID) authored. Logo=" . ( $logo ? 'yes' : 'no' ) . ", menu=" . ( $MENU_ID ?: 'none' ) . ", locations=" . count( $locations ) . ", recent=" . count( $recent ) . "\n";

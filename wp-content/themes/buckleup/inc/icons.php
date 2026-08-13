@@ -14,13 +14,20 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 /**
- * Return an inline SVG icon string.
+ * The icon map: lucide icon name → its raw inner-SVG path data.
  *
- * @param string $name  lucide icon name (e.g. 'chevron-down').
- * @param string $class Classes for the <svg> (default 'size-4').
- * @return string SVG markup, or '' if unknown.
+ * Lifted out of buckleup_icon() (behaviour unchanged) so admin-facing pickers can
+ * enumerate the set without duplicating it — see buckleup_icon_names(), which
+ * feeds the Elementor hero widget's trust-badge icon <select>. Built once per
+ * request and memoized.
+ *
+ * @return array<string,string> icon name => inner SVG markup.
  */
-function buckleup_icon( string $name, string $class = '' ): string {
+function buckleup_icon_paths(): array {
+	static $paths = null;
+	if ( null !== $paths ) {
+		return $paths;
+	}
 	$paths = array(
 		'x'              => '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
 		'chevron-down'   => '<path d="m6 9 6 6 6-6"/>',
@@ -87,6 +94,32 @@ function buckleup_icon( string $name, string $class = '' ): string {
 		'rotate-ccw'     => '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
 		'list-checks'    => '<path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/>',
 	);
+	return $paths;
+}
+
+/**
+ * Every lucide icon name buckleup_icon() can render, in declaration order.
+ *
+ * Used to build admin pickers that must stay in sync with the icon set (adding an
+ * icon above automatically offers it in the picker). Declaration order is kept —
+ * it groups the icons by the section that introduced them, which reads better in
+ * a dropdown than alphabetical.
+ *
+ * @return string[] Icon names.
+ */
+function buckleup_icon_names(): array {
+	return array_keys( buckleup_icon_paths() );
+}
+
+/**
+ * Return an inline SVG icon string.
+ *
+ * @param string $name  lucide icon name (e.g. 'chevron-down').
+ * @param string $class Classes for the <svg> (default 'size-4').
+ * @return string SVG markup, or '' if unknown.
+ */
+function buckleup_icon( string $name, string $class = '' ): string {
+	$paths = buckleup_icon_paths();
 
 	if ( ! isset( $paths[ $name ] ) ) {
 		return '';

@@ -384,15 +384,23 @@ function build_icbc() {
 }
 
 /* ----------------------------------------------------------- RUN ------ */
+// Keyed by SLUG, not id — see el_post_id() in lib.php for why ids aren't stable.
 $pages = array(
-	39 => build_about(),
-	41 => build_services(),
-	42 => build_instructors(),
-	40 => build_contact(),
-	44 => build_resources(),
-	45 => build_icbc(),
+	'about'                   => 'build_about',
+	'services'                => 'build_services',
+	'instructors'             => 'build_instructors',
+	'contact'                 => 'build_contact',
+	'resources'               => 'build_resources',
+	'icbc-road-test-failures' => 'build_icbc',
 );
-foreach ( $pages as $id => $tree ) {
-	el_save_page( $id, $tree );
+$built = array();
+foreach ( $pages as $slug => $builder ) {
+	$id = el_post_id( $slug );
+	if ( ! $id ) {
+		echo "SKIP $slug: no page with that slug.\n";
+		continue;
+	}
+	el_save_page( $id, $builder() );
+	$built[] = "$slug($id)";
 }
-echo "Built 6 pages: About(39), Services(41), Instructors(42), Contact(40), Resources(44), ICBC(45).\n";
+echo 'Built ' . count( $built ) . ' pages: ' . implode( ', ', $built ) . ".\n";

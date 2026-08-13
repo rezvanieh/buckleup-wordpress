@@ -8,7 +8,11 @@
  */
 require __DIR__ . '/lib.php';
 
-$PAGE_ID = 38;
+$PAGE_ID = el_post_id( 'home' );
+if ( ! $PAGE_ID ) {
+	echo "ERROR: no page with slug 'home'. Run provision first.\n";
+	return;
+}
 
 $packages     = function_exists( 'buckleup_get_packages' ) ? buckleup_get_packages() : array();
 $testimonials = function_exists( 'buckleup_get_testimonials' ) ? buckleup_get_testimonials() : array();

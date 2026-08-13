@@ -31,6 +31,11 @@ require_once __DIR__ . '/inc/console.php';
 // incl. non-Elementor consoles/blog), plus a defensive Geist @font-face fallback.
 // NOTE: the Tailwind bundle is NOT dequeued — the design system loads site-wide.
 require_once __DIR__ . '/inc/elementor.php';
+// Custom Elementor widgets (inc/elementor-widgets/): the "BuckleUp Hero" widget that
+// makes the front-page hero admin-editable while rendering the REAL theme markup via
+// buckleup_hero_markup(). Loaded after inc/elementor.php (interop) and inc/site.php
+// (the renderer + buckleup_icon_names(), which feeds the badge icon picker).
+require_once __DIR__ . '/inc/elementor-widgets.php';
 // [buckleup_image_credits] — CC attribution for the location hero photos (/image-credits/).
 require_once __DIR__ . '/inc/credits.php';
 // Front-end performance: strip dead-weight ElementsKit assets + jquery-migrate.
@@ -85,9 +90,16 @@ add_action( 'wp_head', function () {
 	// Prefer the optimized WebP (~60KB) and tag the preload with type=image/webp so
 	// non-WebP browsers ignore it and fall back to the <picture> JPG (no double
 	// download). If no WebP exists, preload the (already resized) JPG.
+	// The background is now admin-editable (the Elementor "BuckleUp Hero" widget), so
+	// resolve what that widget will ACTUALLY render before falling back to the stock
+	// brand asset — otherwise a swapped hero would preload the wrong image and lose
+	// the LCP win. With no hero widget present this is byte-for-byte the old path.
 	if ( is_front_page() && function_exists( 'buckleup_asset_url' ) ) {
-		$hero_webp = function_exists( 'buckleup_asset_webp_url' ) ? buckleup_asset_webp_url( 'image2.png' ) : '';
-		$hero      = $hero_webp ?: buckleup_asset_url( 'image2.png' );
+		$hero_src  = function_exists( 'buckleup_hero_widget_bg_url' ) ? buckleup_hero_widget_bg_url( (int) get_queried_object_id() ) : '';
+		$hero_webp = $hero_src
+			? ( function_exists( 'buckleup_webp_sibling_url' ) ? buckleup_webp_sibling_url( $hero_src ) : '' )
+			: ( function_exists( 'buckleup_asset_webp_url' ) ? buckleup_asset_webp_url( 'image2.png' ) : '' );
+		$hero      = $hero_webp ?: ( $hero_src ?: buckleup_asset_url( 'image2.png' ) );
 		if ( $hero ) {
 			printf(
 				'<link rel="preload" href="%s" as="image" fetchpriority="high"%s>' . "\n",

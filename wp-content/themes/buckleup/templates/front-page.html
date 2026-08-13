@@ -2,12 +2,13 @@
 
 <!-- wp:group {"tagName":"main"} -->
 <main class="wp-block-group">
-  <!-- The hero is the REAL bespoke showpiece (floating rating card, Toyota badge,
-       instructor chip, 3D tilt, gradient text) — Elementor can't reproduce the
-       floating overlays / star rendering cleanly, so we render the original hero for
-       exact fidelity (matches the live site). The rest of the Home body below is
-       authored in Elementor and renders via post-content. -->
-  <!-- wp:buckleup/section {"name":"home-hero"} /-->
+  <!-- Full-bleed, unconstrained: Elementor full-width Containers render edge-to-edge.
+       The hero is no longer hard-coded here — it is the FIRST element of the Elementor
+       body (the "BuckleUp Hero" widget, injected by scripts/wp/elementor/build-hero.php)
+       so the client can edit its copy/images in Elementor. The widget renders the REAL
+       theme markup via buckleup_hero_markup(), so nothing about it changed visually.
+       Re-adding a wp:buckleup/section {"name":"home-hero"} line here would render the
+       hero TWICE. -->
   <!-- wp:post-content /-->
 </main>
 <!-- /wp:group -->
