@@ -146,34 +146,171 @@ function build_about() {
 }
 
 /* ================================================== SERVICES (41) ====== */
+/**
+ * The /services/ PILLAR for Hub 1 ("Driving Lessons & Packages").
+ *
+ * Per the content plan (Documents/pillar-cluster-driving-school.pdf §3, Hub 1) this
+ * page is no longer just a pricing table: it introduces every lesson type and links
+ * DOWN to a dedicated cluster page per licence class, so authority flows to the
+ * money pages and Google can see the group.
+ *
+ * Deliberate SEO decisions:
+ *   - The H1 owns the HUB head term ("Driving Lessons & Packages"), NOT city head
+ *     terms. §6 of the plan names /locations/coquitlam/ the single owner of Coquitlam
+ *     commercial intent; targeting cities here would re-create the cannibalisation
+ *     the plan exists to fix. Cities appear as supporting context only.
+ *   - Cluster copy comes from services-content.php so the pillar can never drift
+ *     from the cluster pages it summarises.
+ *   - Cluster links use descriptive anchors ("Class 7 driving lessons"), per §5.
+ *   - Until a cluster page exists, each card falls back to the closest existing
+ *     article so no card dead-ends and nothing 404s. The link upgrades itself the
+ *     moment the cluster page is published — no edit needed here.
+ *   - "Related guides" wires this hub to Hubs 2/3/4 (§5 "connect the hubs").
+ *   - No new prices, pass rates or awards are introduced (plan adds none).
+ */
 function build_services() {
 	$packages = function_exists( 'buckleup_get_packages' ) ? buckleup_get_packages() : array();
-	$services = function_exists( 'buckleup_get_services' ) ? buckleup_get_services() : array();
+	$svc      = require __DIR__ . '/services-content.php';
 	$stats = array( array( '98%', 'Pass Rate' ), array( '5000+', 'Graduates' ), array( '15+', 'Years Experience' ), array( '50+', 'Instructors' ) );
 
-	$tree = array(
-		page_hero( '98% First-Time Pass Rate', 'fas fa-shield-alt', 'Choose Your Path to <span class="gradient-text">Driving Success</span>', 'Structured lesson packages and ICBC road-test prep for every BC licence class — taught in modern Toyota vehicles.' ),
-		el_section( array( 'bg' => '#FFFFFF', 'pad_y' => 24, 'gap' => 28, 'id_css' => 'pricing' ), array( sec_heading( 'Our Lesson <span class="gradient-text">Packages</span>', 'Transparent pricing — choose the package that fits your needs.' ), pricing_cards_row( $packages ) ) ),
+	// Transitional targets: used only while a cluster page doesn't exist yet.
+	$fallback = array(
+		'class-7-driving-lessons'     => array( '/class-7-road-test-preparation-bc/', 'Read the Class 7 road test guide' ),
+		'class-5-driving-lessons'     => array( '/how-to-pass-icbc-class-5-road-test-vancouver/', 'Read the Class 5 road test guide' ),
+		'class-4-driving-lessons'     => array( '/icbc-class-4-knowledge-test/', 'Try the free Class 4 practice test' ),
+		'highway-driving-lessons'     => array( '/contact/', 'Ask about highway lessons' ),
+		'refresher-driving-lessons'   => array( '/driving-lessons-nervous-anxious-drivers-vancouver/', 'Read the nervous-driver guide' ),
 	);
 
-	if ( ! empty( $services ) ) {
-		$svc_cards = array();
-		foreach ( $services as $svc ) {
-			$kids = array( el_heading( $svc['name'], array( 'tag' => 'h3', 'size' => 18, 'weight' => 700, 'color_global' => 'text' ) ) );
-			if ( ! empty( $svc['description'] ) ) {
-				$kids[] = el_text( $svc['description'], array( 'size' => 14, 'color_global' => 'mutedcol' ) );
-			}
-			if ( ! empty( $svc['price'] ) ) {
-				$kids[] = el_text( '$' . rtrim( rtrim( number_format( (float) $svc['price'], 2 ), '0' ), '.' ), array( 'size' => 18, 'color_global' => 'primary' ) );
-			}
-			$svc_cards[] = card_col( $kids, 31 );
+	/** One pillar card: icon, keyword-bearing H3, short intro, descriptive link down. */
+	$card = function ( $slug, array $s ) use ( $fallback ) {
+		$page = get_page_by_path( 'services/' . $slug );
+		if ( $page && 'publish' === $page->post_status ) {
+			$url   = get_permalink( $page->ID );
+			$label = strip_tags( html_entity_decode( $s['card_title'] ) );
+		} else {
+			$url   = home_url( $fallback[ $slug ][0] );
+			$label = $fallback[ $slug ][1];
 		}
-		$tree[] = el_section( array( 'bg' => '#FFFFFF', 'pad_y' => 56, 'gap' => 28 ), array( sec_heading( 'What We Offer' ), el_row( $svc_cards, 20, 'stretch', 'center' ) ) );
-	}
+		// Titles wrap to different line counts, so let the description absorb the
+		// slack and every CTA lands on the same baseline. Elementor ignores
+		// _flex_grow unless _flex_size is 'custom'.
+		$intro = el_text( $s['short'], array( 'size' => 15, 'color_global' => 'mutedcol' ) );
+		$intro['settings']['_flex_size']   = 'custom';
+		$intro['settings']['_flex_grow']   = 1;
+		$intro['settings']['_flex_shrink'] = 1;
+
+		return el_col(
+			array(
+				icon_chip( $s['icon'] ),
+				el_heading( $s['card_title'], array( 'tag' => 'h3', 'size' => 20, 'weight' => 700, 'color_global' => 'text', 'line_height' => 1.25 ) ),
+				$intro,
+				el_button( $label, array( 'url' => $url, 'size' => 'sm', 'variant' => 'outline', 'icon' => 'fas fa-arrow-right' ) ),
+			),
+			array( 'width' => 31, 'bg' => '#FFFFFF', 'pad' => 24, 'radius' => 18, 'border' => '#CBD5E1', 'shadow' => true, 'gap_px' => 12, 'align' => 'flex-start' )
+		);
+	};
+
+	$by_class   = array( 'class-7-driving-lessons', 'class-5-driving-lessons', 'class-4-driving-lessons' );
+	$specialist = array( 'highway-driving-lessons', 'refresher-driving-lessons' );
+
+	$tree = array(
+		page_hero(
+			'Driving Lessons &amp; Packages',
+			'fas fa-graduation-cap',
+			'Driving Lessons &amp; <span class="gradient-text">Packages</span>',
+			'ICBC-certified lessons for every BC licence class — Class 7 for new drivers, Class 5 road test preparation and Class 4 commercial training — plus highway and refresher lessons across Coquitlam, Port Coquitlam, Port Moody and North Vancouver.'
+		),
+		// Pillar → cluster: the licence-class money pages.
+		el_section(
+			array( 'bg' => '#FFFFFF', 'pad_y' => 64, 'gap' => 30, 'id_css' => 'lessons' ),
+			array(
+				sec_heading(
+					'Lessons by <span class="gradient-text">ICBC Licence Class</span>',
+					'Every BC licence class is a different test with different habits to build. Pick the one you are working toward.'
+				),
+				el_row( array_map( function ( $k ) use ( $card, $svc ) { return $card( $k, $svc[ $k ] ); }, $by_class ), 20, 'stretch', 'center' ),
+			)
+		),
+		// Pillar → cluster: the non-licence-class services.
+		el_section(
+			array( 'bg_global' => 'bgcolor', 'pad_y' => 64, 'gap' => 30 ),
+			array(
+				sec_heading(
+					'Specialist <span class="gradient-text">Lessons</span>',
+					'Already licensed, or working on one specific thing? These lessons are built around a single goal.'
+				),
+				el_row( array_map( function ( $k ) use ( $card, $svc ) { return $card( $k, $svc[ $k ] ); }, $specialist ), 20, 'stretch', 'center' ),
+			)
+		),
+		// Commercial core — kept on the pillar (§6: /services/ stays the price owner,
+		// the cost blog stays informational; they interlink rather than compete).
+		el_section(
+			array( 'bg' => '#FFFFFF', 'pad_y' => 64, 'gap' => 28, 'id_css' => 'pricing' ),
+			array(
+				sec_heading( 'Lesson <span class="gradient-text">Packages</span>', 'Transparent pricing — choose the package that fits your needs.' ),
+				pricing_cards_row( $packages ),
+				el_text(
+					'<div class="prose" style="text-align:center"><p>Not sure how much to budget? Our <a href="' . esc_url( home_url( '/driving-lessons-cost-vancouver-2026-price-guide/' ) ) . '">guide to what driving lessons cost in Vancouver</a> breaks down what affects the price, and <a href="' . esc_url( home_url( '/how-many-driving-lessons-do-you-need/' ) ) . '">how many lessons you actually need</a> explains why the answer differs from person to person.</p></div>',
+					array( 'raw' => true, 'align' => 'center', 'size' => 15, 'color_global' => 'mutedcol' )
+				),
+			)
+		),
+	);
 
 	$stat_blocks = array();
 	foreach ( $stats as $s ) { $stat_blocks[] = stat_block( $s[0], $s[1] ); }
-	$tree[] = el_section( array( 'bg_global' => 'bgcolor', 'pad_y' => 56, 'gap' => 16 ), array( el_row( $stat_blocks, 24, 'stretch', 'center' ) ) );
+	$tree[] = el_section( array( 'bg' => '#FFFFFF', 'pad_y' => 56, 'gap' => 16 ), array( el_row( $stat_blocks, 24, 'stretch', 'center' ) ) );
+
+	/* ---- Cross-hub internal linking (plan §5 "then connect the hubs") -------
+	 * Grouped by reader intent rather than by hub, so the list reads as help
+	 * rather than as an SEO link dump. Every anchor is descriptive; `.prose` is a
+	 * custom (non-Tailwind) class, so it survives the CSS purge and gives these
+	 * links the brand colour + underline treatment.
+	 */
+	$link_col = function ( $title, array $links ) {
+		$items = '';
+		foreach ( $links as $href => $text ) {
+			$items .= '<li><a href="' . esc_url( $href ) . '">' . $text . '</a></li>';
+		}
+		return el_col(
+			array(
+				el_heading( $title, array( 'tag' => 'h3', 'size' => 17, 'weight' => 700, 'color_global' => 'text' ) ),
+				el_text( '<div class="prose"><ul>' . $items . '</ul></div>', array( 'raw' => true, 'size' => 15, 'color_global' => 'mutedcol' ) ),
+			),
+			array( 'width' => 31, 'gap_px' => 10, 'align' => 'flex-start' )
+		);
+	};
+
+	$tree[] = el_section(
+		array( 'bg_global' => 'bgcolor', 'pad_y' => 64, 'gap' => 30 ),
+		array(
+			sec_heading( 'Helpful <span class="gradient-text">Guides</span>', 'Free reading before you book — written for BC learners, not generic advice.' ),
+			el_row(
+				array(
+					$link_col( 'Getting your licence', array(
+						home_url( '/bc-graduated-licensing-program-explained-7l-7n-class-5/' ) => 'BC Graduated Licensing explained: 7L &rarr; 7N &rarr; Class 5',
+						home_url( '/class-7l-learners-licence-bc-step-by-step/' )             => 'How to get your Class 7L learner&#8217;s licence',
+						home_url( '/icbc-glp-changes-2026/' )                                  => 'ICBC&#8217;s 2026 licensing changes',
+						home_url( '/exchange-foreign-drivers-licence-bc-new-to-canada/' )      => 'Exchanging a foreign driver&#8217;s licence in BC',
+					) ),
+					$link_col( 'Preparing for the road test', array(
+						home_url( '/how-to-pass-icbc-class-5-road-test-vancouver/' ) => 'How to pass your ICBC Class 5 road test',
+						home_url( '/class-7-road-test-preparation-bc/' )             => 'Class 7 road test preparation',
+						home_url( '/mastering-parallel-parking-ultimate-guide/' )    => 'Mastering parallel parking',
+						home_url( '/driving-school-car-icbc-road-test/' )            => 'Using our car for your ICBC road test',
+					) ),
+					$link_col( 'Lessons &amp; practice', array(
+						home_url( '/icbc-class-4-knowledge-test/' )                          => 'Free ICBC Class 4 knowledge practice test',
+						home_url( '/driving-lessons-nervous-anxious-drivers-vancouver/' )     => 'Lessons for nervous and anxious drivers',
+						home_url( '/farsi-driving-lessons-vancouver-port-moody/' )            => 'Driving lessons in Farsi',
+						home_url( '/locations/' )                                            => 'Where we teach across Metro Vancouver',
+					) ),
+				),
+				24, 'stretch', 'center'
+			),
+		)
+	);
 
 	$tree[] = el_section( array( 'bg' => '#FFFFFF', 'pad_y' => 64, 'gap' => 16 ), array(
 		el_col( array(
@@ -393,8 +530,20 @@ $pages = array(
 	'resources'               => 'build_resources',
 	'icbc-road-test-failures' => 'build_icbc',
 );
+// Optional slug filter: `wp eval-file build-pages.php services` rebuilds ONLY that
+// page. Without it every page is rebuilt, which silently discards any edit made in
+// the Elementor editor on the pages you weren't trying to touch — so prefer the
+// filter when you only mean to change one.
+$only = array();
+if ( isset( $args ) && is_array( $args ) ) {
+	$only = array_filter( array_map( 'sanitize_title', $args ) );
+}
+
 $built = array();
 foreach ( $pages as $slug => $builder ) {
+	if ( $only && ! in_array( $slug, $only, true ) ) {
+		continue;
+	}
 	$id = el_post_id( $slug );
 	if ( ! $id ) {
 		echo "SKIP $slug: no page with that slug.\n";
@@ -403,4 +552,8 @@ foreach ( $pages as $slug => $builder ) {
 	el_save_page( $id, $builder() );
 	$built[] = "$slug($id)";
 }
-echo 'Built ' . count( $built ) . ' pages: ' . implode( ', ', $built ) . ".\n";
+if ( $only ) {
+	$missing = array_diff( $only, array_keys( $pages ) );
+	foreach ( $missing as $m ) { echo "WARNING: '$m' is not a page this script builds.\n"; }
+}
+echo 'Built ' . count( $built ) . ' page(s): ' . implode( ', ', $built ) . ".\n";

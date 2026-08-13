@@ -302,12 +302,18 @@ $page_meta = array(
 		'og_title'    => 'Contact BuckleUp Driving School | Book Your Lesson Today',
 		'og_desc'     => 'Call (604) 441-3677 or book online. Serving Port Moody, Vancouver, Coquitlam & Burnaby.',
 	),
+	// Hub 1 PILLAR. Targets the hub head term ("driving lessons & packages") and the
+	// licence classes — deliberately NOT city head terms, which belong to the
+	// /locations/ pages (see the content plan §6 on Coquitlam cannibalisation).
+	// NOTE: the previous description advertised "from $199", a price that does not
+	// exist — packages are $100/lesson and $360/$480/$620. Removed rather than
+	// corrected: the plan adds no prices, and a price in meta goes stale silently.
 	'services' => array(
 		'type'        => 'page',
-		'title'       => 'Driving Lesson Packages & Pricing | Class 7L, 7N, 5 & 4 Training',
-		'description' => 'Affordable driving lesson packages from $199 in Vancouver, Port Moody & Coquitlam. Class 7L learner, Class 7N novice, Class 5 & Class 4 commercial training. ICBC road test prep with 98% pass rate.',
-		'og_title'    => 'Driving Lesson Packages & Pricing | BuckleUp Vancouver',
-		'og_desc'     => 'Affordable driving packages from $199. Class 7L, 7N, Class 5 & 4 training with 98% pass rate.',
+		'title'       => 'Driving Lessons & Packages | Class 7, Class 5 & Class 4 | BuckleUp',
+		'description' => 'Driving lessons for every ICBC licence class — Class 7 for new drivers, Class 5 road test preparation and Class 4 commercial — plus highway and refresher lessons in Metro Vancouver.',
+		'og_title'    => 'Driving Lessons & Packages | BuckleUp Driving School',
+		'og_desc'     => 'Lessons for every ICBC licence class: Class 7, Class 5 road test prep and Class 4 commercial, plus highway and refresher lessons.',
 	),
 	'icbc-road-test-failures' => array(
 		'type'        => 'page',

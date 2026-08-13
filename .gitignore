@@ -65,3 +65,4 @@ buckleup_bluehost
 buckleup_bluehost.pub
 id_*
 *.pem
+.pdftmp/
