@@ -171,7 +171,6 @@ function build_about() {
 function build_services() {
 	$packages = function_exists( 'buckleup_get_packages' ) ? buckleup_get_packages() : array();
 	$svc      = require __DIR__ . '/services-content.php';
-	$stats = array( array( '98%', 'Pass Rate' ), array( '5000+', 'Graduates' ), array( '15+', 'Years Experience' ), array( '50+', 'Instructors' ) );
 
 	// Transitional targets: used only while a cluster page doesn't exist yet.
 	$fallback = array(
@@ -258,9 +257,12 @@ function build_services() {
 		),
 	);
 
-	$stat_blocks = array();
-	foreach ( $stats as $s ) { $stat_blocks[] = stat_block( $s[0], $s[1] ); }
-	$tree[] = el_section( array( 'bg' => '#FFFFFF', 'pad_y' => 56, 'gap' => 16 ), array( el_row( $stat_blocks, 24, 'stretch', 'center' ) ) );
+	/* The stats band (98% pass rate / 5000+ graduates / 15+ years / 50+ instructors)
+	 * was removed at the client's request. Those figures were unverified and
+	 * internally inconsistent — "98% pass rate" contradicted the "100% Pass
+	 * Guarantee" badge in the hero, and "50+ instructors" did not match a school
+	 * that presents a single named instructor. Unsupported numbers on a money page
+	 * are a trust and compliance risk, so nothing replaces it. */
 
 	/* ---- Cross-hub internal linking (plan §5 "then connect the hubs") -------
 	 * Grouped by reader intent rather than by hub, so the list reads as help
