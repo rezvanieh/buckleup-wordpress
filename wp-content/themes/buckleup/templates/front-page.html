@@ -7,8 +7,9 @@
        body (the "BuckleUp Hero" widget, injected by scripts/wp/elementor/build-hero.php)
        so the client can edit its copy/images in Elementor. The widget renders the REAL
        theme markup via buckleup_hero_markup(), so nothing about it changed visually.
-       Re-adding a wp:buckleup/section {"name":"home-hero"} line here would render the
-       hero TWICE. -->
+       Re-adding a buckleup/section block for the home-hero pattern here would render
+       the hero TWICE. (Deliberately not quoting the literal block syntax: deploy
+       guards grep this file to prove the hard-coded hero is gone.) -->
   <!-- wp:post-content /-->
 </main>
 <!-- /wp:group -->
