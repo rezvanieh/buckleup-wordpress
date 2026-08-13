@@ -4,7 +4,7 @@
  * Slug: buckleup/home-testimonials
  * Inserter: no
  *
- * "Loved by Thousands" review grid. Card header leads with the reviewer
+ * "Trusted by Tri-Cities Learners" review grid. Card header leads with the reviewer
  * (avatar + name + role) and the star rating on top, with the review text
  * below. Data from the `testimonial` CPT via buckleup_get_testimonials()
  * (seeded from the REAL Google reviews — see scripts/wp/real-testimonials.php),
@@ -73,9 +73,9 @@ $initials = static function ( $name ) {
 				<span class="text-sm font-medium text-muted-foreground"><?php esc_html_e( 'Student Reviews', 'buckleup' ); ?></span>
 			</div>
 			<h2 data-reveal class="text-4xl md:text-5xl font-bold mb-4">
-				<span class="text-foreground"><?php esc_html_e( 'Loved by ', 'buckleup' ); ?></span><span class="gradient-text"><?php esc_html_e( 'Thousands', 'buckleup' ); ?></span>
+				<span class="text-foreground"><?php esc_html_e( 'Trusted by ', 'buckleup' ); ?></span><span class="gradient-text"><?php esc_html_e( 'Tri-Cities Learners', 'buckleup' ); ?></span>
 			</h2>
-			<p data-reveal class="text-muted-foreground max-w-2xl mx-auto"><?php esc_html_e( 'Join over 10,000 happy students who are now safe, confident drivers on the road.', 'buckleup' ); ?></p>
+			<p data-reveal class="text-muted-foreground max-w-2xl mx-auto"><?php esc_html_e( 'Join drivers across Coquitlam, Port Coquitlam, and Port Moody who have built their skills and confidence with BuckleUp Driving School.', 'buckleup' ); ?></p>
 		</div>
 
 		<div data-reveal-stagger="0.05" class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
