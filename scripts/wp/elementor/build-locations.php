@@ -143,7 +143,7 @@ function loc_intro( array $d ) {
 			el_heading( 'Why learn with BuckleUp', array( 'tag' => 'h3', 'size' => 19, 'weight' => 700, 'color_global' => 'text' ) ),
 			el_icon_list(
 				array( 'ICBC-certified instructors', 'Patient one-on-one instruction', 'English &amp; Farsi lessons', 'Modern dual-control Toyotas', 'Free local pickup &amp; drop-off' ),
-				array( 'icon' => 'fas fa-circle-check', 'color_global' => 'secondary' )
+				array( 'icon' => 'fas fa-check-circle', 'color_global' => 'secondary' )
 			),
 			el_button( 'Book a Lesson', array( 'url' => '#pricing', 'size' => 'md', 'bg_global' => 'primary', 'icon' => 'fas fa-arrow-right' ) ),
 		),
@@ -207,7 +207,7 @@ function loc_icbc( array $d ) {
 	$tips = el_col(
 		array(
 			el_heading( 'Local Test-Day Tips', array( 'tag' => 'h3', 'size' => 18, 'weight' => 700, 'color_global' => 'text' ) ),
-			el_icon_list( $icbc['tips'], array( 'icon' => 'fas fa-circle-check', 'color_global' => 'secondary', 'size' => 15 ) ),
+			el_icon_list( $icbc['tips'], array( 'icon' => 'fas fa-check-circle', 'color_global' => 'secondary', 'size' => 15 ) ),
 		),
 		array( 'width' => 40, 'bg' => '#FFFFFF', 'pad' => 28, 'radius' => 18, 'border' => '#CBD5E1', 'shadow' => true, 'gap_px' => 12, 'align' => 'flex-start' )
 	);
