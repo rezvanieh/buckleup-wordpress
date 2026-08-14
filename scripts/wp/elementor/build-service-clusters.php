@@ -139,7 +139,7 @@ foreach ( $SERVICES as $slug => $s ) {
 			el_col(
 				array(
 					svc_prose( '<p>' . $s['long'] . '</p>' ),
-					svc_prose( '<p>This is one of our <a href="' . esc_url( $pillar_url ) . '">driving lessons and packages</a> — see the full range if you are not sure which licence class you need.</p>', array( 'size' => 15 ) ),
+					svc_prose( '<p>This is one of our <a href="' . esc_url( $pillar_url ) . '">driving lessons and packages</a>. Have a look at the full range if you\'re not sure which licence class you need.</p>', array( 'size' => 15 ) ),
 				),
 				array( 'width' => 100, 'gap_px' => 14, 'align' => 'flex-start' )
 			),
@@ -200,7 +200,7 @@ foreach ( $SERVICES as $slug => $s ) {
 			el_col(
 				array(
 					el_heading( 'Ready to book a lesson?', array( 'tag' => 'h2', 'size' => 28, 'weight' => 800, 'align' => 'center', 'color_global' => 'text' ) ),
-					el_text( 'Tell us where you are starting from and we will map out the fastest sensible route to your licence.', array( 'align' => 'center', 'size' => 16, 'color_global' => 'mutedcol', 'max_width' => 560 ) ),
+					el_text( 'Tell us where you\'re starting from and we\'ll work out the quickest sensible route to your licence.', array( 'align' => 'center', 'size' => 16, 'color_global' => 'mutedcol', 'max_width' => 560 ) ),
 					el_container(
 						array( 'content_width' => 'full', 'css_classes' => 'bu-hug', 'flex_direction' => 'row', 'flex_gap' => array( 'unit' => 'px', 'size' => 12, 'column' => '12', 'row' => '12' ), '_flex_grow' => 0, 'padding' => el_box( 8, 0, 0, 0 ) ),
 						array(

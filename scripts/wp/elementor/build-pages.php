@@ -218,7 +218,7 @@ function build_services() {
 			'Driving Lessons &amp; Packages',
 			'fas fa-graduation-cap',
 			'Driving Lessons &amp; <span class="gradient-text">Packages</span>',
-			'ICBC-certified lessons for every BC licence class — Class 7 for new drivers, Class 5 road test preparation and Class 4 commercial training — plus highway and refresher lessons across Coquitlam, Port Coquitlam, Port Moody and North Vancouver.'
+			'ICBC-certified lessons for every BC licence class: Class 7 for new drivers, Class 5 road test preparation, Class 4 commercial training, plus highway and refresher lessons across Coquitlam, Port Coquitlam, Port Moody and North Vancouver.'
 		),
 		// Pillar → cluster: the licence-class money pages.
 		el_section(
@@ -226,7 +226,7 @@ function build_services() {
 			array(
 				sec_heading(
 					'Lessons by <span class="gradient-text">ICBC Licence Class</span>',
-					'Every BC licence class is a different test with different habits to build. Pick the one you are working toward.'
+					'Every BC licence class is a different test with different habits to build. Pick the one you\'re working toward.'
 				),
 				el_row( array_map( function ( $k ) use ( $card, $svc ) { return $card( $k, $svc[ $k ] ); }, $by_class ), 20, 'stretch', 'center' ),
 			)
@@ -247,7 +247,7 @@ function build_services() {
 		el_section(
 			array( 'bg' => '#FFFFFF', 'pad_y' => 64, 'gap' => 28, 'id_css' => 'pricing' ),
 			array(
-				sec_heading( 'Lesson <span class="gradient-text">Packages</span>', 'Transparent pricing — choose the package that fits your needs.' ),
+				sec_heading( 'Lesson <span class="gradient-text">Packages</span>', 'Transparent pricing. Pick the package that fits how much practice you need.' ),
 				pricing_cards_row( $packages ),
 				el_text(
 					'<div class="prose" style="text-align:center"><p>Not sure how much to budget? Our <a href="' . esc_url( home_url( '/driving-lessons-cost-vancouver-2026-price-guide/' ) ) . '">guide to what driving lessons cost in Vancouver</a> breaks down what affects the price, and <a href="' . esc_url( home_url( '/how-many-driving-lessons-do-you-need/' ) ) . '">how many lessons you actually need</a> explains why the answer differs from person to person.</p></div>',
@@ -287,7 +287,7 @@ function build_services() {
 	$tree[] = el_section(
 		array( 'bg_global' => 'bgcolor', 'pad_y' => 64, 'gap' => 30 ),
 		array(
-			sec_heading( 'Helpful <span class="gradient-text">Guides</span>', 'Free reading before you book — written for BC learners, not generic advice.' ),
+			sec_heading( 'Helpful <span class="gradient-text">Guides</span>', 'Free reading before you book, written for BC learners rather than generic advice.' ),
 			el_row(
 				array(
 					$link_col( 'Getting your licence', array(
