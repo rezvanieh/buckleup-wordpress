@@ -75,7 +75,7 @@ function loc_hero( array $d, $hero_url, $hero_id, $wa_link ) {
 			'padding' => el_box( 6, 16, 6, 16 ), '_flex_grow' => 0, 'flex_shrink' => 0,
 		),
 		array(
-			el_icon( 'fas fa-location-dot', array( 'size' => 15, 'color' => '#FFFFFF' ) ),
+			el_icon( 'fas fa-map-marker-alt', array( 'size' => 15, 'color' => '#FFFFFF' ) ),
 			el_text( $d['hero_eyebrow'], array( 'size' => 14, 'color' => '#FFFFFF' ) ),
 		)
 	);
@@ -180,7 +180,7 @@ function loc_why( array $d ) {
 function loc_neighborhoods( array $d ) {
 	$pills = array();
 	foreach ( $d['neighborhoods'] as $n ) {
-		$pills[] = el_pill( $n, 'fas fa-location-dot' );
+		$pills[] = el_pill( $n, 'fas fa-map-marker-alt' );
 	}
 	$cloud = el_container(
 		array( 'content_width' => 'full', 'width' => el_size( 100, '%' ), 'flex_direction' => 'row', 'flex_wrap' => 'wrap', 'flex_justify_content' => 'center', 'flex_gap' => array( 'unit' => 'px', 'size' => 12, 'column' => '12', 'row' => '12' ) ),

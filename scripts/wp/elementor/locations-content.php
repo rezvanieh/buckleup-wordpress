@@ -47,7 +47,7 @@ return array(
 		),
 		'why_heading'    => 'Why Coquitlam Drivers Choose BuckleUp',
 		'why_items'      => array(
-			array( 'icon' => 'fas fa-map-location-dot', 'title' => 'We Know Coquitlam Roads',      'desc' => 'From Lougheed Highway merges to the Westwood Plateau hills and the Town Centre one-way grid, we train on the real routes you\'ll be tested on.' ),
+			array( 'icon' => 'fas fa-map-marked-alt', 'title' => 'We Know Coquitlam Roads',      'desc' => 'From Lougheed Highway merges to the Westwood Plateau hills and the Town Centre one-way grid, we train on the real routes you\'ll be tested on.' ),
 			array( 'icon' => 'fas fa-award',            'title' => 'ICBC-Certified Instructors',   'desc' => 'Led by senior instructor Farhad Sanaeifar, our team is fully ICBC-certified and teaches these roads every day.' ),
 			array( 'icon' => 'fas fa-car-side',         'title' => 'Modern Toyota Vehicles',       'desc' => 'Calm, reliable, dual-control Toyotas that are easy to handle — ideal for first-time and nervous drivers.' ),
 			array( 'icon' => 'fas fa-language',         'title' => 'English & Farsi Lessons',      'desc' => 'Clear instruction in English and Farsi so nothing gets lost — a real advantage for Coquitlam\'s diverse community.' ),
@@ -107,7 +107,7 @@ return array(
 		'why_heading'    => 'Why North Vancouver Drivers Choose BuckleUp',
 		'why_items'      => array(
 			array( 'icon' => 'fas fa-mountain', 'title' => 'Hill & Mountain Expertise',  'desc' => 'We drill hill starts, downhill control, and steep-grade confidence on the real Lonsdale and Lynn Valley inclines.' ),
-			array( 'icon' => 'fas fa-bridge',   'title' => 'Bridge & Highway Ready',     'desc' => 'Master the Upper Levels Highway merges and the Lions Gate / Ironworkers bridge approaches that define North Shore driving.' ),
+			array( 'icon' => 'fas fa-water',   'title' => 'Bridge & Highway Ready',     'desc' => 'Master the Upper Levels Highway merges and the Lions Gate / Ironworkers bridge approaches that define North Shore driving.' ),
 			array( 'icon' => 'fas fa-cloud-rain', 'title' => 'Wet-Weather Skills',       'desc' => 'The North Shore gets the region\'s heaviest rain — we teach safe braking, following distance, and visibility habits for it.' ),
 			array( 'icon' => 'fas fa-award',    'title' => 'ICBC-Certified Instructors', 'desc' => 'Fully ICBC-certified, led by senior instructor Farhad Sanaeifar.' ),
 		),
@@ -166,7 +166,7 @@ return array(
 		'why_heading'    => 'Why Port Coquitlam Drivers Choose BuckleUp',
 		'why_items'      => array(
 			array( 'icon' => 'fas fa-train',            'title' => 'Rail-Crossing Confidence',    'desc' => 'PoCo has more level rail crossings than most cities — we teach the exact stopping and scanning habits examiners look for.' ),
-			array( 'icon' => 'fas fa-map-location-dot',  'title' => 'We Know PoCo Routes',         'desc' => 'From the Coast Meridian Overpass to Shaughnessy Street and the Lougheed corridor, we train on the roads you\'ll be tested on.' ),
+			array( 'icon' => 'fas fa-map-marked-alt',  'title' => 'We Know PoCo Routes',         'desc' => 'From the Coast Meridian Overpass to Shaughnessy Street and the Lougheed corridor, we train on the roads you\'ll be tested on.' ),
 			array( 'icon' => 'fas fa-car-side',          'title' => 'Modern Toyota Vehicles',      'desc' => 'Reliable, dual-control Toyotas that are forgiving and easy to learn in for first-time and nervous drivers.' ),
 			array( 'icon' => 'fas fa-award',             'title' => 'ICBC-Certified Instructors',  'desc' => 'Fully ICBC-certified, led by senior instructor Farhad Sanaeifar.' ),
 		),
@@ -224,7 +224,7 @@ return array(
 		),
 		'why_heading'    => 'Why Port Moody Drivers Choose BuckleUp',
 		'why_items'      => array(
-			array( 'icon' => 'fas fa-house-chimney',     'title' => 'Your Local School',          'desc' => 'BuckleUp is based right here in Port Moody — we know every test route, hill, and tricky intersection in the city.' ),
+			array( 'icon' => 'fas fa-home',     'title' => 'Your Local School',          'desc' => 'BuckleUp is based right here in Port Moody — we know every test route, hill, and tricky intersection in the city.' ),
 			array( 'icon' => 'fas fa-mountain',          'title' => 'Heritage Mountain Hills',    'desc' => 'We drill hill starts and downhill control on the real Heritage Mountain and College Park grades the examiner uses.' ),
 			array( 'icon' => 'fas fa-car-side',          'title' => 'Modern Toyota Vehicles',     'desc' => 'Calm, reliable, dual-control Toyotas that build confidence for first-time and nervous drivers.' ),
 			array( 'icon' => 'fas fa-award',             'title' => 'ICBC-Certified Instructors', 'desc' => 'Fully ICBC-certified, led by senior instructor Farhad Sanaeifar.' ),
@@ -283,8 +283,8 @@ return array(
 		),
 		'why_heading'    => 'Why Tri-Cities Drivers Choose BuckleUp',
 		'why_items'      => array(
-			array( 'icon' => 'fas fa-map-location-dot',  'title' => 'Every Tri-Cities Route',     'desc' => 'From Westwood Plateau and Heritage Mountain hills to PoCo rail crossings and the Lougheed corridor, we train on them all.' ),
-			array( 'icon' => 'fas fa-location-dot',       'title' => 'One School, Three Cities',   'desc' => 'Coquitlam, Port Coquitlam, and Port Moody — one trusted, local school with pickup across the whole region.' ),
+			array( 'icon' => 'fas fa-map-marked-alt',  'title' => 'Every Tri-Cities Route',     'desc' => 'From Westwood Plateau and Heritage Mountain hills to PoCo rail crossings and the Lougheed corridor, we train on them all.' ),
+			array( 'icon' => 'fas fa-map-marker-alt',       'title' => 'One School, Three Cities',   'desc' => 'Coquitlam, Port Coquitlam, and Port Moody — one trusted, local school with pickup across the whole region.' ),
 			array( 'icon' => 'fas fa-award',              'title' => 'ICBC-Certified Instructors', 'desc' => 'Fully ICBC-certified, led by senior instructor Farhad Sanaeifar.' ),
 			array( 'icon' => 'fas fa-language',           'title' => 'English & Farsi Lessons',    'desc' => 'Clear instruction in English and Farsi to suit the Tri-Cities\' diverse community.' ),
 		),

@@ -1,17 +1,4 @@
 {
-    "home": {
-        "path": "home",
-        "title": "Home",
-        "menu_order": 0,
-        "modified": "2026-07-22 23:44:03",
-        "meta": {
-            "bu_seo_title": "",
-            "bu_seo_description": "",
-            "rank_math_title": "Best Driving School Vancouver | BuckleUp Driving School",
-            "rank_math_description": "BuckleUp Driving School is a top driving school Vancouver learners trust. Driving lessons are available in Vancouver, Tri-Cities, Coquitlam, Port Moody, and North Vancouver. Book today!",
-            "_wp_page_template": "page-elementor"
-        }
-    },
     "about": {
         "path": "about",
         "title": "About Us",
@@ -38,16 +25,16 @@
             "_wp_page_template": "page-elementor"
         }
     },
-    "services": {
-        "path": "services",
-        "title": "Services",
+    "home": {
+        "path": "home",
+        "title": "Home",
         "menu_order": 0,
-        "modified": "2026-08-14 08:30:36",
+        "modified": "2026-07-22 23:44:03",
         "meta": {
             "bu_seo_title": "",
             "bu_seo_description": "",
-            "rank_math_title": "Driving Lessons & Packages | Class 7, Class 5 & Class 4 | BuckleUp",
-            "rank_math_description": "Driving lessons for every ICBC licence class: Class 7 for new drivers, Class 5 road test preparation, Class 4 commercial, plus highway and refresher lessons in Metro Vancouver.",
+            "rank_math_title": "Best Driving School Vancouver | BuckleUp Driving School",
+            "rank_math_description": "BuckleUp Driving School is a top driving school Vancouver learners trust. Driving lessons are available in Vancouver, Tri-Cities, Coquitlam, Port Moody, and North Vancouver. Book today!",
             "_wp_page_template": "page-elementor"
         }
     },
@@ -61,6 +48,19 @@
             "bu_seo_description": "",
             "rank_math_title": "",
             "rank_math_description": "",
+            "_wp_page_template": "page-elementor"
+        }
+    },
+    "locations": {
+        "path": "locations",
+        "title": "Locations",
+        "menu_order": 1,
+        "modified": "2026-07-22 22:07:53",
+        "meta": {
+            "bu_seo_title": "Driving Lesson Service Areas in Metro Vancouver | BuckleUp",
+            "bu_seo_description": "Where BuckleUp teaches: Coquitlam, Port Coquitlam, Port Moody, North Vancouver and the wider Tri-Cities. Local instructors who know the roads and the test centres.",
+            "rank_math_title": "Driving Lesson Service Areas in Metro Vancouver | BuckleUp",
+            "rank_math_description": "Where BuckleUp teaches: Coquitlam, Port Coquitlam, Port Moody, North Vancouver and the wider Tri-Cities. Local instructors who know the roads and the test centres.",
             "_wp_page_template": "page-elementor"
         }
     },
@@ -90,16 +90,29 @@
             "_wp_page_template": "page-elementor"
         }
     },
-    "services--class-7-driving-lessons": {
-        "path": "services/class-7-driving-lessons",
-        "title": "Class 7 Driving Lessons",
-        "menu_order": 1,
-        "modified": "2026-08-14 08:30:02",
+    "services": {
+        "path": "services",
+        "title": "Services",
+        "menu_order": 0,
+        "modified": "2026-08-14 08:30:36",
         "meta": {
-            "bu_seo_title": "Class 7 Driving Lessons in Coquitlam & the Tri-Cities | BuckleUp",
-            "bu_seo_description": "ICBC-certified Class 7 driving lessons for new and novice BC drivers in Coquitlam, Port Coquitlam, Port Moody and North Vancouver. Patient one-on-one instruction.",
-            "rank_math_title": "Class 7 Driving Lessons in Coquitlam & the Tri-Cities | BuckleUp",
-            "rank_math_description": "ICBC-certified Class 7 driving lessons for new and novice BC drivers in Coquitlam, Port Coquitlam, Port Moody and North Vancouver. Patient one-on-one instruction.",
+            "bu_seo_title": "",
+            "bu_seo_description": "",
+            "rank_math_title": "Driving Lessons & Packages | Class 7, Class 5 & Class 4 | BuckleUp",
+            "rank_math_description": "Driving lessons for every ICBC licence class: Class 7 for new drivers, Class 5 road test preparation, Class 4 commercial, plus highway and refresher lessons in Metro Vancouver.",
+            "_wp_page_template": "page-elementor"
+        }
+    },
+    "services--class-4-driving-lessons": {
+        "path": "services/class-4-driving-lessons",
+        "title": "Class 4 Commercial Lessons",
+        "menu_order": 3,
+        "modified": "2026-08-14 08:30:04",
+        "meta": {
+            "bu_seo_title": "Class 4 Driving Lessons in BC | Taxi & Ride-Hailing Training | BuckleUp",
+            "bu_seo_description": "Class 4 commercial driving lessons for taxi, ride-hailing and small-bus drivers in Metro Vancouver, plus a free ICBC Class 4 knowledge test practice exam.",
+            "rank_math_title": "Class 4 Driving Lessons in BC | Taxi & Ride-Hailing Training | BuckleUp",
+            "rank_math_description": "Class 4 commercial driving lessons for taxi, ride-hailing and small-bus drivers in Metro Vancouver, plus a free ICBC Class 4 knowledge test practice exam.",
             "_wp_page_template": "page-elementor"
         }
     },
@@ -116,16 +129,16 @@
             "_wp_page_template": "page-elementor"
         }
     },
-    "services--class-4-driving-lessons": {
-        "path": "services/class-4-driving-lessons",
-        "title": "Class 4 Commercial Lessons",
-        "menu_order": 3,
-        "modified": "2026-08-14 08:30:04",
+    "services--class-7-driving-lessons": {
+        "path": "services/class-7-driving-lessons",
+        "title": "Class 7 Driving Lessons",
+        "menu_order": 1,
+        "modified": "2026-08-14 08:30:02",
         "meta": {
-            "bu_seo_title": "Class 4 Driving Lessons in BC | Taxi & Ride-Hailing Training | BuckleUp",
-            "bu_seo_description": "Class 4 commercial driving lessons for taxi, ride-hailing and small-bus drivers in Metro Vancouver, plus a free ICBC Class 4 knowledge test practice exam.",
-            "rank_math_title": "Class 4 Driving Lessons in BC | Taxi & Ride-Hailing Training | BuckleUp",
-            "rank_math_description": "Class 4 commercial driving lessons for taxi, ride-hailing and small-bus drivers in Metro Vancouver, plus a free ICBC Class 4 knowledge test practice exam.",
+            "bu_seo_title": "Class 7 Driving Lessons in Coquitlam & the Tri-Cities | BuckleUp",
+            "bu_seo_description": "ICBC-certified Class 7 driving lessons for new and novice BC drivers in Coquitlam, Port Coquitlam, Port Moody and North Vancouver. Patient one-on-one instruction.",
+            "rank_math_title": "Class 7 Driving Lessons in Coquitlam & the Tri-Cities | BuckleUp",
+            "rank_math_description": "ICBC-certified Class 7 driving lessons for new and novice BC drivers in Coquitlam, Port Coquitlam, Port Moody and North Vancouver. Patient one-on-one instruction.",
             "_wp_page_template": "page-elementor"
         }
     },
