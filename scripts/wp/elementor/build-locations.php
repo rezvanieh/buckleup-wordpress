@@ -325,10 +325,10 @@ $built = 0;
  *
  * So: if a snapshot exists for a slug, skip it unless explicitly forced.
  *   normal  → wp eval-file build-locations.php            (skips snapshotted pages)
- *   force   → wp eval-file build-locations.php --force    (regenerates everything)
+ *   force   → wp eval-file build-locations.php force    (regenerates everything)
  * Use restore-location-snapshots.php to put the real content back.
  */
-$BU_FORCE = ( isset( $args ) && is_array( $args ) && in_array( '--force', $args, true ) );
+$BU_FORCE = ( isset( $args ) && is_array( $args ) && in_array( 'force', $args, true ) );
 $BU_SNAPDIR = __DIR__ . '/snapshots/locations';
 
 foreach ( $CONTENT as $slug => $d ) {
@@ -339,7 +339,7 @@ foreach ( $CONTENT as $slug => $d ) {
 	}
 
 	if ( ! $BU_FORCE && is_readable( "$BU_SNAPDIR/$slug.json" ) ) {
-		echo "SKIP {$slug}: a snapshot exists (client-edited page). Use restore-location-snapshots.php, or pass --force to regenerate.\n";
+		echo "SKIP {$slug}: a snapshot exists (client-edited page). Use restore-location-snapshots.php, or pass 'force' to regenerate.\n";
 		continue;
 	}
 

@@ -1,0 +1,158 @@
+{
+    "home": {
+        "path": "home",
+        "title": "Home",
+        "menu_order": 0,
+        "modified": "2026-07-22 23:44:03",
+        "meta": {
+            "bu_seo_title": "",
+            "bu_seo_description": "",
+            "rank_math_title": "Best Driving School Vancouver | BuckleUp Driving School",
+            "rank_math_description": "BuckleUp Driving School is a top driving school Vancouver learners trust. Driving lessons are available in Vancouver, Tri-Cities, Coquitlam, Port Moody, and North Vancouver. Book today!",
+            "_wp_page_template": "page-elementor"
+        }
+    },
+    "about": {
+        "path": "about",
+        "title": "About Us",
+        "menu_order": 0,
+        "modified": "2026-06-03 18:08:27",
+        "meta": {
+            "bu_seo_title": "",
+            "bu_seo_description": "",
+            "rank_math_title": "About Us - ICBC-Certified Driving Instructors Since 2014",
+            "rank_math_description": "Meet BuckleUp Driving School's ICBC-certified instructors, rated 4.98★ on Google by learners in Vancouver, Port Moody, Coquitlam & Burnaby since 2014. Modern vehicles & personalized training.",
+            "_wp_page_template": "page-elementor"
+        }
+    },
+    "contact": {
+        "path": "contact",
+        "title": "Contact",
+        "menu_order": 0,
+        "modified": "2026-06-03 18:08:27",
+        "meta": {
+            "bu_seo_title": "",
+            "bu_seo_description": "",
+            "rank_math_title": "Contact Us | Book Driving Lessons in Port Moody & Vancouver",
+            "rank_math_description": "Contact BuckleUp Driving School: Call (604) 441-3677 or WhatsApp. Book driving lessons in Port Moody, Vancouver, Coquitlam, Burnaby & New Westminster. 136 Maple Dr, Port Moody.",
+            "_wp_page_template": "page-elementor"
+        }
+    },
+    "services": {
+        "path": "services",
+        "title": "Services",
+        "menu_order": 0,
+        "modified": "2026-08-14 08:30:36",
+        "meta": {
+            "bu_seo_title": "",
+            "bu_seo_description": "",
+            "rank_math_title": "Driving Lessons & Packages | Class 7, Class 5 & Class 4 | BuckleUp",
+            "rank_math_description": "Driving lessons for every ICBC licence class: Class 7 for new drivers, Class 5 road test preparation, Class 4 commercial, plus highway and refresher lessons in Metro Vancouver.",
+            "_wp_page_template": "page-elementor"
+        }
+    },
+    "instructors": {
+        "path": "instructors",
+        "title": "Instructors",
+        "menu_order": 0,
+        "modified": "2026-07-22 22:04:24",
+        "meta": {
+            "bu_seo_title": "",
+            "bu_seo_description": "",
+            "rank_math_title": "",
+            "rank_math_description": "",
+            "_wp_page_template": "page-elementor"
+        }
+    },
+    "resources": {
+        "path": "resources",
+        "title": "Resources",
+        "menu_order": 0,
+        "modified": "2026-07-22 22:05:32",
+        "meta": {
+            "bu_seo_title": "",
+            "bu_seo_description": "",
+            "rank_math_title": "",
+            "rank_math_description": "",
+            "_wp_page_template": "page-elementor"
+        }
+    },
+    "resources--icbc-road-test-failures": {
+        "path": "resources/icbc-road-test-failures",
+        "title": "Top 5 Reasons Students Fail the ICBC Road Test",
+        "menu_order": 0,
+        "modified": "2026-08-14 08:30:36",
+        "meta": {
+            "bu_seo_title": "",
+            "bu_seo_description": "",
+            "rank_math_title": "Top 5 Reasons Students Fail the ICBC Road Test | BuckleUp",
+            "rank_math_description": "Learn the exact reasons why Vancouver students fail their ICBC Class 5 and Class 7 road tests, and how BuckleUp Driving School helps you avoid them.",
+            "_wp_page_template": "page-elementor"
+        }
+    },
+    "services--class-7-driving-lessons": {
+        "path": "services/class-7-driving-lessons",
+        "title": "Class 7 Driving Lessons",
+        "menu_order": 1,
+        "modified": "2026-08-14 08:30:02",
+        "meta": {
+            "bu_seo_title": "Class 7 Driving Lessons in Coquitlam & the Tri-Cities | BuckleUp",
+            "bu_seo_description": "ICBC-certified Class 7 driving lessons for new and novice BC drivers in Coquitlam, Port Coquitlam, Port Moody and North Vancouver. Patient one-on-one instruction.",
+            "rank_math_title": "Class 7 Driving Lessons in Coquitlam & the Tri-Cities | BuckleUp",
+            "rank_math_description": "ICBC-certified Class 7 driving lessons for new and novice BC drivers in Coquitlam, Port Coquitlam, Port Moody and North Vancouver. Patient one-on-one instruction.",
+            "_wp_page_template": "page-elementor"
+        }
+    },
+    "services--class-5-driving-lessons": {
+        "path": "services/class-5-driving-lessons",
+        "title": "Class 5 Lessons &amp; Road Test Prep",
+        "menu_order": 2,
+        "modified": "2026-08-14 08:30:03",
+        "meta": {
+            "bu_seo_title": "Class 5 Driving Lessons & ICBC Road Test Prep | BuckleUp Driving School",
+            "bu_seo_description": "Class 5 driving lessons and ICBC road test preparation in Coquitlam, Port Moody and North Vancouver. Move off your N with confidence.",
+            "rank_math_title": "Class 5 Driving Lessons & ICBC Road Test Prep | BuckleUp Driving School",
+            "rank_math_description": "Class 5 driving lessons and ICBC road test preparation in Coquitlam, Port Moody and North Vancouver. Move off your N with confidence.",
+            "_wp_page_template": "page-elementor"
+        }
+    },
+    "services--class-4-driving-lessons": {
+        "path": "services/class-4-driving-lessons",
+        "title": "Class 4 Commercial Lessons",
+        "menu_order": 3,
+        "modified": "2026-08-14 08:30:04",
+        "meta": {
+            "bu_seo_title": "Class 4 Driving Lessons in BC | Taxi & Ride-Hailing Training | BuckleUp",
+            "bu_seo_description": "Class 4 commercial driving lessons for taxi, ride-hailing and small-bus drivers in Metro Vancouver, plus a free ICBC Class 4 knowledge test practice exam.",
+            "rank_math_title": "Class 4 Driving Lessons in BC | Taxi & Ride-Hailing Training | BuckleUp",
+            "rank_math_description": "Class 4 commercial driving lessons for taxi, ride-hailing and small-bus drivers in Metro Vancouver, plus a free ICBC Class 4 knowledge test practice exam.",
+            "_wp_page_template": "page-elementor"
+        }
+    },
+    "services--highway-driving-lessons": {
+        "path": "services/highway-driving-lessons",
+        "title": "Highway Driving Lessons",
+        "menu_order": 4,
+        "modified": "2026-08-14 08:30:04",
+        "meta": {
+            "bu_seo_title": "Highway Driving Lessons in Metro Vancouver | BuckleUp Driving School",
+            "bu_seo_description": "Highway driving lessons for nervous or inexperienced drivers in Coquitlam, Port Moody and North Vancouver. Learn merging, lane changes and speed management.",
+            "rank_math_title": "Highway Driving Lessons in Metro Vancouver | BuckleUp Driving School",
+            "rank_math_description": "Highway driving lessons for nervous or inexperienced drivers in Coquitlam, Port Moody and North Vancouver. Learn merging, lane changes and speed management.",
+            "_wp_page_template": "page-elementor"
+        }
+    },
+    "services--refresher-driving-lessons": {
+        "path": "services/refresher-driving-lessons",
+        "title": "Refresher &amp; Nervous-Driver Lessons",
+        "menu_order": 5,
+        "modified": "2026-08-14 08:30:05",
+        "meta": {
+            "bu_seo_title": "Refresher & Nervous Driver Lessons | BuckleUp Driving School Vancouver",
+            "bu_seo_description": "Patient refresher and nervous-driver lessons in Coquitlam, Port Moody and North Vancouver, for drivers returning after a break or new to Canada.",
+            "rank_math_title": "Refresher & Nervous Driver Lessons | BuckleUp Driving School Vancouver",
+            "rank_math_description": "Patient refresher and nervous-driver lessons in Coquitlam, Port Moody and North Vancouver, for drivers returning after a break or new to Canada.",
+            "_wp_page_template": "page-elementor"
+        }
+    }
+}

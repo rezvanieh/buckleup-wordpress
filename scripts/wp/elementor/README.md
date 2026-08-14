@@ -88,3 +88,27 @@ activation grabs the next free post ID for its default kit (collided with the fo
 **164** — relocate the kit + raw-`$wpdb`-delete to free 164, because `wp_delete_post`
 on a kit hits a `wp_die` guard); and `_wp_page_template` must be set or pages fall back
 to the old patterns.
+
+## Snapshots vs builders — which file owns a page?
+
+The client edits pages in Elementor on production, so for anything already live the
+**live page is the source of truth**, not the PHP builder. That is captured here:
+
+| | Owns | Use |
+|---|---|---|
+| `snapshots/pages/*.json` | the 12 live marketing + service pages | `restore-page-snapshots.php` |
+| `snapshots/locations/*.json` | the 5 live location pages | `restore-location-snapshots.php` |
+| `build-pages.php` / `build-locations.php` | scaffolding a page that does not exist yet | pass `force` to regenerate |
+
+`build-pages.php` and `build-locations.php` now **skip any page that has a snapshot**
+and say what to run instead. Passing `force` regenerates anyway — only do that on a
+fresh install, never on a site with real content. Regenerating blind is what
+destroyed the client's location-page edits on 2026-08-14.
+
+Snapshot keys are the page PATH with `/` written as `--`
+(`services--class-7-driving-lessons.json` → `/services/class-7-driving-lessons/`).
+They store production URLs and are rewritten to the target `home_url()` on import,
+so the same snapshot restores to prod, local or staging.
+
+**Re-capture after the client edits a page**, or the repo goes stale again: export
+`_elementor_data` per page into `snapshots/` and commit.

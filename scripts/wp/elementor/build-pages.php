@@ -546,8 +546,22 @@ $pages = array(
 // filter when you only mean to change one.
 $only = array();
 if ( isset( $args ) && is_array( $args ) ) {
-	$only = array_filter( array_map( 'sanitize_title', $args ) );
+	$only = array_filter( array_map( function( $a ) { return $a; }, $args ) );
 }
+
+/*
+ * SAFETY GUARD — same reasoning as build-locations.php.
+ *
+ * Production is edited, so the live page body is the truth and is captured in
+ * snapshots/pages/*.json. Regenerating blind replaces real content with the repo's
+ * older idea of it. If a snapshot exists for a page, skip it unless forced.
+ *   normal → wp eval-file build-pages.php               (skips snapshotted pages)
+ *   force  → wp eval-file build-pages.php force       (regenerate, e.g. new install)
+ * Use restore-page-snapshots.php to put the live content back.
+ */
+$BU_FORCE   = in_array( 'force', $only, true );
+$only       = array_values( array_map( 'sanitize_title', array_diff( $only, array( 'force' ) ) ) );
+$BU_SNAPDIR = __DIR__ . '/snapshots/pages';
 
 $built = array();
 foreach ( $pages as $slug => $builder ) {
@@ -558,6 +572,16 @@ foreach ( $pages as $slug => $builder ) {
 	if ( ! $id ) {
 		echo "SKIP $slug: no page with that slug.\n";
 		continue;
+	}
+	// Snapshots are keyed by full page PATH with `/` as `--`, so a nested page
+	// (resources/icbc-road-test-failures) is matched too — checking the bare slug
+	// silently missed those and regenerated them.
+	if ( ! $BU_FORCE ) {
+		$snap_key = str_replace( '/', '--', get_page_uri( $id ) );
+		if ( is_readable( "$BU_SNAPDIR/$snap_key.json" ) ) {
+			echo "SKIP $slug: a snapshot exists (live content). Use restore-page-snapshots.php, or pass 'force' to regenerate.\n";
+			continue;
+		}
 	}
 	el_save_page( $id, $builder() );
 	$built[] = "$slug($id)";
