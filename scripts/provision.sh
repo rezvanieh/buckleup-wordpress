@@ -10,7 +10,14 @@ cd "$(dirname "$0")/.."
 if [ -f .env ]; then set -a; . ./.env; set +a; fi
 
 WP_ADMIN_USER="${WP_ADMIN_USER:-admin}"
-WP_ADMIN_PASSWORD="${WP_ADMIN_PASSWORD:-admin123}"
+# No default password in the repo. Set WP_ADMIN_PASSWORD in .env (gitignored) for a
+# stable local login; otherwise one is generated and printed below. The old literal
+# default shipped in a PUBLIC repo, and seeded credentials from these scripts were
+# found still working on production on 2026-08-14.
+if [ -z "${WP_ADMIN_PASSWORD:-}" ]; then
+  WP_ADMIN_PASSWORD="$(head -c 18 /dev/urandom | base64 | tr -d '/+=' | cut -c1-20)"
+  BU_GENERATED_ADMIN_PW=1
+fi
 WP_ADMIN_EMAIL="${WP_ADMIN_EMAIL:-admin@buckleupdriving.ca}"
 WP_TITLE="${WP_TITLE:-BuckleUp Driving School}"
 WP_HOME="${WP_HOME:-http://localhost:8080}"
@@ -489,7 +496,13 @@ echo ""
 echo "============================================================"
 echo " BuckleUp WordPress is ready."
 echo "   Site   : $WP_HOME"
-echo "   Admin  : $WP_HOME/wp-admin  ($WP_ADMIN_USER / $WP_ADMIN_PASSWORD)"
+echo "   Admin  : $WP_HOME/wp-admin  (user: $WP_ADMIN_USER)"
+if [ "${BU_GENERATED_ADMIN_PW:-0}" = "1" ]; then
+  echo "            password (GENERATED, shown once): $WP_ADMIN_PASSWORD"
+  echo "            set WP_ADMIN_PASSWORD in .env to keep it stable across re-provisions"
+else
+  echo "            password: from WP_ADMIN_PASSWORD in your .env"
+fi
 echo "   Adminer: http://localhost:${ADMINER_PORT:-8081}"
 echo "   Mailpit: http://localhost:${MAILPIT_UI_PORT:-8025}"
 echo "============================================================"

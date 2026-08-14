@@ -52,11 +52,38 @@ function bu_upsert_user( $login, $email, $pass, $role, $display, $meta = array()
 }
 
 /* ---------------------------------------------------------------------------
- * 3 demo users — known creds for the live demo + QA. The WP `admin`
+ * 3 demo console users (student / instructor / admin roles). The WP `admin`
  * administrator stays for wp-admin/blog; these are the front-end console roles.
+ *
+ * PASSWORDS ARE NOT HARD-CODED. They used to be, and the literal strings were
+ * committed to a PUBLIC repo — on 2026-08-14 all three accounts were found still
+ * accepting those passwords on production, one of them with upload_files and
+ * edit_others_posts. The accounts were deleted; this seeder no longer recreates
+ * that exposure.
+ *
+ * Each password now comes from an env var, or is generated and printed once if the
+ * var is unset. Set them in .env (gitignored) if you want stable dev logins:
+ *     BU_SEED_STUDENT_PW / BU_SEED_INSTRUCTOR_PW / BU_SEED_APPADMIN_PW
  * ------------------------------------------------------------------------- */
+
+/**
+ * Password for a seeded demo account: the env var when set, else a fresh random
+ * one that is printed so the developer can use it. Never a literal in the repo.
+ */
+function bu_seed_password( $env_var ) {
+	$pw = getenv( $env_var );
+	if ( is_string( $pw ) && '' !== trim( $pw ) ) {
+		WP_CLI::log( "  password for {$env_var}: (from environment)" );
+		return trim( $pw );
+	}
+	$pw = wp_generate_password( 20, true, false );
+	WP_CLI::log( "  GENERATED password ({$env_var}): {$pw}" );
+	WP_CLI::log( '    ^ shown once. Set that env var in .env to keep it stable across re-provisions.' );
+	return $pw;
+}
+
 bu_upsert_user(
-	'sam.student', 'student@buckleup.test', 'Student123!', 'buckleup_student', 'Sam Student',
+	'sam.student', 'student@buckleup.test', bu_seed_password( 'BU_SEED_STUDENT_PW' ), 'buckleup_student', 'Sam Student',
 	array(
 		'bu_status'           => 'ACTIVE',
 		'bu_preferred_lang'   => 'en',
@@ -68,7 +95,7 @@ bu_upsert_user(
 );
 
 bu_upsert_user(
-	'farhad.instructor', 'instructor@buckleup.test', 'Instruct123!', 'buckleup_instructor', 'Farhad Sanaeifar',
+	'farhad.instructor', 'instructor@buckleup.test', bu_seed_password( 'BU_SEED_INSTRUCTOR_PW' ), 'buckleup_instructor', 'Farhad Sanaeifar',
 	array(
 		'bu_is_active'   => 1,
 		'bu_bio'         => 'Farhad brings a unique blend of technical expertise and cultural understanding to his teaching. Fluent in multiple languages, he specializes in helping new immigrants adapt to Canadian driving conditions.',
@@ -86,7 +113,7 @@ if ( $farhad ) {
 }
 
 bu_upsert_user(
-	'buckleup.appadmin', 'appadmin@buckleup.test', 'Admin12345!', 'buckleup_admin', 'BuckleUp Admin',
+	'buckleup.appadmin', 'appadmin@buckleup.test', bu_seed_password( 'BU_SEED_APPADMIN_PW' ), 'buckleup_admin', 'BuckleUp Admin',
 	array()
 );
 

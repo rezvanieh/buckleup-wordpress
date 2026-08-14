@@ -48,7 +48,7 @@ domain below if the final one differs.
 - [ ] Logged-out `/student` (etc.) → redirected to `/login`
 - [ ] The 5 `bu_*` tables exist with data (Adminer/phpMyAdmin or
       `wp db query "SHOW TABLES LIKE '%bu_%'"`)
-- [ ] **Change the dev admin login** (the seed used `admin/admin123` — replace the
+- [ ] **Change the dev admin login** (the seed no longer hard-codes a password — replace the
       username + password; do NOT carry dev creds to prod)
 - [ ] Demo console users (`student@buckleup.test` etc.) — keep for a demo, or
       delete before public launch

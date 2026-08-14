@@ -67,11 +67,20 @@ make reset                  # DESTROY volumes + re-provision from scratch (VERIF
 make wp CMD="plugin list"   # run any WP-CLI command in the dev stack
 ```
 
-- Site: **http://localhost:8080** (admin/admin123) · Mailpit: **:8025** · Adminer: **:8081**
-- **Demo console logins** (kept for testing — do not delete): log in at `/login/`
-  - Student: `student@buckleup.test` / `Student123!`
-  - Instructor: `instructor@buckleup.test` / `Instruct123!`
-  - Admin (console): `appadmin@buckleup.test` / `Admin12345!`
+- Site: **http://localhost:8080** · Mailpit: **:8025** · Adminer: **:8081**
+- **Credentials are NOT in this repo.** Both GitHub repos are PUBLIC, and on
+  2026-08-14 the demo passwords that used to be listed here were found still
+  working on the **live site** — including a console-admin account with
+  `upload_files` + `edit_others_posts`. Those accounts were deleted from
+  production; the seeders no longer hard-code anything.
+  - `provision.sh` prints a generated `admin` password on first run. Set
+    `WP_ADMIN_PASSWORD` in `.env` (gitignored) to keep it stable.
+  - Demo console users at `/login/` (`student@` / `instructor@` /
+    `appadmin@buckleup.test`) get generated passwords, printed once by
+    `seed-console-users-pages.php`. Set `BU_SEED_STUDENT_PW`,
+    `BU_SEED_INSTRUCTOR_PW`, `BU_SEED_APPADMIN_PW` in `.env` to fix them.
+  - **Production has exactly ONE user**: `admin` (administrator, display name
+    "Farhad Sanaeifar"). Do not seed demo users onto prod.
 - **Golden rule:** reproduce + fix a bug **here first**, verify locally, *then*
   deploy to prod. The dev env mirrors prod (same theme/plugins/mu-plugins code).
 

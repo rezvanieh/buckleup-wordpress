@@ -80,6 +80,6 @@ with .webp, DB export already search-replaced localhost→prod, prod-safe mu-plu
 Other gotchas: pin `$table_prefix='wp_'` to match the dump (Bluehost installer can
 randomize it → empty duplicate bu_ tables); delete bundled **Yoast** (conflicts
 with Rank Math) + Jetpack/CreativeMail; phpMyAdmin import cap ~50MB (our DB is
-tiny); change dev admin creds (admin/admin123) post-import.
+tiny); change the dev admin credentials post-import.
 
 See also [[buckleup-wp-project]].

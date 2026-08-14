@@ -29,7 +29,7 @@
 
 ## 4. Security hardening (carry the dev hardening into prod + add the deploy‑only pieces)
 Already done in the build: DISALLOW_FILE_EDIT, Safe SVG, least‑priv DB user, no committed secrets, **XML‑RPC blocked (403)**, **user/author enumeration locked (404)**, generator removed, nginx deny on `*.log` / `readme.html` / `uploads/*.php` + the deny rule ordered above the PHP handler.
-- [ ] **Replace the dev admin credentials**: a strong unique password + a **non‑`admin` username** (provisioning seeds `admin/admin123` for dev only — do NOT carry to prod).
+- [ ] **Replace the dev admin credentials**: a strong unique password + a **non‑`admin` username** (provisioning generates a random dev password and prints it once — never carry a dev login to prod).
 - [ ] Add a firewall + login throttling (Wordfence free or equivalent) and consider 2FA for the admin.
 - [ ] Belt‑and‑suspenders: also `deny` `/xmlrpc.php` at the prod nginx (app already 403s it).
 - [ ] Confirm `wp-config.php` salts are fresh/unique in prod and file permissions are tight.

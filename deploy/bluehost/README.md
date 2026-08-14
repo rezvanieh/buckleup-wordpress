@@ -164,7 +164,7 @@ that a spot-checked `wp-content/uploads/.../<file>.png.webp` returns 200.
 
 ## 9. Security + go-live hardening
 
-- **Change the dev admin login** (`admin/admin123` is dev-only): create a new
+- **Change the dev admin login** (the dev password is generated, never committed): create a new
   admin with a non-`admin` username + strong password, then delete the old one.
 - Consider **Wordfence (free)** for login throttling + firewall, and 2FA.
 - Confirm `/xmlrpc.php` → 403 and `wp-json/wp/v2/users` → 404 (the plugin + the

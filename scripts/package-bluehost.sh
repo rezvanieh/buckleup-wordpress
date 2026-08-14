@@ -112,5 +112,5 @@ say "Bundle contents:"
 echo
 du -sh "$OUT" | sed 's/^/    total: /'
 say "Done. Upload per deploy/bluehost/README.md."
-warn "Reminder: change the dev admin creds (admin/admin123) after import, and"
+warn "Reminder: change the dev admin credentials after import, and"
 warn "set up SMTP (deploy/bluehost/smtp-and-dns.md) before relying on email."

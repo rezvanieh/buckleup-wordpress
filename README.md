@@ -17,7 +17,7 @@ Then open:
 | URL                              | What                                  |
 | -------------------------------- | ------------------------------------- |
 | http://localhost:8080            | The site                              |
-| http://localhost:8080/wp-admin   | WP admin (`admin` / `admin123`)       |
+| http://localhost:8080/wp-admin   | WP admin (user `admin`; password is generated and printed by `provision.sh`, or set `WP_ADMIN_PASSWORD` in `.env`) |
 | http://localhost:8081            | Adminer (DB GUI)                      |
 | http://localhost:8025            | Mailpit (caught outgoing email)       |
 
