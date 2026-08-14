@@ -5,9 +5,10 @@
  * WHY THIS SECTION EXISTS (SEO): the home page ranked on brand + location terms but
  * had no on-page copy targeting the actual services people search for — "Class 7
  * driving lessons", "Class 5 road test", "Class 4 licence", "ICBC road test". This
- * section puts those terms in an H2 + four H3 cards immediately after the H1, which
- * is the strongest position on the page, and turns them into internal links to the
- * matching blog articles + the Class 4 practice-test hub (topical clustering).
+ * section puts those terms in an H2 + one H3 card per lesson type immediately after
+ * the H1, which is the strongest position on the page, and links each straight to
+ * its /services/ cluster page — so the strongest section on the site feeds the money
+ * pages rather than the blog.
  *
  * PLACEMENT: element index 1 — directly after the BuckleUp Hero, before the
  * graduates gallery. Hero (what we are) → services (what we sell) → proof
@@ -93,7 +94,7 @@ function lessons_card( array $c ) {
 			el_button( $c['cta'], array( 'url' => $c['url'], 'size' => 'sm', 'variant' => 'outline', 'icon' => 'fas fa-arrow-right' ) ),
 		),
 		array(
-			'width'  => 23,
+			'width'  => 31,
 			'bg'     => '#FFFFFF',
 			'pad'    => 24,
 			'radius' => 18,
@@ -107,48 +108,31 @@ function lessons_card( array $c ) {
 
 /* ------------------------------------------------------------------ COPY -- */
 /*
- * Keyword targets, one per card, mirroring how BC learners actually search:
- * "class 7 driving lessons", "class 5 road test", "class 4 licence /
- * knowledge test", "use driving school car for ICBC road test". Each card links
- * to the article that already covers the term, so the section also strengthens
- * those posts' internal link equity.
+ * Cards come from services-content.php — the SAME file the /services/ pillar and
+ * the cluster pages read. Previously this block held its own copy of the card
+ * text and pointed at blog posts; that meant the home page could drift from the
+ * service pages, and the strongest section on the site sent visitors to articles
+ * rather than to the money pages.
+ *
+ * Each card now links to its cluster page at /services/<slug>/, falling back to
+ * the pillar's #lessons anchor if a cluster has not been built yet — so this
+ * never emits a dead link.
  */
-$cards = array(
-	array(
-		'icon'     => 'fas fa-id-card',
-		'title'    => 'Class 7L &amp; 7N Driving Lessons',
-		'desc'     => 'New-driver lessons for your Class 7L learner\'s licence and 7N novice stage — cockpit drill, mirrors, intersections and highway confidence, at your pace.',
-		'features' => array( 'Class 7 road test preparation', 'Patient one-on-one coaching', 'Dual-control Toyota vehicles' ),
-		'cta'      => 'Class 7 lessons',
-		'url'      => home_url( '/class-7l-learners-licence-bc-step-by-step/' ),
-	),
-	array(
-		'icon'     => 'fas fa-car',
-		'title'    => 'Class 5 Road Test Preparation',
-		'desc'     => 'Ready to move off your N? Focused Class 5 road test prep on the exact ICBC routes, covering parallel parking, hill starts and lane changes.',
-		'features' => array( 'Real ICBC Class 5 test routes', 'Parallel parking &amp; hill starts', 'Mock road test with feedback' ),
-		'cta'      => 'Class 5 prep',
-		'url'      => home_url( '/how-to-pass-icbc-class-5-road-test-vancouver/' ),
-	),
-	array(
-		'icon'     => 'fas fa-truck',
-		'title'    => 'Class 4 Commercial Training',
-		'desc'     => 'Class 4 licence training for taxi, ride-hailing and small-bus drivers — plus a free ICBC Class 4 knowledge test practice exam to get you test-ready.',
-		'features' => array( 'Free Class 4 knowledge practice test', 'Taxi, ride-hail &amp; small bus', 'Restricted &amp; unrestricted Class 4' ),
-		// Kept to ~3 words so the button stays on one line and matches the others.
-		'cta'      => 'Class 4 practice test',
-		'url'      => home_url( '/icbc-class-4-knowledge-test/' ),
-	),
-	array(
-		'icon'     => 'fas fa-flag-checkered',
-		'title'    => 'ICBC Road Test Package',
-		'desc'     => 'Walk into your ICBC road test ready: a warm-up lesson beforehand, plus use of our insured dual-control car for the test itself.',
-		'features' => array( 'Use our car for the road test', 'Pre-test warm-up lesson', 'Test-day route review' ),
-		'cta'      => 'Road test package',
-		'url'      => home_url( '/driving-school-car-icbc-road-test/' ),
-	),
-);
-
+$svc   = require __DIR__ . '/services-content.php';
+$cards = array();
+foreach ( $svc as $svc_slug => $svc_item ) {
+	$svc_page = get_page_by_path( 'services/' . $svc_slug );
+	$cards[] = array(
+		'icon'     => $svc_item['icon'],
+		'title'    => $svc_item['card_title'],
+		'desc'     => $svc_item['short'],
+		// Three bullets keeps the home teaser scannable; the cluster page carries
+		// the full list.
+		'features' => array_slice( $svc_item['features'], 0, 3 ),
+		'cta'      => $svc_item['nav_label'],
+		'url'      => $svc_page ? get_permalink( $svc_page->ID ) : ( home_url( '/services/' ) . '#lessons' ),
+	);
+}
 /* --------------------------------------------------------------- SECTION -- */
 $heading_block = el_col(
 	array(
@@ -163,7 +147,7 @@ $heading_block = el_col(
 			array( 'tag' => 'h2', 'size' => 38, 'weight' => 800, 'align' => 'center', 'color_global' => 'text', 'line_height' => 1.12 )
 		),
 		el_text(
-			'ICBC-certified driving lessons in Coquitlam, Port Coquitlam, Port Moody and North Vancouver — from your first lesson on a Class 7L learner\'s licence through to your Class 5 or Class 4 road test.',
+			'ICBC-certified driving lessons in Coquitlam, Port Coquitlam, Port Moody and North Vancouver — from your first lesson on a Class 7L learner\'s licence through to your Class 5 or Class 4 road test, plus highway and refresher sessions.',
 			array( 'align' => 'center', 'size' => 17, 'color_global' => 'mutedcol', 'max_width' => 720 )
 		),
 	),
@@ -208,5 +192,11 @@ if ( class_exists( '\Elementor\Plugin' ) ) {
 
 echo 'Lessons section injected at index ' . $pos . ' of ' . count( $elements )
 	. ( $removed ? " (replaced $removed existing)" : '' ) . ".\n";
-echo 'Cards: ' . count( $cards ) . " (Class 7, Class 5, Class 4, Road test)\n";
+echo 'Cards: ' . count( $cards ) . ' — ' . implode( ', ', array_map( function ( $c ) {
+	return html_entity_decode( strip_tags( $c['title'] ) );
+}, $cards ) ) . "\n";
+$unlinked = count( array_filter( $cards, function ( $c ) { return false !== strpos( $c['url'], '#lessons' ); } ) );
+if ( $unlinked ) {
+	echo "WARNING: $unlinked card(s) fell back to the pillar anchor — run build-service-clusters.php.\n";
+}
 echo 'Anchor: ' . get_permalink( $PAGE_ID ) . '#' . BU_LESSONS_ID . "\n";

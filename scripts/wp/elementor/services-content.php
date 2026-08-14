@@ -43,6 +43,7 @@ return array(
 			'Cockpit drill, mirrors, observation and steering',
 			'Intersections, lane changes and merging',
 			'Class 7 road test preparation',
+			'Use our insured dual-control car for your road test',
 		),
 		'faqs'       => array(
 			array(
@@ -76,6 +77,7 @@ return array(
 			'Parallel parking, hill starts and reversing',
 			'Speed management and lane positioning',
 			'Mock road test with honest feedback',
+			'Use our insured dual-control car for your road test',
 		),
 		'faqs'       => array(
 			array(
