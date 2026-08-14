@@ -88,7 +88,13 @@ function initDropdowns(root) {
 
     // Click-toggle (mobile/keyboard); hover-open is left to CSS on desktop nav if
     // the part opts in. data-dropdown-hover enables JS hover open/close.
+    // A trigger that is a real link (the Services pillar) must stay navigable:
+    // clicking it goes to the page, hover still opens the menu. Only button-style
+    // triggers toggle on click. Without this, making Services a dropdown would
+    // silently make the pillar page unreachable from the nav.
+    const isLinkTrigger = trigger.tagName === 'A' && trigger.getAttribute('href');
     trigger.addEventListener('click', (e) => {
+      if (isLinkTrigger) return; // let the browser follow the href
       e.preventDefault();
       content.getAttribute('data-state') === 'open' ? close() : open();
     });

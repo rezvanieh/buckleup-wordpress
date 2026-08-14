@@ -462,7 +462,10 @@ function buckleup_nav_items(): array {
 	// links (/#graduates, /#faq) and home_url('/') are already correct.
 	$items = array(
 		array( 'name' => 'Home', 'href' => home_url( '/' ), 'icon' => 'home', 'active' => is_front_page() ),
-		array( 'name' => 'Services', 'href' => home_url( '/services/' ), 'icon' => 'briefcase', 'active' => buckleup_path_is( 'services' ) ),
+		// Prefix match (like Blog): Services must stay highlighted on its cluster
+		// pages at /services/<slug>/ too, or the nav loses its "you are here" state
+		// the moment a visitor opens a licence-class page.
+		array( 'name' => 'Services', 'href' => home_url( '/services/' ), 'icon' => 'briefcase', 'active' => buckleup_path_is( 'services', true ) ),
 		// Graduates + FAQ are #anchors to home sections — never their own active box
 		// (Home carries the highlight on the front page).
 		array( 'name' => 'Graduates', 'href' => home_url( '/#graduates' ), 'icon' => 'image', 'active' => false ),
@@ -510,6 +513,52 @@ function buckleup_path_is( string $slug, bool $starts_with = false ): bool {
 	$path = trim( (string) $path, '/' );             // e.g. "blog/my-post" or "services".
 	$first = explode( '/', $path )[0];               // first segment.
 	return $starts_with ? ( $slug === $first ) : ( $slug === $path );
+}
+
+/**
+ * Service items for the Services nav dropdown — the Hub 1 cluster pages.
+ *
+ * Read live from the CHILD PAGES of /services/ rather than hard-coded, so adding
+ * or renaming a cluster page updates the nav with no code change (same contract as
+ * buckleup_location_items()). Ordered by menu_order then title, so the order can be
+ * curated from the admin.
+ *
+ * Returns [] when the pillar or its children are missing — the header then falls
+ * back to rendering Services as a plain link, exactly as before.
+ *
+ * @return array<int,array{name:string,href:string}>
+ */
+function buckleup_service_items(): array {
+	static $cache = null;
+	if ( null !== $cache ) {
+		return $cache;
+	}
+
+	$cache  = array();
+	$pillar = get_page_by_path( 'services' );
+	if ( ! $pillar ) {
+		return $cache;
+	}
+
+	$children = get_posts( array(
+		'post_type'        => 'page',
+		'post_parent'      => $pillar->ID,
+		'post_status'      => 'publish',
+		'numberposts'      => -1,
+		'orderby'          => array( 'menu_order' => 'ASC', 'title' => 'ASC' ),
+		'suppress_filters' => false,
+	) );
+
+	foreach ( $children as $child ) {
+		$cache[] = array(
+			'name' => get_the_title( $child ),
+			// Trailing-slashed to match WP permalinks — the slash-less form costs a
+			// 301 hop on every click.
+			'href' => user_trailingslashit( get_permalink( $child->ID ) ),
+		);
+	}
+
+	return $cache;
 }
 
 /**

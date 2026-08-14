@@ -34,6 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 $nav        = buckleup_nav_items();
 $locations  = buckleup_location_items();
+$services   = function_exists( 'buckleup_service_items' ) ? buckleup_service_items() : array();
 $quiz_cta    = function_exists( 'buckleup_quiz_nav_cta' ) ? buckleup_quiz_nav_cta() : null;
 $wa         = function_exists( 'buckleup_get_setting' ) ? buckleup_get_setting( 'whatsapp', '16044413677' ) : '16044413677';
 // Generic CTAs carry a prefilled message (production parity).
@@ -86,6 +87,38 @@ $logout_url     = wp_logout_url( home_url() );
 						$item_class = $is_active
 							? 'text-foreground bg-background shadow-sm border border-border/50'
 							: 'text-muted-foreground hover:text-foreground hover:bg-background/50';
+
+						// Services carries a dropdown of its cluster pages (Hub 1). The trigger
+						// stays a real <a> to the pillar — hover opens the menu, click still
+						// goes to /services/ (overlays.js skips preventDefault for link
+						// triggers). Falls back to a plain link when there are no clusters.
+						if ( 'Services' === $item['name'] && ! empty( $services ) ) :
+							?>
+							<div data-dropdown data-dropdown-hover class="relative">
+								<a href="<?php echo esc_url( $item['href'] ); ?>" data-dropdown-trigger
+									aria-expanded="false" aria-haspopup="true"
+									class="relative flex items-center gap-1 px-2 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-200 <?php echo esc_attr( $item_class ); ?>"
+									<?php echo $is_active ? 'aria-current="page"' : ''; ?>>
+									<span><?php echo esc_html( $item['name'] ); ?></span>
+									<?php echo buckleup_icon( 'chevron-down', 'w-3.5 h-3.5' ); // phpcs:ignore ?>
+								</a>
+								<div data-dropdown-content data-state="closed" data-side="bottom" hidden
+									class="absolute top-full left-0 mt-2 w-64 bg-card/98 backdrop-blur-2xl border border-border rounded-xl shadow-xl shadow-black/10 py-1 overflow-hidden z-50 <?php echo esc_attr( buckleup_dropdown_content_class() ); ?>">
+									<a href="<?php echo esc_url( $item['href'] ); ?>"
+										class="block px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors border-b border-border/60">
+										<?php esc_html_e( 'All lessons &amp; packages', 'buckleup' ); ?>
+									</a>
+									<?php foreach ( $services as $svc ) : ?>
+										<a href="<?php echo esc_url( $svc['href'] ); ?>"
+											class="block px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+											<?php echo esc_html( $svc['name'] ); ?>
+										</a>
+									<?php endforeach; ?>
+								</div>
+							</div>
+							<?php
+							continue;
+						endif;
 						?>
 						<a href="<?php echo esc_url( $item['href'] ); ?>"
 							class="relative flex items-center px-2 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-200 <?php echo esc_attr( $item_class ); ?>"
@@ -212,6 +245,17 @@ $logout_url     = wp_logout_url( home_url() );
 					<span><?php echo esc_html( $item['name'] ); ?></span>
 				</a>
 			<?php endforeach; ?>
+			<?php if ( ! empty( $services ) ) : ?>
+				<?php // Touch devices never fire hover, so the desktop dropdown is unreachable
+					  // by tap — the cluster pages are listed here instead. ?>
+				<div class="px-4 pt-2 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground"><?php esc_html_e( 'Lessons', 'buckleup' ); ?></div>
+				<?php foreach ( $services as $svc ) : ?>
+					<a href="<?php echo esc_url( $svc['href'] ); ?>"
+						class="px-4 py-2.5 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+						<?php echo esc_html( $svc['name'] ); ?>
+					</a>
+				<?php endforeach; ?>
+			<?php endif; ?>
 			<div class="px-4 pt-2 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground"><?php esc_html_e( 'Locations', 'buckleup' ); ?></div>
 			<?php foreach ( $locations as $loc ) : ?>
 				<a href="<?php echo esc_url( $loc['href'] ); ?>"

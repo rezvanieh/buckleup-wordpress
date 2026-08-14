@@ -86,6 +86,7 @@ function svc_prose( $html, array $o = array() ) {
 
 /* ------------------------------------------------------------------- build -- */
 
+$position = 0;
 $built   = array();
 $skipped = array();
 
@@ -93,11 +94,16 @@ foreach ( $SERVICES as $slug => $s ) {
 	if ( $only && ! in_array( $slug, $only, true ) ) { continue; }
 
 	/* --- 1. ensure the page exists (idempotent, matched by full path) --------- */
+	// menu_order follows the order in services-content.php — the learner journey
+	// (Class 7 → 5 → 4, then the specialist lessons). Without it the nav dropdown
+	// falls back to alphabetical and opens on "Class 4", which is the class the
+	// fewest visitors want.
+	$order    = ++$position;
 	$existing = get_page_by_path( 'services/' . $slug );
 	$title    = trim( strip_tags( html_entity_decode( $s['card_title'] ) ) );
 	if ( $existing ) {
 		$id = (int) $existing->ID;
-		wp_update_post( array( 'ID' => $id, 'post_title' => $title, 'post_status' => 'publish', 'post_parent' => $pillar ) );
+		wp_update_post( array( 'ID' => $id, 'post_title' => $title, 'post_status' => 'publish', 'post_parent' => $pillar, 'menu_order' => $order ) );
 	} else {
 		$id = wp_insert_post( array(
 			'post_type'    => 'page',
@@ -105,6 +111,7 @@ foreach ( $SERVICES as $slug => $s ) {
 			'post_title'   => $title,
 			'post_parent'  => $pillar,
 			'post_status'  => 'publish',
+			'menu_order'   => $order,
 			'post_content' => '',
 		) );
 		if ( is_wp_error( $id ) ) { echo "ERROR creating $slug: " . $id->get_error_message() . "\n"; continue; }
