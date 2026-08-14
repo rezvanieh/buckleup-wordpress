@@ -3,7 +3,7 @@
  * Seeds marketing content into the buckleup-core CPTs (verbatim from source):
  *   - testimonial (17) real Google reviews (scripts/wp/real-testimonials.php)
  *   - faq (14)         src/components/landing/FAQ.tsx
- *   - instructor (2)   prisma/seed.ts  (REAL: Sarah Mitchell + Farhad Sanaeifar)
+ *   - instructor (1)   prisma/seed.ts  (Farhad Sanaeifar; Sarah Mitchell removed)
  *   - location (5)     src/app/locations/<slug>/page.tsx  (hero + SEO meta, CPT)
  * Plus the static Pages (Home front page, About/Contact/Services/Blog/Resources)
  * and front-page wiring. Graduates are intentionally NOT seeded (live empty state
@@ -93,21 +93,17 @@ if ( post_type_exists( 'faq' ) ) {
 }
 
 /* ===========================================================================
- * INSTRUCTORS (2, REAL) — Sarah Mitchell + Farhad Sanaeifar, from prisma/seed.ts.
- * Photos: Farhad gets farhad-instructor.jpg (set by import-media.php). Sarah has
- * no source photo → no featured image (theme shows initial/placeholder).
+ * INSTRUCTORS (1) — Farhad Sanaeifar. Photo: farhad-instructor.jpg (set by
+ * import-media.php).
+ *
+ * Sarah Mitchell was removed on 2026-08-14: she came from the original
+ * prisma/seed.ts and is no longer an instructor (confirmed by the client). She
+ * had already been deleted from the instructor CPT on production, but the
+ * instructors PAGE kept showing a stale card until it was rebuilt, and this
+ * seeder would have recreated her on any fresh install or `make reset`.
  * ========================================================================= */
 if ( post_type_exists( 'instructor' ) ) {
 	$instructors = array(
-		array(
-			'slug'  => 'sarah-mitchell',
-			'name'  => 'Sarah Mitchell',
-			'role'  => 'Senior Instructor',
-			'rating'=> 4.9,
-			'bio'   => 'With over 15 years of professional driving instruction experience, Sarah has helped thousands of students achieve their driving goals.',
-			'certs' => array( 'ICBC Approved', 'Class 4 Commercial', 'Defensive Driving Specialist' ),
-			'langs' => array( 'English', 'French' ),
-		),
 		array(
 			'slug'  => 'farhad-sanaeifar',
 			'name'  => 'Farhad Sanaeifar',

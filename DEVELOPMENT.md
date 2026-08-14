@@ -60,7 +60,7 @@ make build-assets  # one-off production build
    required before seeding) and the `buckleup` theme,
 6. runs the seed eval-files in `scripts/wp/`:
    - `roles.php` — `student` + `instructor` roles + admin caps,
-   - `users.php` — Sarah, Farhad, demo student (from `prisma/seed.ts`),
+   - `users.php` — Farhad, demo student (from `prisma/seed.ts`; Sarah removed),
    - `seed-catalog.php` — 3 services + 4 home pricing packages,
    - `seed-content.php` — front/Blog/static pages, 5 testimonials, 14 FAQ, 2 instructors,
      5 location CPT posts, the ICBC resources article,

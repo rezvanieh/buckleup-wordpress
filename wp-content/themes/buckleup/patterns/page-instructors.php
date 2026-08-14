@@ -5,8 +5,9 @@
  * Inserter: no
  *
  * The Instructors page, driven by the `instructor` CPT via
- * buckleup_get_instructors() — i.e. the REAL instructors (Farhad Sanaeifar, Sarah
- * Mitchell), NOT the source page's Unsplash placeholder personas (PLAN §4 clean-up).
+ * buckleup_get_instructors() — i.e. the REAL instructor (Farhad Sanaeifar), NOT the
+ * source page's Unsplash placeholder personas (PLAN §4 clean-up). Sarah Mitchell was
+ * seeded from the original app but is no longer an instructor (removed 2026-08-14).
  * Mirrors the LIVE page's section weight: hero + marketing stats row, the instructor
  * card grid (photo, role, rating, bio, certs + languages pills, per-instructor
  * WhatsApp CTA), and a "Why Choose Our Instructors" feature section. The shared
@@ -44,7 +45,9 @@ $why = array(
 	array( 'icon' => 'shield-check',   'title' => __( 'ICBC Certified', 'buckleup' ),       'desc' => __( 'All instructors are ICBC-approved with clean driving records', 'buckleup' ) ),
 	array( 'icon' => 'message-circle', 'title' => __( 'Multilingual', 'buckleup' ),         'desc' => __( 'Lessons available in English, Farsi, French, and more', 'buckleup' ) ),
 	array( 'icon' => 'star',           'title' => __( 'Patient & Supportive', 'buckleup' ), 'desc' => __( 'Specializing in nervous and first-time drivers', 'buckleup' ) ),
-	array( 'icon' => 'check',          'title' => __( 'Proven Results', 'buckleup' ),        'desc' => __( 'Above-average pass rates with thousands of success stories', 'buckleup' ) ),
+	// Was "Above-average pass rates with thousands of success stories" — an
+	// unverifiable claim of the same kind removed site-wide on 2026-08-13.
+	array( 'icon' => 'check',          'title' => __( 'Structured Lessons', 'buckleup' ),    'desc' => __( 'A clear plan for each drive, with honest feedback afterwards', 'buckleup' ) ),
 );
 ?>
 <!-- wp:html -->

@@ -148,7 +148,7 @@ function buckleup_register_post_types() {
 		)
 	);
 
-	// Instructor — team profiles (Farhad + Sarah for v1).
+	// Instructor — team profiles (Farhad; Sarah Mitchell removed 2026-08-14).
 	register_post_type(
 		'instructor',
 		array(

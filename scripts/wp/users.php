@@ -28,16 +28,9 @@ function buckleup_upsert_user( $login, $email, $pass, $role, $display, $meta = a
 	WP_CLI::log( "  user ok: {$email} ({$role})" );
 }
 
-// Instructors (Sarah, Farhad) — from seed.ts
-buckleup_upsert_user( 'sarah', 'sarah@buckleupdriving.ca', 'password123', 'instructor', 'Sarah Mitchell', array(
-	'bu_phone'          => '(604) 555-0101',
-	'bu_bio'            => '15+ years teaching new drivers in the Lower Mainland.',
-	'bu_certifications' => array( 'ICBC Approved', 'Class 4 Commercial', 'Defensive Driving Specialist' ),
-	'bu_languages'      => array( 'English', 'French' ),
-	'bu_hourly_rate'    => '50.00',
-	'bu_is_active'      => 1,
-) );
-
+// Instructor accounts. The 'sarah' account (Sarah Mitchell, from the original
+// seed.ts) was removed on 2026-08-14 — she is no longer an instructor, and seeding
+// a login for a former staff member is worse than pointless.
 buckleup_upsert_user( 'farhad', 'farhad@buckleupdriving.ca', 'password123', 'instructor', 'Farhad Sanaeifar', array(
 	'bu_phone'          => '+1 (604) 441-3677',
 	'bu_bio'            => 'Patient, multilingual instructor focused on newcomer drivers.',

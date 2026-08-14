@@ -17,7 +17,7 @@ You own ONLY `scripts/` (`provision.sh`, `scripts/wp/*.php`) and the `wp-data/` 
 - **5 blog posts** from the source seed (preserve slugs: how-to-pass-icbc-class-5-road-test-vancouver, mastering-parallel-parking-ultimate-guide, winter-driving-bc-essential-safety-tips, why-port-moody-best-place-learn-to-drive, ultimate-highway-merging-checklist), with categories (Tips/Tutorials/Safety/Local), tag arrays, and HTML bodies; side-load any inline/featured images.
 - **Services (3):** Single Driving Lesson (90min, $75), Road Test Preparation (120min, $120), Highway Driving (120min, $100).
 - **Home pricing packages (4):** Single Session $100, 4 Sessions $360, 6 Sessions $480 (most-popular), 8 Sessions $620 — with exact bullets, +car fees, WhatsApp text.
-- **Instructors (2, REAL):** Sarah Mitchell + Farhad Sanaeifar (bios, certs, languages from seed) — NOT the Unsplash placeholder personas.
+- **Instructors (1, REAL):** Farhad Sanaeifar (bios, certs, languages from seed; Sarah Mitchell removed 2026-08-14) — NOT the Unsplash placeholder personas.
 - **Testimonials (5):** the named fallback quotes (Jason Kim, Amanda Liu, David Wang, Sarah Martinez, Michael Chen), all 5-star.
 - **FAQ (14 Q&A)** verbatim. **Graduates:** import any available graduate photos.
 - **Brand media** from `/Users/esfandiyar/Projects/Buckleup/public/` (logo.png, logo-dark.png, image2.png, hero_card_image.png, farhad-instructor.jpg, icon set) into the Media Library; set Site Icon + theme-swap logos.

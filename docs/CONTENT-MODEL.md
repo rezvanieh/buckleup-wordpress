@@ -141,7 +141,8 @@ level for `/locations/` to resolve (owned by provisioning, not this plugin).
 | Active         | meta           | `bu_is_active`      | boolean | `'1'`                    |
 
 > Seed the **real** instructors (PLAN §4 / seed.ts): Farhad Sanaeifar and
-> Sarah Mitchell — not the Unsplash placeholder personas in `landing/Instructors.tsx`.
+> Farhad Sanaeifar — not the Unsplash placeholder personas in `landing/Instructors.tsx`.
+> (Sarah Mitchell was seeded originally but is no longer an instructor — removed 2026-08-14.)
 
 ### `location` — per-city landing page (`/locations/{slug}`)
 | Field            | Source         | Key                  | Type    | Example                       |
