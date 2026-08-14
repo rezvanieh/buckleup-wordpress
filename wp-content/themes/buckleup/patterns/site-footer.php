@@ -36,8 +36,8 @@ $is_landing = is_front_page();
 $recent = get_posts( array( 'numberposts' => 3, 'post_status' => 'publish', 'no_found_rows' => true ) );
 
 $quick_links = array(
-	array( 'label' => 'Services & Pricing', 'href' => home_url( '/services' ) ),
-	array( 'label' => 'About Us',           'href' => home_url( '/about' ) ),
+	array( 'label' => 'Services & Pricing', 'href' => home_url( '/services/' ) ),
+	array( 'label' => 'About Us',           'href' => home_url( '/about/' ) ),
 	array( 'label' => 'Book a Lesson',      'href' => home_url( '/#single-session' ) ),
 	array( 'label' => 'FAQ',                'href' => home_url( '/#faq' ) ),
 );

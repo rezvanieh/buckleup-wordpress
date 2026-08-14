@@ -191,7 +191,7 @@ $tabs = array_map( static function ( $c ) {
 				<?php
 				buckleup_button( array(
 					'label'   => __( 'Book Free Consultation', 'buckleup' ),
-					'href'    => home_url( '/contact' ),
+					'href'    => home_url( '/contact/' ),
 					'size'    => 'lg',
 					'variant' => 'outline',
 					'class'   => 'rounded-full',

@@ -44,7 +44,7 @@ $items = array_map( static function ( $f ) {
 
 			<p data-reveal class="text-center text-muted-foreground mt-8">
 				<?php esc_html_e( 'Still have questions?', 'buckleup' ); ?>
-				<a href="<?php echo esc_url( home_url( '/contact' ) ); ?>" class="text-primary font-medium hover:underline"><?php esc_html_e( 'Contact us', 'buckleup' ); ?></a>
+				<a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>" class="text-primary font-medium hover:underline"><?php esc_html_e( 'Contact us', 'buckleup' ); ?></a>
 				<?php esc_html_e( "and we'll be happy to help.", 'buckleup' ); ?>
 			</p>
 		</div>

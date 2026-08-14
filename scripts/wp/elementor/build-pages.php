@@ -320,7 +320,7 @@ function build_services() {
 			el_text( "Book a free consultation and we'll map the fastest route to your licence.", array( 'align' => 'center', 'size' => 16, 'color_global' => 'mutedcol', 'max_width' => 560 ) ),
 			el_container( array( 'content_width' => 'full', 'css_classes' => 'bu-hug', 'flex_direction' => 'row', 'flex_gap' => array( 'unit' => 'px', 'size' => 12, 'column' => '12', 'row' => '12' ), '_flex_grow' => 0, 'padding' => el_box( 8, 0, 0, 0 ) ), array(
 				el_button( 'See Pricing', array( 'url' => '#pricing', 'size' => 'lg', 'icon' => 'fas fa-arrow-right', 'bg_global' => 'primary' ) ),
-				el_button( 'Book Free Consultation', array( 'url' => home_url( '/contact' ), 'size' => 'lg', 'variant' => 'outline' ) ),
+				el_button( 'Book Free Consultation', array( 'url' => home_url( '/contact/' ), 'size' => 'lg', 'variant' => 'outline' ) ),
 			) ),
 		), array( 'width' => 100, 'gap_px' => 14, 'align' => 'center', 'bg' => '#FFFFFF', 'pad' => 32, 'radius' => 24, 'border' => '#CBD5E1', 'shadow' => true ) ),
 	) );
@@ -446,12 +446,12 @@ function build_resources() {
 		array( 'Checklists & Guides', array( 'Road Test Day Checklist · PDF · 500 KB', 'Pre-Trip Vehicle Inspection · PDF · 750 KB', 'Common Mistakes to Avoid · PDF · 1.2 MB' ) ),
 	);
 	$icbc = get_page_by_path( 'icbc-road-test-failures', OBJECT, array( 'page', 'post' ) );
-	$icbc_href = $icbc ? (string) get_permalink( $icbc ) : home_url( '/resources/icbc-road-test-failures' );
+	$icbc_href = $icbc ? (string) get_permalink( $icbc ) : home_url( '/resources/icbc-road-test-failures/' );
 	$articles = array(
-		array( 'Winter Driving in BC: Essential Tips', 'Safety', '5 min read', home_url( '/blog' ) ),
+		array( 'Winter Driving in BC: Essential Tips', 'Safety', '5 min read', home_url( '/blog/' ) ),
 		array( 'How to Conquer Parallel Parking', 'Skills', '4 min read', $icbc_href ),
-		array( 'Understanding the BC Graduated Licensing Program', 'Licensing', '6 min read', home_url( '/blog' ) ),
-		array( 'Defensive Driving: Key Principles', 'Safety', '7 min read', home_url( '/blog' ) ),
+		array( 'Understanding the BC Graduated Licensing Program', 'Licensing', '6 min read', home_url( '/blog/' ) ),
+		array( 'Defensive Driving: Key Principles', 'Safety', '7 min read', home_url( '/blog/' ) ),
 	);
 
 	$cat_cards = array();
@@ -479,7 +479,7 @@ function build_resources() {
 				icon_chip( 'fas fa-check' ),
 				el_heading( 'Practice Quizzes Coming Soon', array( 'tag' => 'h3', 'size' => 24, 'weight' => 800, 'align' => 'center', 'color_global' => 'text' ) ),
 				el_text( 'Interactive quizzes to test your knowledge of BC driving rules, road signs, and safe driving practices.', array( 'align' => 'center', 'size' => 15, 'color_global' => 'mutedcol', 'max_width' => 560 ) ),
-				el_button( 'Get Notified', array( 'url' => home_url( '/contact' ), 'size' => 'md', 'bg_global' => 'primary' ) ),
+				el_button( 'Get Notified', array( 'url' => home_url( '/contact/' ), 'size' => 'md', 'bg_global' => 'primary' ) ),
 			), array( 'width' => 100, 'gap_px' => 12, 'align' => 'center', 'bg' => '#FFFFFF', 'pad' => 32, 'radius' => 24, 'border' => '#CBD5E1', 'shadow' => true ) ),
 		) ),
 	);

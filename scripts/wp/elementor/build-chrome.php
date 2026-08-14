@@ -162,7 +162,7 @@ function build_footer( $logo, $get, $locations, $recent, $wa_link ) {
 		$blog_links[] = array( 'label' => get_the_title( $p ), 'href' => get_permalink( $p ) );
 	}
 	if ( ! $blog_links ) {
-		$blog_links[] = array( 'label' => 'Coming soon.', 'href' => home_url( '/blog' ) );
+		$blog_links[] = array( 'label' => 'Coming soon.', 'href' => home_url( '/blog/' ) );
 	}
 	$blogs = footer_column( 'Recent Blogs', footer_links_html( $blog_links ), 19 );
 

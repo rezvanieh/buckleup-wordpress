@@ -282,7 +282,7 @@ $logout_url     = wp_logout_url( home_url() );
 			<?php echo buckleup_icon( 'home', 'size-5' ); // phpcs:ignore ?>
 			<span class="text-[10px] font-medium"><?php esc_html_e( 'Home', 'buckleup' ); ?></span>
 		</a>
-		<a href="<?php echo esc_url( home_url( '/services' ) ); ?>" class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-muted-foreground hover:text-primary transition-colors">
+		<a href="<?php echo esc_url( home_url( '/services/' ) ); ?>" class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-muted-foreground hover:text-primary transition-colors">
 			<?php echo buckleup_icon( 'star', 'size-5' ); // phpcs:ignore ?>
 			<span class="text-[10px] font-medium"><?php esc_html_e( 'Services', 'buckleup' ); ?></span>
 		</a>

@@ -119,7 +119,7 @@ if ( $icbc ) {
 					<?php
 					buckleup_button( array(
 						'label' => __( 'Get Notified', 'buckleup' ),
-						'href'  => home_url( '/contact' ),
+						'href'  => home_url( '/contact/' ),
 						'class' => 'rounded-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground shine',
 					) );
 					?>
