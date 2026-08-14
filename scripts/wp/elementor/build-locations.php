@@ -314,10 +314,32 @@ $wa_number = function_exists( 'buckleup_get_setting' ) ? buckleup_get_setting( '
 $wa_number = preg_replace( '/\D/', '', (string) $wa_number );
 
 $built = 0;
+/*
+ * SAFETY GUARD — this script is scaffolding, not the source of truth.
+ *
+ * The client edits location pages directly in Elementor, so the live page body is
+ * authoritative and is captured in snapshots/locations/*.json. Running this
+ * generator against a site that already has those pages replaces hand-written
+ * content with the repo's version. That happened on 2026-08-14 and destroyed edits
+ * across three pages; only a database backup got them back.
+ *
+ * So: if a snapshot exists for a slug, skip it unless explicitly forced.
+ *   normal  → wp eval-file build-locations.php            (skips snapshotted pages)
+ *   force   → wp eval-file build-locations.php --force    (regenerates everything)
+ * Use restore-location-snapshots.php to put the real content back.
+ */
+$BU_FORCE = ( isset( $args ) && is_array( $args ) && in_array( '--force', $args, true ) );
+$BU_SNAPDIR = __DIR__ . '/snapshots/locations';
+
 foreach ( $CONTENT as $slug => $d ) {
 	$post = get_page_by_path( $slug, OBJECT, 'location' );
 	if ( ! $post ) {
 		echo "SKIP {$slug}: no location post.\n";
+		continue;
+	}
+
+	if ( ! $BU_FORCE && is_readable( "$BU_SNAPDIR/$slug.json" ) ) {
+		echo "SKIP {$slug}: a snapshot exists (client-edited page). Use restore-location-snapshots.php, or pass --force to regenerate.\n";
 		continue;
 	}
 

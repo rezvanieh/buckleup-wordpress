@@ -41,6 +41,8 @@ deterministically. Run them with WP-CLI against the dev stack.
 | `build-locations.php` | Builds the **5 location landing pages** (Coquitlam 33, North Vancouver 34, Port Coquitlam 35, Port Moody 36, Tri-Cities 37) as fully-editable Elementor on the `location` CPT — landmark hero (image bg + overlay) + local intro/why/neighbourhoods/ICBC/FAQ/CTA, with shared pricing/graduates/testimonials embedded via `[buckleup_section]`. Self-enables `elementor_cpt_support` for `location`, and syncs each post's `bu_seo_title`/`bu_seo_description` from the content file. Consumes `locations-content.php`. |
 | `locations-content.php` | **Single source of truth** for per-location copy + SEO (hero, intro, why, neighbourhoods, ICBC routes, FAQs, `seo_title`/`seo_description`, `geo`, `area_served`). Also mirrored by the SEO mu-plugin (per-location JSON-LD) and `seo-config.php`. |
 | `import-location-heroes.php` | Imports the 5 landmark hero WebPs from `assets/heroes/{slug}.webp` into the Media Library (tagged `_bu_location_hero`, idempotent) with alt text + CC attribution baked into each attachment. |
+| `snapshots/locations/*.json` | ⚠️ **The real location page bodies.** The client edits these pages in Elementor, so the LIVE page is the source of truth, not `locations-content.php`. Captured from production and version-controlled so a bad deploy is recoverable from git, not just from a DB backup. URLs are stored as production URLs and rewritten to the target `home_url()` on import. |
+| `restore-location-snapshots.php` | Restores those snapshots (body + SEO meta). Use this instead of `build-locations.php` on any site that already has content. Optional slug args restore a subset. |
 | `assets/heroes/*.webp` | The 5 pre-processed landmark hero images (Wikimedia Commons, CC-licensed — attribution stored on the attachments). |
 | `build-chrome.php` | Builds the footer (library template **164**) and the header (163, retained but **unused** — the real theme header renders live). |
 | `set-kit.php` | Writes the Elementor Kit globals (brand colors + Geist) onto the active kit. |
@@ -61,6 +63,10 @@ docker compose run --rm -T wpcli wp eval-file /scripts/wp/elementor/build-pages.
 docker compose run --rm -T wpcli wp eval 'foreach([38,39,40,41,42,44,45] as $id){update_post_meta($id,"_wp_page_template","page-elementor");}'
 # --- location landing pages (CPT 33-37) ---
 docker compose run --rm -T wpcli wp eval-file /scripts/wp/elementor/import-location-heroes.php  # media: 5 landmark heroes
+# Location BODIES come from the committed snapshots, NOT from build-locations.php —
+# the client edits these pages in Elementor, so the live page is the source of truth.
+# build-locations.php now skips any slug that has a snapshot (pass --force to override).
+docker compose run --rm -T wpcli wp eval-file /scripts/wp/elementor/restore-location-snapshots.php
 docker compose run --rm -T wpcli wp eval-file /scripts/wp/elementor/build-locations.php         # locations 33-37 (+enables CPT support)
 docker compose run --rm -T wpcli wp eval-file /scripts/wp/seo-config.php                          # push bu_seo_* -> Rank Math titles
 docker compose run --rm -T wpcli wp eval '\Elementor\Plugin::$instance->files_manager->clear_cache();'
