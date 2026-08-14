@@ -138,10 +138,14 @@ function build_footer( $logo, $get, $locations, $recent, $wa_link ) {
 	$brand = el_col( $brand_kids, array( 'gap' => 16, 'align' => 'flex-start', 'width' => 22 ) );
 
 	// Quick Links
+	// Graduates + FAQ are home-page ANCHORS, not pages, so they were dropped from the
+	// primary nav. The footer is where they belong — it keeps both sections reachable
+	// by a link (otherwise nothing on the site would point at #graduates at all).
 	$quick = footer_column( 'Quick Links', footer_links_html( array(
 		array( 'label' => 'Services & Pricing', 'href' => home_url( '/services/' ) ),
 		array( 'label' => 'About Us', 'href' => home_url( '/about/' ) ),
 		array( 'label' => 'Book a Lesson', 'href' => home_url( '/#pricing' ) ),
+		array( 'label' => 'Graduates', 'href' => home_url( '/#graduates' ) ),
 		array( 'label' => 'FAQ', 'href' => home_url( '/#faq' ) ),
 	) ), 14 );
 

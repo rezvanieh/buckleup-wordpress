@@ -460,19 +460,32 @@ function buckleup_nav_items(): array {
 	// Page paths carry a trailing slash to match WP's permalink structure — the
 	// slash-less form triggers a 301 redirect hop on every click (QA B2). Anchor
 	// links (/#graduates, /#faq) and home_url('/') are already correct.
+	// ORDER is deliberate — commercial intent first, trust and reading later, Contact
+	// last by convention:
+	//   Home · Services ▾ · Locations ▾ · About · Blog · Contact
+	//
+	//   - Services and Locations are the two hubs that own money intent (the content
+	//     plan makes /services/ the Hub 1 pillar and /locations/coquitlam/ the single
+	//     owner of Coquitlam commercial intent). Leftmost positions get the most
+	//     attention, so both sit ahead of the informational items. Locations used to
+	//     be appended dead-last, which under-weighted the pages this business most
+	//     needs to rank.
+	//   - Both carry a `dropdown` key; the header renders their children generically.
+	//     Each is still a real link to its own pillar — hover opens the menu, click
+	//     goes to the index page.
+	//   - Graduates and FAQ were REMOVED: they are #anchors into home-page sections,
+	//     not destinations, so they added nav weight without adding a page. Both are
+	//     linked from the footer's Quick Links instead (see build-chrome.php).
 	$items = array(
 		array( 'name' => 'Home', 'href' => home_url( '/' ), 'icon' => 'home', 'active' => is_front_page() ),
 		// Prefix match (like Blog): Services must stay highlighted on its cluster
 		// pages at /services/<slug>/ too, or the nav loses its "you are here" state
 		// the moment a visitor opens a licence-class page.
-		array( 'name' => 'Services', 'href' => home_url( '/services/' ), 'icon' => 'briefcase', 'active' => buckleup_path_is( 'services', true ) ),
-		// Graduates + FAQ are #anchors to home sections — never their own active box
-		// (Home carries the highlight on the front page).
-		array( 'name' => 'Graduates', 'href' => home_url( '/#graduates' ), 'icon' => 'image', 'active' => false ),
-		array( 'name' => 'FAQ', 'href' => home_url( '/#faq' ), 'icon' => 'help-circle', 'active' => false ),
-		array( 'name' => 'Contact', 'href' => home_url( '/contact/' ), 'icon' => 'phone', 'active' => buckleup_path_is( 'contact' ) ),
-		array( 'name' => 'Blog', 'href' => home_url( '/blog/' ), 'icon' => 'book-open', 'active' => buckleup_path_is( 'blog', true ) ),
+		array( 'name' => 'Services', 'href' => home_url( '/services/' ), 'icon' => 'briefcase', 'active' => buckleup_path_is( 'services', true ), 'dropdown' => 'services' ),
+		array( 'name' => 'Locations', 'href' => home_url( '/locations/' ), 'icon' => 'map-pin', 'active' => buckleup_path_is( 'locations', true ), 'dropdown' => 'locations' ),
 		array( 'name' => 'About', 'href' => home_url( '/about/' ), 'icon' => 'info', 'active' => buckleup_path_is( 'about' ) ),
+		array( 'name' => 'Blog', 'href' => home_url( '/blog/' ), 'icon' => 'book-open', 'active' => buckleup_path_is( 'blog', true ) ),
+		array( 'name' => 'Contact', 'href' => home_url( '/contact/' ), 'icon' => 'phone', 'active' => buckleup_path_is( 'contact' ) ),
 	);
 	return $items;
 }

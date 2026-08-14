@@ -88,11 +88,15 @@ $logout_url     = wp_logout_url( home_url() );
 							? 'text-foreground bg-background shadow-sm border border-border/50'
 							: 'text-muted-foreground hover:text-foreground hover:bg-background/50';
 
-						// Services carries a dropdown of its cluster pages (Hub 1). The trigger
-						// stays a real <a> to the pillar — hover opens the menu, click still
-						// goes to /services/ (overlays.js skips preventDefault for link
-						// triggers). Falls back to a plain link when there are no clusters.
-						if ( 'Services' === $item['name'] && ! empty( $services ) ) :
+						// Items flagged with `dropdown` (Services, Locations) render a menu of
+						// their children. The trigger stays a real <a> to that hub's pillar —
+						// hover opens the menu, click still navigates (overlays.js skips
+						// preventDefault for link triggers). Falls back to a plain link when
+						// the hub has no children yet.
+						$dd_key   = isset( $item['dropdown'] ) ? $item['dropdown'] : '';
+						$dd_items = 'services' === $dd_key ? $services : ( 'locations' === $dd_key ? $locations : array() );
+						$dd_all   = 'services' === $dd_key ? __( 'All lessons &amp; packages', 'buckleup' ) : __( 'All service areas', 'buckleup' );
+						if ( $dd_key && ! empty( $dd_items ) ) :
 							?>
 							<div data-dropdown data-dropdown-hover class="relative">
 								<a href="<?php echo esc_url( $item['href'] ); ?>" data-dropdown-trigger
@@ -106,12 +110,12 @@ $logout_url     = wp_logout_url( home_url() );
 									class="absolute top-full left-0 mt-2 w-64 bg-card/98 backdrop-blur-2xl border border-border rounded-xl shadow-xl shadow-black/10 py-1 overflow-hidden z-50 <?php echo esc_attr( buckleup_dropdown_content_class() ); ?>">
 									<a href="<?php echo esc_url( $item['href'] ); ?>"
 										class="block px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors border-b border-border/60">
-										<?php esc_html_e( 'All lessons &amp; packages', 'buckleup' ); ?>
+										<?php echo esc_html( $dd_all ); ?>
 									</a>
-									<?php foreach ( $services as $svc ) : ?>
-										<a href="<?php echo esc_url( $svc['href'] ); ?>"
+									<?php foreach ( $dd_items as $dd ) : ?>
+										<a href="<?php echo esc_url( $dd['href'] ); ?>"
 											class="block px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
-											<?php echo esc_html( $svc['name'] ); ?>
+											<?php echo esc_html( $dd['name'] ); ?>
 										</a>
 									<?php endforeach; ?>
 								</div>
@@ -127,29 +131,8 @@ $logout_url     = wp_logout_url( home_url() );
 						</a>
 					<?php endforeach; ?>
 
-					<!-- Locations dropdown (text + chevron only on desktop; map-pin dropped) -->
-					<?php
-					$loc_active     = function_exists( 'buckleup_path_is' ) && buckleup_path_is( 'locations', true );
-					$loc_trig_class = $loc_active
-						? 'text-foreground bg-background shadow-sm border border-border/50'
-						: 'text-muted-foreground hover:text-foreground hover:bg-background/50';
-					?>
-					<div data-dropdown data-dropdown-hover class="relative">
-						<button type="button" data-dropdown-trigger aria-expanded="false" aria-haspopup="true"
-							class="relative flex items-center gap-1 px-2 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-200 <?php echo esc_attr( $loc_trig_class ); ?>">
-							<?php esc_html_e( 'Locations', 'buckleup' ); ?>
-							<?php echo buckleup_icon( 'chevron-down', 'w-3.5 h-3.5' ); // phpcs:ignore ?>
-						</button>
-						<div data-dropdown-content data-state="closed" data-side="bottom" hidden
-							class="absolute top-full left-0 mt-2 w-48 bg-card/98 backdrop-blur-2xl border border-border rounded-xl shadow-xl shadow-black/10 py-1 overflow-hidden z-50 <?php echo esc_attr( buckleup_dropdown_content_class() ); ?>">
-							<?php foreach ( $locations as $loc ) : ?>
-								<a href="<?php echo esc_url( $loc['href'] ); ?>"
-									class="block px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
-									<?php echo esc_html( $loc['name'] ); ?>
-								</a>
-							<?php endforeach; ?>
-						</div>
-					</div>
+					<?php // Locations is now part of $nav (with a `dropdown` key) and renders in
+						  // the loop above, so it sits beside Services rather than dead-last. ?>
 				</div>
 			</nav>
 
