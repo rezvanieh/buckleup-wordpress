@@ -590,6 +590,52 @@ html {
 .prose strong { color: hsl(var(--foreground)); font-weight: 600; }
 
 /* ---------------------------------------------------------------------------
+ * Full-bleed images inside Elementor content.
+ *
+ * Elementor's frontend stylesheet sets `.elementor img { height: auto }`. That
+ * selector scores (0,1,1) and outranks Tailwind's `.h-full` at (0,1,0), so every
+ * image meant to FILL its box collapsed back to its intrinsic aspect ratio once
+ * it rendered inside an Elementor container.
+ *
+ * On the home hero that was plainly broken on phones: the section is min-h-screen
+ * (912px on a 412px-wide device) while the photo, sized by its own 3:2 ratio,
+ * was only 267px tall. The headline therefore began below the photo and the rest
+ * of the hero sat on blank background — the image stopped mid-headline.
+ *
+ * It was invisible on desktop only by luck: at a wide viewport the same ratio
+ * produces an image TALLER than the section, so it still covered.
+ *
+ * Restoring the two utilities at a higher specificity fixes the hero, the
+ * graduates gallery and the About mission photo in one rule, and any future
+ * fill-the-box image, rather than patching one instance.
+ * ------------------------------------------------------------------------- */
+.elementor img.h-full { height: 100%; }
+.elementor img.w-full { width: 100%; }
+
+/* Hero scrim on phones.
+ *
+ * The default scrim fades left-to-right, which is right for the desktop hero
+ * where the copy sits in the left column. On a phone the copy runs nearly the
+ * full width, so its right-hand side fell on the transparent end of that
+ * gradient and the subtitle had almost nothing to sit against. Below the md
+ * breakpoint it becomes a vertical fade instead: the photo stays open at the
+ * top, and the surface firms up behind the headline, subtitle and button. */
+@media (max-width: 767px) {
+  /* `section .bu-hero-scrim` (0,1,1), not `.bu-hero-scrim` (0,1,0): the element
+     also carries Tailwind's `bg-gradient-to-r` utility, which has equal
+     specificity and is emitted later, so the plain class selector lost and the
+     horizontal gradient stayed. */
+  section .bu-hero-scrim {
+    background-image: linear-gradient(
+      to bottom,
+      hsl(var(--background) / 0.35) 0%,
+      hsl(var(--background) / 0.62) 38%,
+      hsl(var(--background) / 0.86) 100%
+    );
+  }
+}
+
+/* ---------------------------------------------------------------------------
  * FAQ accordions — one look, three implementations.
  *
  * The site grew three different FAQ widgets:

@@ -400,7 +400,17 @@ function buckleup_hero_markup( array $args = array() ): string {
 				<img src="<?php echo esc_url( $bg ); ?>" alt="<?php echo esc_attr( $bg_alt ); ?>" class="absolute inset-0 w-full h-full object-cover" fetchpriority="high" loading="eager" decoding="async">
 			</picture>
 		<?php endif; ?>
-		<div class="absolute inset-0 bg-gradient-to-r from-background/90 via-background/40 to-background/10"></div>
+		<?php
+		/*
+		 * Two scrims sit between the photo and the copy. The horizontal one is
+		 * built for the desktop split layout, where the text occupies the left
+		 * column: it fades 90% -> 10% across the width. On a phone the copy spans
+		 * almost the full width, so its right-hand side landed on the 10% end and
+		 * the subtitle had very little to sit against. bu-hero-scrim lets the CSS
+		 * swap that for a vertical fade under 768px — see app.css.
+		 */
+		?>
+		<div class="bu-hero-scrim absolute inset-0 bg-gradient-to-r from-background/90 via-background/40 to-background/10"></div>
 		<div class="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent"></div>
 	</div>
 
