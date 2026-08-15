@@ -127,7 +127,7 @@ return array(
 			),
 		),
 		'faqs'           => array(
-			array( 'q' => 'Where do you offer driving lessons in North Vancouver?', 'a' => 'We cover all of North Vancouver, including Lower and Central Lonsdale, Lynn Valley, Deep Cove, Capilano, and Edgemont Village, with pickup from home, work, school, or the SeaBus terminal.' ),
+			array( 'q' => 'Where do you offer driving lessons in North Vancouver?', 'a' => 'We cover all of North Vancouver, including Lower and Central Lonsdale, Lynn Valley, Deep Cove, Capilano, and Edgemont Village.' ),
 			array( 'q' => 'Do you teach hill starts and steep-grade driving?', 'a' => 'Yes — and it is a core part of every North Shore lesson. We practise hill starts, downhill braking, and hill parking on the real Lonsdale and Lynn Valley grades the ICBC examiner uses.' ),
 			array( 'q' => 'Can you prepare me for the North Vancouver ICBC road test?', 'a' => 'Absolutely. We train on the routes used by the North Vancouver ICBC Driver Licensing office so you are already familiar with the hills, arterials, and parking spots before test day.' ),
 			array( 'q' => 'Do you offer driving lessons in Farsi in North Vancouver?', 'a' => 'Yes. Lessons are available in both English and Farsi for clearer, more comfortable learning.' ),
@@ -186,7 +186,7 @@ return array(
 			),
 		),
 		'faqs'           => array(
-			array( 'q' => 'Where do you offer driving lessons in Port Coquitlam?', 'a' => 'We serve all of Port Coquitlam, including Downtown PoCo, Citadel Heights, Mary Hill, Riverwood, and Birchland Manor, with pickup from home, work, or school.' ),
+			array( 'q' => 'Where do you offer driving lessons in Port Coquitlam?', 'a' => 'We serve all of Port Coquitlam, including Downtown PoCo, Citadel Heights, Mary Hill, Riverwood, and Birchland Manor.' ),
 			array( 'q' => 'Do you teach how to handle PoCo\'s rail crossings?', 'a' => 'Yes. Port Coquitlam has many level rail crossings, and we make them a focus — proper stopping, scanning, and never stopping on the tracks are exactly what examiners watch for.' ),
 			array( 'q' => 'Where will I take my Port Coquitlam road test?', 'a' => 'Most PoCo road tests are booked at the Coquitlam ICBC Driver Licensing office, which serves the Tri-Cities. We train on those routes so you arrive familiar and confident.' ),
 			array( 'q' => 'How many lessons do I need to pass in Port Coquitlam?', 'a' => 'Most beginners need around six to ten lessons. After a quick assessment, your instructor will give you an honest plan for the PoCo test routes.' ),
@@ -245,7 +245,7 @@ return array(
 			),
 		),
 		'faqs'           => array(
-			array( 'q' => 'Where do you offer driving lessons in Port Moody?', 'a' => 'Port Moody is our home base, so we cover the entire city — Moody Centre, Inlet Centre, Newport Village, Heritage Mountain, and College Park — with pickup from home, work, school, or a SkyTrain station.' ),
+			array( 'q' => 'Where do you offer driving lessons in Port Moody?', 'a' => 'Port Moody is our home base, so we cover the entire city: Moody Centre, Inlet Centre, Newport Village, Heritage Mountain and College Park.' ),
 			array( 'q' => 'Is BuckleUp actually located in Port Moody?', 'a' => 'Yes. BuckleUp Driving School is based in Port Moody, which means our instructors teach on these exact streets, hills, and test routes every day.' ),
 			array( 'q' => 'Do you teach the Heritage Mountain hill starts?', 'a' => 'Definitely. Hill starts and downhill control on the Heritage Mountain and College Park grades are a core part of Port Moody lessons because examiners frequently test them.' ),
 			array( 'q' => 'Where will I take my Port Moody road test?', 'a' => 'Most Port Moody road tests are booked at the nearby Coquitlam ICBC Driver Licensing office, which serves the Tri-Cities. We train you directly on those routes.' ),
@@ -284,7 +284,7 @@ return array(
 		'why_heading'    => 'Why Tri-Cities Drivers Choose BuckleUp',
 		'why_items'      => array(
 			array( 'icon' => 'fas fa-map-marked-alt',  'title' => 'Every Tri-Cities Route',     'desc' => 'From Westwood Plateau and Heritage Mountain hills to PoCo rail crossings and the Lougheed corridor, we train on them all.' ),
-			array( 'icon' => 'fas fa-map-marker-alt',       'title' => 'One School, Three Cities',   'desc' => 'Coquitlam, Port Coquitlam, and Port Moody — one trusted, local school with pickup across the whole region.' ),
+			array( 'icon' => 'fas fa-map-marker-alt',       'title' => 'One School, Three Cities',   'desc' => 'Coquitlam, Port Coquitlam and Port Moody: one trusted local school covering all three.' ),
 			array( 'icon' => 'fas fa-award',              'title' => 'ICBC-Certified Instructors', 'desc' => 'Fully ICBC-certified, led by senior instructor Farhad Sanaeifar.' ),
 			array( 'icon' => 'fas fa-language',           'title' => 'English & Farsi Lessons',    'desc' => 'Clear instruction in English and Farsi to suit the Tri-Cities\' diverse community.' ),
 		),
@@ -304,7 +304,7 @@ return array(
 			),
 		),
 		'faqs'           => array(
-			array( 'q' => 'Which cities do you cover in the Tri-Cities?', 'a' => 'We provide driving lessons across all three Tri-Cities — Coquitlam, Port Coquitlam, and Port Moody — with pickup from home, work, school, or a SkyTrain station anywhere in the region.' ),
+			array( 'q' => 'Which cities do you cover in the Tri-Cities?', 'a' => 'We provide driving lessons across all three Tri-Cities: Coquitlam, Port Coquitlam and Port Moody.' ),
 			array( 'q' => 'Where will I take my Tri-Cities road test?', 'a' => 'Most Tri-Cities road tests are booked at the Coquitlam ICBC Driver Licensing office, which serves Coquitlam, Port Coquitlam, and Port Moody. We train you on those exact routes regardless of which city you live in.' ),
 			array( 'q' => 'Do you cover both the hills and the rail crossings?', 'a' => 'Yes. The Tri-Cities mix steep grades (Westwood Plateau, Heritage Mountain) with Port Coquitlam\'s level rail crossings, and our lessons prepare you confidently for both.' ),
 			array( 'q' => 'How many lessons will I need to pass in the Tri-Cities?', 'a' => 'Most beginners need around six to ten lessons. After a free assessment, your instructor will recommend a plan based on the test routes you\'ll be driving.' ),

@@ -174,7 +174,7 @@ $tree[] = el_section(
 		el_col(
 			array(
 				el_heading( 'Where We <span class="gradient-text">Teach</span>', array( 'tag' => 'h2', 'size' => 36, 'weight' => 800, 'align' => 'center', 'color_global' => 'text', 'line_height' => 1.1 ) ),
-				el_text( 'Four areas, each with its own character. Lessons run in all of them, and we will pick up from home, school or work.', array( 'align' => 'center', 'size' => 17, 'color_global' => 'mutedcol', 'max_width' => 660 ) ),
+				el_text( 'Four areas, each with its own character, and lessons run in all of them.', array( 'align' => 'center', 'size' => 17, 'color_global' => 'mutedcol', 'max_width' => 660 ) ),
 			),
 			array( 'width' => 100, 'gap_px' => 14, 'align' => 'center' )
 		),

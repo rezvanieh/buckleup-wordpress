@@ -39,7 +39,7 @@ $methods = array(
 $quick = array(
 	__( 'How do I book my first lesson?', 'buckleup' ),
 	__( 'What packages do you offer?', 'buckleup' ),
-	__( 'Do you provide pick-up service?', 'buckleup' ),
+	__( 'Where do lessons start and finish?', 'buckleup' ),
 	__( 'How long until I can get my license?', 'buckleup' ),
 );
 ?>
