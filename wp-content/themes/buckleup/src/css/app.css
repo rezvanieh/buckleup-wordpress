@@ -589,6 +589,22 @@ html {
 .prose a:hover { color: hsl(var(--primary) / 0.85); }
 .prose strong { color: hsl(var(--foreground)); font-weight: 600; }
 
+/* Elementor's text-editor widget ships no link styling of its own, and the page
+ * bodies it renders are not wrapped in .prose, so in-content links came out the
+ * same colour and weight as the surrounding paragraph — literally invisible as
+ * links. That silently affected every cross-linking paragraph on the location
+ * pages ("driving school in Port Moody", "lesson packages and pricing", the
+ * Tri-Cities cross-area blocks). Matches .prose a so in-content links look the
+ * same wherever they appear. Scoped to the text widget so it cannot touch
+ * Elementor buttons, icon lists or headings that carry their own link colour. */
+.elementor-widget-text-editor a {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 500;
+}
+.elementor-widget-text-editor a:hover { color: hsl(var(--primary) / 0.85); }
+
 /* Chrome links (header nav, footer, mobile tab bar) never carry the WordPress
  * global content-link underline — only in-content prose links (.prose a) do. */
 header a,
