@@ -91,6 +91,9 @@ foreach ( glob( $DIR . '/*.json' ) as $file ) {
 	$before = strlen( (string) get_post_meta( $post->ID, '_elementor_data', true ) );
 	update_post_meta( $post->ID, '_elementor_data', wp_slash( $json ) );
 	update_post_meta( $post->ID, '_elementor_edit_mode', 'builder' );
+	// Elementor serves _elementor_element_cache in preference to re-rendering
+	// _elementor_data, so new content is invisible until this is dropped.
+	delete_post_meta( $post->ID, '_elementor_element_cache' );
 	if ( defined( 'ELEMENTOR_VERSION' ) ) {
 		update_post_meta( $post->ID, '_elementor_version', ELEMENTOR_VERSION );
 	}

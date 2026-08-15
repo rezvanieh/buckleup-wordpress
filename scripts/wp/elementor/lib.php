@@ -623,6 +623,9 @@ function el_save_page( $post_id, array $elements, array $opts = array() ) {
 	// preserving the JSON's escaped slashes/unicode.
 	update_post_meta( $post_id, '_elementor_data', wp_slash( $json ) );
 	update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
+	// Elementor serves the rendered markup cached here in preference to
+	// re-rendering _elementor_data, so a build is invisible without this.
+	delete_post_meta( $post_id, '_elementor_element_cache' );
 	// Document type: 'wp-page' for Pages, 'wp-post' for CPT singles (e.g. location).
 	update_post_meta( $post_id, '_elementor_template_type', isset( $opts['template_type'] ) ? $opts['template_type'] : 'wp-page' );
 	update_post_meta( $post_id, '_elementor_version', defined( 'ELEMENTOR_VERSION' ) ? ELEMENTOR_VERSION : '3.0.0' );
