@@ -60,6 +60,32 @@ function bu_article_card_id( $category ) {
 }
 
 /**
+ * The author every blog post on this site is published under.
+ *
+ * wp_insert_post() falls back to the CURRENT user, and a WP-CLI run has none, so
+ * the first publish left all six articles with post_author = 0: no byline, and
+ * they would not appear under the author archive with the rest of the blog.
+ *
+ * Resolved by role rather than hardcoded to id 1, because the id is not
+ * guaranteed to match between this dev install and production.
+ */
+function bu_article_author_id() {
+	static $id = null;
+	if ( null !== $id ) { return $id; }
+
+	// Prefer whoever already wrote the blog, so new posts match the existing set.
+	$existing = get_posts( array( 'post_type' => 'post', 'post_status' => 'publish', 'numberposts' => 1, 'orderby' => 'date', 'order' => 'ASC' ) );
+	if ( $existing && (int) $existing[0]->post_author > 0 ) {
+		$id = (int) $existing[0]->post_author;
+		return $id;
+	}
+
+	$admins = get_users( array( 'role' => 'administrator', 'number' => 1, 'orderby' => 'ID', 'order' => 'ASC', 'fields' => 'ID' ) );
+	$id     = $admins ? (int) $admins[0] : 0;
+	return $id;
+}
+
+/**
  * Category term id from its slug.
  *
  * wp_set_post_terms() on a HIERARCHICAL taxonomy does not treat a string as a
@@ -101,7 +127,15 @@ foreach ( $articles as $slug => $a ) {
 
 	$existing = get_posts( array( 'post_type' => 'post', 'name' => $slug, 'post_status' => 'any', 'numberposts' => 1 ) );
 
+	$author = bu_article_author_id();
+	if ( ! $author ) {
+		echo "  !! $slug: could not resolve an author, not published\n";
+		$problems++;
+		continue;
+	}
+
 	$postarr = array(
+		'post_author'  => $author,
 		'post_title'   => $a['title'],
 		'post_name'    => $slug,
 		'post_content' => trim( $a['content'] ),
