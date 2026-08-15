@@ -35,11 +35,10 @@ function buckleup_settings_defaults() {
 		'phone_e164'       => '+16044413677', // for tel: + wa.me.
 		'email'            => 'info@buckleupdriving.ca',
 		'whatsapp'         => '16044413677',   // wa.me path segment.
-
-		// Hours (single uniform block; Mon–Sun 9am–6pm per PLAN §4).
+		// Hours (single uniform block). Client confirmed 2026-08-15: closes 9pm.
 		'hours_open'       => '09:00',
-		'hours_close'      => '18:00',
-		'hours_display'    => 'Mon–Sun 9am–6pm',
+		'hours_close'      => '21:00',
+		'hours_display'    => 'Mon–Sun 9am–9pm',
 
 		// Geo.
 		'geo_lat'          => '49.2838',

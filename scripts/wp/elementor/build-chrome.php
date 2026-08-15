@@ -174,7 +174,7 @@ function build_footer( $logo, $get, $locations, $recent, $wa_link ) {
 	$phone    = $get( 'phone', '(604) 441-3677' );
 	$phone_e  = $get( 'phone_e164', '+16044413677' );
 	$email    = $get( 'email', 'info@buckleupdriving.ca' );
-	$hours    = $get( 'hours_display', 'Mon–Sun 9am–6pm' );
+	$hours    = $get( 'hours_display', 'Mon–Sun 9am–9pm' );
 	$contact_html = '<ul style="list-style:none;padding:0;margin:0;line-height:1.6;">'
 		. '<li style="margin-bottom:10px;">' . esc_html( $street ) . '<br>' . esc_html( "$locality, $region $postal, Canada" ) . '</li>'
 		. '<li style="margin-bottom:10px;"><a href="tel:' . esc_attr( $phone_e ) . '" style="color:#64748B;text-decoration:none;">' . esc_html( $phone ) . '</a></li>'

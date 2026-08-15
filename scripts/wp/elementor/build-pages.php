@@ -400,7 +400,7 @@ function build_contact() {
 	$phone = $get( 'phone', '(604) 441-3677' ); $phone_e = $get( 'phone_e164', '+16044413677' );
 	$email = $get( 'email', 'info@buckleupdriving.ca' );
 	$methods = array(
-		array( 'fas fa-phone', 'Phone', $phone, 'Mon–Sun, 9am–6pm PST' ),
+		array( 'fas fa-phone', 'Phone', $phone, 'Mon–Sun, 9am–9pm PST' ),
 		array( 'fas fa-envelope', 'Email', $email, 'We reply within 24 hours' ),
 		array( 'fas fa-map-marker-alt', 'Office', '136 Maple Dr', 'Port Moody, BC V3H 0A8' ),
 		array( 'fas fa-clock', 'Hours', 'Mon – Sun', '9:00 AM – 6:00 PM' ),

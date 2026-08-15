@@ -113,9 +113,9 @@ function buckleup_seo_settings() {
 		'lat'            => 49.2838,
 		'lng'            => -122.8556,
 		'opens'          => '09:00',
-		'closes'         => '18:00',
+		'closes'         => '21:00',
 		'price_range'    => '$$',
-		'payments'       => array( 'Cash', 'Credit Card', 'E-Transfer' ),
+		'payments'       => array( 'Cash', 'E-Transfer' ),
 		'rating_value'   => '5.0',
 		// Verified 2026-08-15 against the client's Google Business Profile:
 		// 5.0 stars from 33 reviews. The schema and the visible copy must agree;

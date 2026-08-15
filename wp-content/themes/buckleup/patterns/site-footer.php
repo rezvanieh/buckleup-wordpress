@@ -29,7 +29,7 @@ $phone_e164 = $get( 'phone_e164', '+16044413677' );
 $email      = $get( 'email', 'info@buckleupdriving.ca' );
 $instagram  = $get( 'instagram_url', 'https://www.instagram.com/budrivingschool' );
 $facebook   = $get( 'facebook_url', 'https://www.facebook.com/DriveMasterca' );
-$hours      = $get( 'hours_display', 'Mon–Sun 9am–6pm' );
+$hours      = $get( 'hours_display', 'Mon–Sun 9am–9pm' );
 $locations  = buckleup_location_items();
 $is_landing = is_front_page();
 

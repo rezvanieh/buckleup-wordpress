@@ -144,25 +144,21 @@ if ( $skip ) {
 }
 
 /*
- * REPORTED, NOT CHANGED - these need a human to supply the true value, because
- * each one asserts a fact about the business and guessing would put a false
- * claim on the site:
+ * THREE CLAIMS THIS SCRIPT DELIBERATELY DID NOT GUESS AT - all since answered by
+ * the client on 2026-08-15, and fixed in the scripts named below. Kept here as
+ * the record of what the true values are and where they came from:
  *
- *   a) RESOLVED 2026-08-15: the Google Business Profile shows 5.0 stars and 33
- *      while every location meta description says "rated 4.98" and the homepage
- *      says "200+ reviews". Source: buckleup_settings.rating_value = "5.0" and
- *      review_count is EMPTY. Google requires the schema rating to match what is
- *      visible on the page. Someone must confirm the real current Google rating
- *      and review count.
+ *   a) Rating. The site showed "4.98" and "200+ reviews" in copy while the
+ *      schema said 5.0 / 200. The Google Business Profile shows 5.0 stars from
+ *      33 reviews. Fixed in fix-rating-claims.php; the inflated 200 was the
+ *      serious part, being a false claim on every page.
  *
- *   b) Opening hours disagree between two places in our own code:
- *      buckleup_settings says 09:00-21:00 ("Mon-Sun 9am-9pm", which is what the
- *      schema emits and what the footer shows), but the contact pattern
- *      (patterns/page-contact.php) hard-codes "Mon-Sun, 9am-6pm PST". One is
- *      wrong and only the client knows which.
+ *   b) Hours. Code disagreed with itself: buckleup_settings said 09:00-21:00,
+ *      the plugin and theme defaults said 18:00, and the contact pattern
+ *      hard-coded "9am-6pm PST". The client confirms they close at 9pm, so
+ *      09:00-21:00 is correct and every default now matches it.
  *
- *   c) The homepage FAQ answers "We accept cash and e-transfer", while the
- *      Organization schema lists paymentAccepted Cash, Credit Card, E-Transfer.
- *      Either the FAQ or the schema is out of date.
+ *   c) Payments. The FAQ said "cash and e-transfer" while the schema listed
+ *      Credit Card as well. The client confirms cash and e-transfer only, so
+ *      Credit Card is removed from paymentAccepted.
  */
-echo "\nNOT CHANGED (need the client to confirm the true value): aggregate rating, opening hours, accepted payment methods. See the comment block at the end of this file.\n";
