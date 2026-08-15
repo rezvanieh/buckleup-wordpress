@@ -219,3 +219,64 @@ function buckleup_faq_accordion( array $args = array() ): void {
 	}
 	echo '</div>';
 }
+
+/**
+ * Render a post's "Common questions" block as the site's standard FAQ accordion.
+ *
+ * The articles written from the content plan are classic posts, so their FAQ is
+ * authored as plain HTML: an H2 followed by H3 question / paragraph answer
+ * pairs. That is the right thing to STORE, because it stays readable and
+ * editable in the editor and it is what the FAQPage schema extractor reads.
+ * It is not the right thing to SHOW: every other FAQ on the site is a
+ * collapsible accordion, and a wall of headings looked nothing like them.
+ *
+ * So the source stays plain and the presentation is upgraded at render time
+ * through buckleup_faq_accordion(), the same component the home page uses. Any
+ * future post that follows the pattern gets the treatment automatically, with no
+ * shortcode to remember.
+ *
+ * Only touches the main query's single-post content, and only when it finds at
+ * least two question/answer pairs, so ordinary H3s elsewhere are never caught.
+ *
+ * @param string $content Post content.
+ * @return string
+ */
+function buckleup_render_faq_block( string $content ): string {
+	if ( ! is_singular( 'post' ) || ! in_the_loop() || ! is_main_query() ) {
+		return $content;
+	}
+	if ( false === stripos( $content, 'questions</h2>' ) ) {
+		return $content;
+	}
+
+	return (string) preg_replace_callback(
+		'#(<h2[^>]*>\s*(?:common questions|frequently asked questions)\s*</h2>)(.*?)(?=<h2|$)#is',
+		function ( $m ) {
+			if ( ! preg_match_all( '#<h3[^>]*>(.*?)</h3>\s*<p[^>]*>(.*?)</p>#is', $m[2], $pairs, PREG_SET_ORDER ) ) {
+				return $m[0];
+			}
+			if ( count( $pairs ) < 2 ) {
+				return $m[0];
+			}
+
+			$items = array();
+			foreach ( $pairs as $pair ) {
+				$items[] = array(
+					'question' => wp_strip_all_tags( $pair[1] ),
+					'answer'   => trim( $pair[2] ),
+				);
+			}
+
+			// Anything after the last pair (a closing line, a CTA) is preserved.
+			$tail = preg_replace( '#<h3[^>]*>.*?</h3>\s*<p[^>]*>.*?</p>#is', '', $m[2] );
+
+			ob_start();
+			buckleup_faq_accordion( array( 'items' => $items, 'first_open' => true, 'class' => 'not-prose my-6' ) );
+			$accordion = ob_get_clean();
+
+			return $m[1] . $accordion . $tail;
+		},
+		$content
+	);
+}
+add_filter( 'the_content', 'buckleup_render_faq_block', 20 );

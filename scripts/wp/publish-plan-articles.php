@@ -36,18 +36,39 @@ $articles = array_merge(
 	require __DIR__ . '/articles/hub2-hub3-guides.php'
 );
 
-/** The blog-card image each category uses, matching the existing posts. */
+/**
+ * The blog-card image for a category, matched on FILENAME rather than slug.
+ *
+ * The cards were side-loaded under SEO-descriptive slugs, so the attachment for
+ * blog-card-local.png is named "buckleup-driving-school-local-routes-areas".
+ * Looking it up by the slug "blog-card-local" silently found nothing, which is
+ * why the first publish left every article without a featured image. The file
+ * name is the stable identifier here.
+ */
 function bu_article_card_id( $category ) {
-	$slug = 'blog-card-' . $category;
-	$found = get_posts( array(
-		'post_type'      => 'attachment',
-		'post_status'    => 'inherit',
-		'posts_per_page' => 1,
-		'name'           => $slug,
-		'fields'         => 'ids',
-		'no_found_rows'  => true,
-	) );
-	return $found ? (int) $found[0] : 0;
+	global $wpdb;
+	mysqli_report( MYSQLI_REPORT_OFF );
+	$like = mysqli_real_escape_string( $wpdb->dbh, 'blog-card-' . $category . '.' );
+	$res  = mysqli_query(
+		$wpdb->dbh,
+		"SELECT p.ID FROM {$wpdb->posts} p
+		   JOIN {$wpdb->postmeta} m ON m.post_id = p.ID AND m.meta_key = '_wp_attached_file'
+		  WHERE p.post_type = 'attachment' AND m.meta_value LIKE '%{$like}%' LIMIT 1"
+	);
+	$row = $res ? mysqli_fetch_row( $res ) : null;
+	return $row ? (int) $row[0] : 0;
+}
+
+/**
+ * Category term id from its slug.
+ *
+ * wp_set_post_terms() on a HIERARCHICAL taxonomy does not treat a string as a
+ * slug, so passing 'local' did not assign the Local category and the articles
+ * published uncategorised. Integer term ids are unambiguous.
+ */
+function bu_article_category_id( $slug ) {
+	$term = get_term_by( 'slug', $slug, 'category' );
+	return $term ? (int) $term->term_id : 0;
 }
 
 $published = 0;
@@ -104,20 +125,29 @@ foreach ( $articles as $slug => $a ) {
 		continue;
 	}
 
-	wp_set_post_terms( $post_id, array( $a['category'] ), 'category', false );
+	$cat_id = bu_article_category_id( $a['category'] );
+	if ( $cat_id ) {
+		wp_set_post_terms( $post_id, array( $cat_id ), 'category', false );
+	} else {
+		echo "  !! $slug: category '{$a['category']}' not found\n";
+		$problems++;
+	}
 	wp_set_post_terms( $post_id, $a['tags'], 'post_tag', false );
 
 	update_post_meta( $post_id, 'rank_math_title', $a['seo_title'] );
 	update_post_meta( $post_id, 'rank_math_description', $a['seo_desc'] );
 	update_post_meta( $post_id, 'rank_math_focus_keyword', $a['focus_kw'] );
 
-	if ( ! get_post_thumbnail_id( $post_id ) ) {
-		$card = bu_article_card_id( $a['category'] );
-		if ( $card ) { set_post_thumbnail( $post_id, $card ); }
+	$card = bu_article_card_id( $a['category'] );
+	if ( $card ) {
+		set_post_thumbnail( $post_id, $card );
+	} else {
+		echo "  !! $slug: no blog-card image for category '{$a['category']}'\n";
+		$problems++;
 	}
 
 	$words = str_word_count( wp_strip_all_tags( $a['content'] ) );
-	printf( "  %-9s %-42s %5d words  title %2d  desc %3d\n", $verb, $slug, $words, mb_strlen( $a['seo_title'] ), mb_strlen( $a['seo_desc'] ) );
+	printf( "  %-9s %-42s %5d words  cat=%-10s card=%-4s\n", $verb, $slug, $words, $a['category'], $card ?: 'none' );
 	$published++;
 }
 
