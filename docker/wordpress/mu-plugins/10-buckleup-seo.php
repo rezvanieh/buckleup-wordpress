@@ -353,7 +353,17 @@ function buckleup_seo_is_front() {
  * @return bool
  */
 function buckleup_seo_wants_faq() {
-	return ( buckleup_seo_is_front() || buckleup_seo_is_location() );
+	if ( buckleup_seo_is_front() || buckleup_seo_is_location() ) {
+		return true;
+	}
+
+	/*
+	 * Any other page that actually renders an FAQ. The five service pages each
+	 * carry a visible "Common questions" block and were publishing no FAQ markup
+	 * at all; rather than hardcode that list, ask the page whether it has FAQ
+	 * content, which also covers anything built later.
+	 */
+	return (bool) buckleup_seo_page_faq_items();
 }
 
 /**
@@ -804,10 +814,24 @@ function buckleup_seo_faq_fallback() {
 function buckleup_seo_faq_items() {
 	$items = array();
 
-	// On a location page, prefer that city's OWN FAQs (the same Q&A the Elementor
-	// page body shows) so the FAQPage schema matches the visible accordion for
-	// THAT location and is rich with local-intent terms. Falls through to the
-	// homepage/CPT FAQ below when the content file isn't deployed.
+	/*
+	 * FIRST preference: the Q&A actually rendered on THIS page, read out of its
+	 * Elementor document.
+	 *
+	 * Google requires FAQPage markup to match content the visitor can see. The
+	 * hardcoded per-city list below silently stopped matching when the client
+	 * rewrote the accordions: on 2026-08-15 the Coquitlam page was publishing
+	 * "Where do you offer driving lessons in Coquitlam?" in its schema while that
+	 * sentence appeared nowhere in the body, and Port Moody had drifted the same
+	 * way. Reading the page itself cannot drift.
+	 */
+	$page_faqs = buckleup_seo_page_faq_items();
+	if ( ! empty( $page_faqs ) ) {
+		return $page_faqs;
+	}
+
+	// Then that city's curated FAQs, for a location page whose body has no
+	// accordion to read.
 	$location_faqs = buckleup_seo_location_faq_items();
 	if ( ! empty( $location_faqs ) ) {
 		return $location_faqs;
@@ -831,6 +855,102 @@ function buckleup_seo_faq_items() {
 	}
 
 	return $items;
+}
+
+/**
+ * The FAQ pairs actually rendered on the current page, read from its Elementor
+ * document so the schema can never describe questions the visitor cannot see.
+ *
+ * Handles the three ways this site builds an FAQ:
+ *   - Elementor's core accordion   — repeater `tabs` of tab_title / tab_content
+ *   - ElementsKit's accordion      — repeater `ekit_accordion_items` of
+ *                                    acc_title / acc_content
+ *   - the service pages' plain run — an H2 "Common questions" followed by
+ *                                    heading + text-editor pairs until the next H2
+ *
+ * Read with raw mysqli: pulling _elementor_data through $wpdb rewrites every
+ * literal %, and Elementor documents are full of "%" units.
+ *
+ * @return array<int,array{question:string,answer:string}>
+ */
+function buckleup_seo_page_faq_items() {
+	static $cache = null;
+	if ( null !== $cache ) { return $cache; }
+	$cache = array();
+
+	$post_id = get_queried_object_id();
+	if ( ! $post_id ) { return $cache; }
+
+	global $wpdb;
+	if ( ! isset( $wpdb->dbh ) || ! $wpdb->dbh ) { return $cache; }
+	mysqli_report( MYSQLI_REPORT_OFF );
+	$res = mysqli_query( $wpdb->dbh, "SELECT meta_value FROM {$wpdb->postmeta} WHERE post_id=" . (int) $post_id . " AND meta_key='_elementor_data' LIMIT 1" );
+	$row = $res ? mysqli_fetch_row( $res ) : null;
+	if ( ! $row || '' === $row[0] ) { return $cache; }
+
+	$data = json_decode( $row[0], true );
+	if ( ! is_array( $data ) ) { return $cache; }
+
+	// Flatten to widgets in document order.
+	$widgets = array();
+	$walk    = function ( $els ) use ( &$walk, &$widgets ) {
+		foreach ( $els as $el ) {
+			if ( ! is_array( $el ) ) { continue; }
+			if ( ! empty( $el['widgetType'] ) ) {
+				$widgets[] = array( 'type' => $el['widgetType'], 'settings' => isset( $el['settings'] ) ? $el['settings'] : array() );
+			}
+			if ( ! empty( $el['elements'] ) ) { $walk( $el['elements'] ); }
+		}
+	};
+	$walk( $data );
+
+	$clean = function ( $s ) {
+		return trim( wp_strip_all_tags( (string) $s ) );
+	};
+	$add = function ( $q, $a ) use ( &$cache, $clean ) {
+		$q = $clean( $q );
+		$a = $clean( $a );
+		if ( '' !== $q && '' !== $a ) { $cache[] = array( 'question' => $q, 'answer' => $a ); }
+	};
+
+	// 1 + 2: accordions.
+	foreach ( $widgets as $w ) {
+		if ( 'accordion' === $w['type'] && ! empty( $w['settings']['tabs'] ) && is_array( $w['settings']['tabs'] ) ) {
+			foreach ( $w['settings']['tabs'] as $tab ) {
+				$add( isset( $tab['tab_title'] ) ? $tab['tab_title'] : '', isset( $tab['tab_content'] ) ? $tab['tab_content'] : '' );
+			}
+		}
+		if ( 'elementskit-accordion' === $w['type'] && ! empty( $w['settings']['ekit_accordion_items'] ) && is_array( $w['settings']['ekit_accordion_items'] ) ) {
+			foreach ( $w['settings']['ekit_accordion_items'] as $tab ) {
+				$add( isset( $tab['acc_title'] ) ? $tab['acc_title'] : '', isset( $tab['acc_content'] ) ? $tab['acc_content'] : '' );
+			}
+		}
+	}
+	if ( $cache ) { return $cache; }
+
+	// 3: the service pages' plain heading/text run under "Common questions".
+	$in_faq   = false;
+	$question = '';
+	foreach ( $widgets as $w ) {
+		$size = isset( $w['settings']['header_size'] ) ? $w['settings']['header_size'] : '';
+		if ( 'heading' === $w['type'] ) {
+			$title = $clean( isset( $w['settings']['title'] ) ? $w['settings']['title'] : '' );
+			if ( 'h2' === $size ) {
+				// A new H2 opens the FAQ run or closes it.
+				$in_faq   = ( false !== stripos( $title, 'common question' ) || false !== stripos( $title, 'frequently asked' ) );
+				$question = '';
+				continue;
+			}
+			if ( $in_faq && 'h3' === $size ) { $question = $title; }
+			continue;
+		}
+		if ( $in_faq && 'text-editor' === $w['type'] && '' !== $question ) {
+			$add( $question, isset( $w['settings']['editor'] ) ? $w['settings']['editor'] : '' );
+			$question = '';
+		}
+	}
+
+	return $cache;
 }
 
 /**

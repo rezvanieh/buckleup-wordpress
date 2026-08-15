@@ -589,6 +589,186 @@ html {
 .prose a:hover { color: hsl(var(--primary) / 0.85); }
 .prose strong { color: hsl(var(--foreground)); font-weight: 600; }
 
+/* ---------------------------------------------------------------------------
+ * FAQ accordions — one look, three implementations.
+ *
+ * The site grew three different FAQ widgets:
+ *   1. the theme's own <details> component (buckleup_faq_accordion) — home page
+ *      and the Class 4 practice test. This is the reference design.
+ *   2. Elementor's core accordion — the five location pages.
+ *   3. ElementsKit's accordion — thirteen blog posts.
+ *
+ * The content stays where it is, in Elementor, so the client can keep editing it;
+ * only the presentation is normalised. Every value below is taken from the
+ * theme component's Tailwind classes so the three render identically:
+ *
+ *   container  rounded-xl, 1px border, bg-card, rows divided by a border
+ *   question   px-6 py-5, 500 weight, foreground, primary on hover
+ *   answer     px-6 pb-5, muted-foreground
+ *   marker     chevron, rotates 180deg when open
+ * ------------------------------------------------------------------------- */
+
+.elementor-accordion,
+.elementskit-accordion {
+  /* Same chevron the theme's own FAQ component renders (lucide chevron-down),
+     inlined so it needs no network request and inherits currentColor. */
+  --bu-chevron: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.75rem;
+  background: hsl(var(--card));
+  overflow: hidden;
+}
+
+/* Rows: a single hairline between items, none above the first. */
+.elementor-accordion .elementor-accordion-item,
+.elementskit-accordion .elementskit-card {
+  border: 0;
+  border-top: 1px solid hsl(var(--border));
+  background: transparent;
+  border-radius: 0;
+}
+.elementor-accordion .elementor-accordion-item:first-child,
+.elementskit-accordion .elementskit-card:first-child {
+  border-top: 0;
+}
+
+/* The question row. */
+.elementor-accordion .elementor-tab-title,
+.elementskit-accordion .elementskit-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: hsl(var(--foreground));
+  transition: color 0.2s ease;
+}
+.elementor-accordion .elementor-tab-title:hover,
+.elementskit-accordion .elementskit-card-header:hover,
+.elementskit-accordion .ekit-accordion--toggler:hover {
+  color: hsl(var(--primary));
+}
+
+/* Both plugins wrap the question text in an <a> — Elementor's has no href at
+   all — so it inherits the global link colour and renders blue and underlined.
+   A question is not a link. */
+.elementor-accordion .elementor-accordion-title,
+.elementor-accordion .elementor-accordion-title:hover,
+.elementskit-accordion .ekit-accordion--toggler,
+.elementskit-accordion .ekit-accordion--toggler:hover,
+.elementskit-accordion .ekit-accordion-title {
+  color: inherit;
+  text-decoration: none;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+
+/* The answer. ElementsKit's own padding rule is three classes deep, so its
+   selector is matched here or the answer keeps an extra indent the reference
+   design does not have. */
+.elementor-accordion .elementor-tab-content,
+.ekit-wid-con .elementskit-accordion .elementskit-card-body {
+  padding: 0 1.5rem 1.25rem;
+  border: 0;
+  background: transparent;
+  color: hsl(var(--muted-foreground));
+  font-size: 0.975rem;
+  line-height: 1.7;
+}
+.elementor-accordion .elementor-tab-content p:last-child,
+.ekit-wid-con .elementskit-accordion .elementskit-card-body p:last-child {
+  margin-bottom: 0;
+}
+
+/* ElementsKit tints the card header; the reference rows are the card colour. */
+.ekit-wid-con .elementskit-accordion .elementskit-card-header {
+  background: transparent;
+}
+
+/* Marker.
+ *
+ * The reference component uses a chevron that rotates 180deg when open, while
+ * Elementor ships a +/- pair and ElementsKit its own glyph. Rather than accept
+ * three different markers, the plugin glyphs are hidden and a chevron is drawn
+ * with a mask so it inherits currentColor and matches the theme icon exactly. */
+.elementor-accordion .elementor-accordion-icon,
+.elementskit-accordion .ekit-accordion--toggler > i,
+.elementskit-accordion .ekit-accordion--toggler > svg,
+.elementskit-accordion .ekit-accordion--toggler .icon {
+  color: hsl(var(--muted-foreground));
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+/* Hide the plugins' own glyphs. ElementsKit nests its pair of icons two divs
+   deep inside .ekit_accordion_icon_group, so the whole group goes. */
+.elementor-accordion .elementor-accordion-icon i,
+.elementor-accordion .elementor-accordion-icon svg,
+.elementor-accordion .elementor-accordion-icon-closed,
+.elementor-accordion .elementor-accordion-icon-opened,
+.ekit-wid-con .elementskit-accordion .ekit_accordion_icon_group {
+  display: none !important;
+}
+
+/* Draw the chevron. */
+.elementor-accordion .elementor-accordion-icon::after,
+.ekit-wid-con .elementskit-accordion .ekit-accordion--toggler::after {
+  content: "";
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  background-color: currentColor;
+  color: hsl(var(--muted-foreground));
+  -webkit-mask: var(--bu-chevron) center / contain no-repeat;
+  mask: var(--bu-chevron) center / contain no-repeat;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+/* Open state. ElementsKit leaves its `collapsed` class on the element even when
+   the row is open and tracks the real state in aria-expanded, so the rotation
+   keys off the attribute rather than the class. */
+.elementor-accordion .elementor-tab-title.elementor-active .elementor-accordion-icon::after,
+.ekit-wid-con .elementskit-accordion .ekit-accordion--toggler[aria-expanded="true"]::after {
+  transform: rotate(180deg);
+}
+
+/* The open row.
+ *
+ * Elementor's per-page CSS colours the ACTIVE question with the kit accent:
+ *   .elementor-widget-accordion .elementor-active .elementor-accordion-title
+ *   { color: var(--e-global-color-accent) }
+ * That is three classes, so it beats the two-class rules above and the open
+ * question rendered blue while every closed one was dark. Matched here at the
+ * same specificity — this stylesheet loads after Elementor's, so it wins — which
+ * keeps the open row the same colour as the closed ones, as the reference does. */
+.elementor-widget-accordion .elementor-active .elementor-accordion-title {
+  color: hsl(var(--foreground));
+}
+.elementor-widget-accordion .elementor-active .elementor-accordion-icon {
+  color: hsl(var(--muted-foreground));
+}
+
+/* Elementor puts the icon on the left by default; the reference design has the
+   marker trailing the question. */
+.elementor-accordion .elementor-accordion-icon.elementor-accordion-icon-left {
+  order: 2;
+  margin-right: 0;
+  margin-left: auto;
+  float: none;
+}
+
 /* Elementor's text-editor widget ships no link styling of its own, and the page
  * bodies it renders are not wrapped in .prose, so in-content links came out the
  * same colour and weight as the surrounding paragraph — literally invisible as
