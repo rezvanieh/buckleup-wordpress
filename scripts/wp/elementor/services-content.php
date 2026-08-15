@@ -66,7 +66,7 @@ return array(
 				'a' => 'Yes. Our dual-control cars are insured for road tests, and we include a warm-up lesson beforehand so you arrive already settled.',
 			),
 		),
-		'seo_title'  => 'Class 7 Driving Lessons in Coquitlam &amp; the Tri-Cities | BuckleUp',
+		'seo_title'  => 'Class 7 Driving Lessons in Coquitlam | BuckleUp',
 		'seo_desc'   => 'ICBC-certified Class 7 driving lessons for new and novice BC drivers in Coquitlam, Port Coquitlam, Port Moody and North Vancouver. Patient one-on-one instruction.',
 	),
 
@@ -100,7 +100,7 @@ return array(
 				'a' => 'Yes, along with hill starts and reversing. Parallel parking is the one students ask to repeat most often, so we keep at it until the reference points are second nature.',
 			),
 		),
-		'seo_title'  => 'Class 5 Driving Lessons &amp; ICBC Road Test Prep | BuckleUp Driving School',
+		'seo_title'  => 'Class 5 Lessons &amp; ICBC Road Test Prep | BuckleUp',
 		'seo_desc'   => 'Class 5 driving lessons and ICBC road test preparation in Coquitlam, Port Moody and North Vancouver. Move off your N with confidence.',
 	),
 
@@ -133,7 +133,7 @@ return array(
 				'a' => 'You need a full Class 5, not an N, before you can hold a Class 4. If you\'re still on your novice licence, start with Class 5 road test preparation and come back to Class 4 afterwards.',
 			),
 		),
-		'seo_title'  => 'Class 4 Driving Lessons in BC | Taxi &amp; Ride-Hailing Training | BuckleUp',
+		'seo_title'  => 'Class 4 Driving Lessons in BC | BuckleUp',
 		'seo_desc'   => 'Class 4 commercial driving lessons for taxi, ride-hailing and small-bus drivers in Metro Vancouver, plus a free ICBC Class 4 knowledge test practice exam.',
 	),
 
@@ -166,7 +166,7 @@ return array(
 				'a' => 'Most drivers feel noticeably better after two or three focused sessions. We\'ll tell you honestly when more practice would help, and when you\'re simply ready to go and do it.',
 			),
 		),
-		'seo_title'  => 'Highway Driving Lessons in Metro Vancouver | BuckleUp Driving School',
+		'seo_title'  => 'Highway Driving Lessons in Vancouver | BuckleUp',
 		'seo_desc'   => 'Highway driving lessons for nervous or inexperienced drivers in Coquitlam, Port Moody and North Vancouver. Learn merging, lane changes and speed management.',
 	),
 
@@ -199,7 +199,7 @@ return array(
 				'a' => 'It depends on the licence you already hold; some can be exchanged directly. Our guide to exchanging a foreign licence explains the process, and lessons help most with the things that differ: winter conditions, road markings and local habits.',
 			),
 		),
-		'seo_title'  => 'Refresher &amp; Nervous Driver Lessons | BuckleUp Driving School Vancouver',
+		'seo_title'  => 'Refresher &amp; Nervous Driver Lessons | BuckleUp',
 		'seo_desc'   => 'Patient refresher and nervous-driver lessons in Coquitlam, Port Moody and North Vancouver, for drivers returning after a break or new to Canada.',
 	),
 

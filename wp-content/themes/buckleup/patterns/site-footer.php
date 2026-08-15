@@ -115,8 +115,25 @@ $quick_links = array(
 							<a href="<?php echo esc_url( $loc['href'] ); ?>" class="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
 								<?php echo buckleup_icon( 'map-pin', 'w-3 h-3 text-primary' ); // phpcs:ignore ?>
 								<?php
-								/* translators: %s: city name */
-								printf( esc_html__( 'Driving Lessons in %s', 'buckleup' ), esc_html( $loc['name'] ) );
+								/*
+								 * The label is built as "Driving Lessons in <city>", so a location
+								 * whose own title is already phrased that way would render as
+								 * "Driving Lessons in Driving Lessons in Coquitlam". That exact bug
+								 * was live, though in the Elementor library template that actually
+								 * renders the footer today (elementor_library/site-footer), where
+								 * the string is literal; it is fixed there by
+								 * scripts/wp/fix-footer-duplicate-label.php.
+								 *
+								 * The guard is kept here because these names are editable in
+								 * wp-admin, so this pattern should not assume every location title
+								 * is a bare city name if it is ever used again.
+								 */
+								if ( 0 === stripos( $loc['name'], 'driving lessons in ' ) ) {
+									echo esc_html( $loc['name'] );
+								} else {
+									/* translators: %s: city name */
+									printf( esc_html__( 'Driving Lessons in %s', 'buckleup' ), esc_html( $loc['name'] ) );
+								}
 								?>
 							</a>
 						</li>

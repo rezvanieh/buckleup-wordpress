@@ -310,7 +310,7 @@ $page_meta = array(
 	// corrected: the plan adds no prices, and a price in meta goes stale silently.
 	'services' => array(
 		'type'        => 'page',
-		'title'       => 'Driving Lessons & Packages | Class 7, Class 5 & Class 4 | BuckleUp',
+		'title'       => 'Driving Lessons & Packages in Metro Vancouver | BuckleUp',
 		'description' => 'Driving lessons for every ICBC licence class: Class 7 for new drivers, Class 5 road test preparation, Class 4 commercial, plus highway and refresher lessons in Metro Vancouver.',
 		'og_title'    => 'Driving Lessons & Packages | BuckleUp Driving School',
 		'og_desc'     => 'Lessons for every ICBC licence class: Class 7, Class 5 road test prep and Class 4 commercial, plus highway and refresher lessons.',
