@@ -148,16 +148,24 @@ bu_walk( $co, function ( &$el ) use ( $nearby, &$seen ) {
  * canonical one used by the footer and the contact page (buckleup_settings
  * phone_e164), not the digits scraped out of the WhatsApp link.
  */
-bu_walk( $co, function ( &$el ) use ( &$seen ) {
+// The label said "Call or text", but a link can only do one of the two and this
+// one dials. Relabelled so the button promises exactly what it does. The emoji is
+// built from its escape rather than pasted, so the source file stays ASCII.
+$call_label = json_decode( '"📞 Call us"' );
+
+bu_walk( $co, function ( &$el ) use ( &$seen, $call_label ) {
 	if ( '3bc43a1' !== ( $el['id'] ?? '' ) || 'button' !== ( $el['widgetType'] ?? '' ) ) { return; }
-	if ( 'tel:+16044413677' === ( $el['settings']['link']['url'] ?? '' ) ) { return; }
+	$done = 'tel:+16044413677' === ( $el['settings']['link']['url'] ?? '' )
+		&& $call_label === ( $el['settings']['text'] ?? '' );
+	if ( $done ) { return; }
 	$el['settings']['link'] = array(
 		'url'               => 'tel:+16044413677',
 		'is_external'       => '',
 		'nofollow'          => '',
 		'custom_attributes' => '',
 	);
-	$seen[] = 'CTA "Call or text" -> tel:+16044413677 (was /services/)';
+	$el['settings']['text'] = $call_label;
+	$seen[] = 'CTA -> tel:+16044413677, relabelled "Call us"';
 } );
 
 bu_save( $file, $co );
