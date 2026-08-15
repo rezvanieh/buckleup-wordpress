@@ -152,7 +152,7 @@ if ( post_type_exists( 'location' ) ) {
 			'highlight' => 'Coquitlam',
 			'subtitle'  => 'Master the roads of Coquitlam and Port Coquitlam. From navigating Lougheed Highway to the local testing centers, our certified instructors will guide you every step of the way.',
 			'seo_title' => 'Driving Lessons in Coquitlam & Port Coquitlam',
-			'seo_desc'  => 'Looking for the best driving lessons in Coquitlam and Port Coquitlam? BuckleUp Driving School offers top-tier ICBC-certified training rated 4.98★ on Google.',
+			'seo_desc'  => 'Looking for the best driving lessons in Coquitlam and Port Coquitlam? BuckleUp Driving School offers top-tier ICBC-certified training rated 5.0★ on Google.',
 		),
 		array(
 			'slug'      => 'north-vancouver',
@@ -170,7 +170,7 @@ if ( post_type_exists( 'location' ) ) {
 			'highlight' => 'Port Coquitlam',
 			'subtitle'  => 'Master the roads of Port Coquitlam. From navigating local neighborhoods to the test center, our certified instructors will guide you every step of the way.',
 			'seo_title' => 'Driving Lessons in Port Coquitlam',
-			'seo_desc'  => 'Looking for the best driving lessons in Port Coquitlam? BuckleUp Driving School offers top-tier ICBC-certified training rated 4.98★ on Google.',
+			'seo_desc'  => 'Looking for the best driving lessons in Port Coquitlam? BuckleUp Driving School offers top-tier ICBC-certified training rated 5.0★ on Google.',
 		),
 		array(
 			'slug'      => 'port-moody',
@@ -188,7 +188,7 @@ if ( post_type_exists( 'location' ) ) {
 			'highlight' => 'Tri-Cities',
 			'subtitle'  => 'Master the roads across Coquitlam, Port Coquitlam, and Port Moody. Our certified instructors will guide you every step of the way to ensure you are ready for any condition.',
 			'seo_title' => 'Driving Lessons in the Tri-Cities',
-			'seo_desc'  => 'Looking for the best driving lessons in the Tri-Cities? BuckleUp Driving School offers top-tier ICBC-certified training rated 4.98★ on Google, across Coquitlam, Port Coquitlam, and Port Moody.',
+			'seo_desc'  => 'Looking for the best driving lessons in the Tri-Cities? BuckleUp Driving School offers top-tier ICBC-certified training rated 5.0★ on Google, across Coquitlam, Port Coquitlam, and Port Moody.',
 		),
 	);
 	$order = 0;

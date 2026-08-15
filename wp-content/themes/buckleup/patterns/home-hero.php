@@ -11,7 +11,7 @@
  * type scale (text-5xl…lg:text-[5.5rem] xl:text-[6.5rem], tracking-tighter,
  * leading-[0.95]), the subtitle, the "Start Learning Today" → #most-popular CTA, and
  * the lg-only 3D mouse-tilt card (hero_card_image.png) with the Farhad instructor
- * chip, the floating 4.98 / "Based on 200+ reviews" card, and the Toyota badge.
+ * chip, the floating 5.0 / "Based on 33 Google reviews" card, and the Toyota badge.
  *
  * The markup itself now lives in buckleup_hero_markup() (inc/site.php) because the
  * SAME hero is also rendered by the admin-editable Elementor widget

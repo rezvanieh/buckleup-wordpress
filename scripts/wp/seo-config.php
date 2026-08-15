@@ -291,9 +291,9 @@ $page_meta = array(
 	'about'    => array(
 		'type'        => 'page',
 		'title'       => 'About Us - ICBC-Certified Driving Instructors Since 2014',
-		'description' => "Meet BuckleUp Driving School's ICBC-certified instructors, rated 4.98★ on Google by learners in Vancouver, Port Moody, Coquitlam & Burnaby since 2014. Modern vehicles & personalized training.",
+		'description' => "Meet BuckleUp Driving School's ICBC-certified instructors, rated 5.0★ on Google by learners in Vancouver, Port Moody, Coquitlam & Burnaby since 2014. Modern vehicles & personalized training.",
 		'og_title'    => 'About BuckleUp Driving School | ICBC-Certified Instructors',
-		'og_desc'     => 'Meet our ICBC-certified instructors, rated 4.98★ on Google. Serving Vancouver & Tri-Cities since 2014.',
+		'og_desc'     => 'Meet our ICBC-certified instructors, rated 5.0★ on Google. Serving Vancouver & Tri-Cities since 2014.',
 	),
 	'contact'  => array(
 		'type'        => 'page',
@@ -431,27 +431,27 @@ $page_meta = array(
 	'port-moody' => array(
 		'type'        => 'location',
 		'title'       => 'Driving Lessons in Port Moody | BuckleUp Driving School',
-		'description' => 'Your local Port Moody driving school. ICBC-certified instructors rated 4.98★, and expert prep for Heritage Mountain hills and test routes. Book today!',
+		'description' => 'Your local Port Moody driving school. ICBC-certified instructors rated 5.0★, and expert prep for Heritage Mountain hills and test routes. Book today!',
 	),
 	'coquitlam' => array(
 		'type'        => 'location',
 		'title'       => 'Driving Lessons in Coquitlam | BuckleUp Driving School',
-		'description' => 'Driving lessons in Coquitlam with ICBC-certified instructors rated 4.98★. Master test routes from Town Centre to Westwood Plateau. Book today!',
+		'description' => 'Driving lessons in Coquitlam with ICBC-certified instructors rated 5.0★. Master test routes from Town Centre to Westwood Plateau. Book today!',
 	),
 	'north-vancouver' => array(
 		'type'        => 'location',
 		'title'       => 'Driving Lessons in North Vancouver | BuckleUp School',
-		'description' => 'Master North Shore hills, bridges & test routes with ICBC-certified instructors rated 4.98★. Driving lessons in North Vancouver. Book today!',
+		'description' => 'Master North Shore hills, bridges & test routes with ICBC-certified instructors rated 5.0★. Driving lessons in North Vancouver. Book today!',
 	),
 	'port-coquitlam' => array(
 		'type'        => 'location',
 		'title'       => 'Driving Lessons in Port Coquitlam | BuckleUp School',
-		'description' => 'Driving lessons in Port Coquitlam with ICBC-certified instructors rated 4.98★. Master PoCo rail crossings and local test routes. Book today!',
+		'description' => 'Driving lessons in Port Coquitlam with ICBC-certified instructors rated 5.0★. Master PoCo rail crossings and local test routes. Book today!',
 	),
 	'tri-cities' => array(
 		'type'        => 'location',
 		'title'       => 'Driving Lessons in the Tri-Cities | BuckleUp School',
-		'description' => 'ICBC-certified driving lessons across Coquitlam, Port Coquitlam & Port Moody. Rated 4.98★ with expert local route prep. Book a lesson today!',
+		'description' => 'ICBC-certified driving lessons across Coquitlam, Port Coquitlam & Port Moody. Rated 5.0★ with expert local route prep. Book a lesson today!',
 	),
 );
 

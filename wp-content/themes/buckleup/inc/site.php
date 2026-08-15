@@ -157,7 +157,7 @@ function buckleup_asset_webp_url( string $filename ): string {
 
 /* -------------------------------------------------------------------------
  * Shared hero partials — the trust-badge row + the right-column visual (hero
- * card image + Toyota badge + 4.98/200+ rating card + Farhad instructor chip).
+ * card image + Toyota badge + 5.0 / 33-review rating card + Farhad instructor chip).
  * Used by BOTH home-hero and location-hero so the two-column layout stays
  * identical (production parity). Return escaped HTML strings.
  *
@@ -198,7 +198,7 @@ function buckleup_hero_trust_badges( ?array $badges = null ): string {
 
 /**
  * The hero right-column visual: 3D-tilt card with the hero photo, Toyota badge,
- * floating 4.98/200+ rating card, and the Farhad instructor chip. lg-only.
+ * floating 5.0 / 33-review rating card, and the Farhad instructor chip. lg-only.
  *
  * @param array $args Optional overrides; every key defaults to today's production copy.
  *   card_image        string Card photo URL. ''  → the migrated hero_card_image.png.
@@ -207,7 +207,7 @@ function buckleup_hero_trust_badges( ?array $badges = null ): string {
  *   instructor_photo  string Chip photo URL. '' → the migrated farhad-instructor.jpg.
  *   instructor_role   string Chip subtitle.
  *   instructor_rating string Chip rating pill value (e.g. '4.9').
- *   rating_value      string Floating card's big rating (e.g. '4.98').
+ *   rating_value      string Floating card's big rating (e.g. '5.0').
  *   rating_caption    string Floating card's caption under the stars.
  *   vehicle_badge     string Top-left glass badge label (e.g. 'Toyota').
  * @return string Escaped HTML.
@@ -220,8 +220,8 @@ function buckleup_hero_visual( array $args = array() ): string {
 		'instructor_photo'  => '',
 		'instructor_role'   => __( 'Senior Instructor • ICBC Certified', 'buckleup' ),
 		'instructor_rating' => '4.9',
-		'rating_value'      => '4.98',
-		'rating_caption'    => __( 'Based on 200+ reviews', 'buckleup' ),
+		'rating_value'      => '5.0',
+		'rating_caption'    => __( 'Based on 33 Google reviews', 'buckleup' ),
 		'vehicle_badge'     => __( 'Toyota', 'buckleup' ),
 	) );
 

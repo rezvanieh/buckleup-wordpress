@@ -116,13 +116,12 @@ function buckleup_seo_settings() {
 		'closes'         => '18:00',
 		'price_range'    => '$$',
 		'payments'       => array( 'Cash', 'Credit Card', 'E-Transfer' ),
-		'rating_value'   => '4.98',
-		// Must match the genuine review volume shown on-page ("200+ Google
-		// reviews" in the Elementor hero + body copy) and the real Google
-		// Business Profile. The source's verbatim 500 contradicts the visible
-		// "200+" claim — an aggregateRating/visible-content mismatch that risks a
-		// Google review-snippet policy flag — so we standardise on 200.
-		'review_count'   => '200',
+		'rating_value'   => '5.0',
+		// Verified 2026-08-15 against the client's Google Business Profile:
+		// 5.0 stars from 33 reviews. The schema and the visible copy must agree;
+		// an inflated count is both a policy risk and a false claim. The earlier
+		// values (4.98 shown on-page, 200 in schema) were wrong in both places.
+		'review_count'   => '33',
 		'best_rating'    => '5',
 		'worst_rating'   => '1',
 		'founding_date'  => '2014',
@@ -495,7 +494,7 @@ function buckleup_seo_current_location() {
 function buckleup_seo_location_faq_map() {
 	return array(
 		'coquitlam' => array(
-			array( 'q' => 'Where do you offer driving lessons in Coquitlam?', 'a' => 'We offer lessons across all of Coquitlam, including Town Centre, Burquitlam, Maillardville, Westwood Plateau, Eagle Ridge, and Austin Heights. We can pick you up from home, work, school, or a SkyTrain station.' ),
+			array( 'q' => 'Where do you offer driving lessons in Coquitlam?', 'a' => 'We offer lessons across all of Coquitlam, including Town Centre, Burquitlam, Maillardville, Westwood Plateau, Eagle Ridge, and Austin Heights.' ),
 			array( 'q' => 'Do you prepare students for the Coquitlam ICBC road test?', 'a' => 'Yes. We train directly on the routes used by the Coquitlam ICBC Driver Licensing office — the same multi-lane changes, hill starts, and parking manoeuvres the examiner will ask for — so you walk in already familiar with the area.' ),
 			array( 'q' => 'How many lessons will I need to pass in Coquitlam?', 'a' => 'Most beginners need around six to ten lessons depending on prior experience. After a free assessment, your instructor will recommend a realistic plan for the Coquitlam test routes.' ),
 			array( 'q' => 'Do you offer driving lessons in Farsi in Coquitlam?', 'a' => 'Yes. Lessons are available in both English and Farsi, which many students in Coquitlam\'s diverse community find makes learning faster and less stressful.' ),

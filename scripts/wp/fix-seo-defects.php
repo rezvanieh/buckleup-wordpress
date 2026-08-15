@@ -148,7 +148,7 @@ if ( $skip ) {
  * each one asserts a fact about the business and guessing would put a false
  * claim on the site:
  *
- *   a) AggregateRating in the schema says ratingValue 5.0 / reviewCount 200,
+ *   a) RESOLVED 2026-08-15: the Google Business Profile shows 5.0 stars and 33
  *      while every location meta description says "rated 4.98" and the homepage
  *      says "200+ reviews". Source: buckleup_settings.rating_value = "5.0" and
  *      review_count is EMPTY. Google requires the schema rating to match what is

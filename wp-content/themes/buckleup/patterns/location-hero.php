@@ -9,7 +9,7 @@
  * bu_hero_title / bu_hero_highlight / bu_hero_subtitle). Matches the HOME hero's
  * full TWO-COLUMN layout (production parity): left = trust badges + headline +
  * subtitle + CTAs; right = the hero card image with the Toyota badge, the
- * 4.98/200+ rating card, and the Farhad instructor chip.
+ * 5.0 / 33-review rating card, and the Farhad instructor chip.
  *
  * @package BuckleUp
  */

@@ -265,13 +265,13 @@ class Buckleup_Hero_Widget extends Widget_Base {
 		$this->add_control( 'rating_value', array(
 			'label'   => __( 'Rating', 'buckleup' ),
 			'type'    => Controls_Manager::TEXT,
-			'default' => '4.98',
+			'default' => '5.0',
 		) );
 
 		$this->add_control( 'rating_caption', array(
 			'label'       => __( 'Caption', 'buckleup' ),
 			'type'        => Controls_Manager::TEXT,
-			'default'     => __( 'Based on 200+ reviews', 'buckleup' ),
+			'default'     => __( 'Based on 33 Google reviews', 'buckleup' ),
 			'label_block' => true,
 		) );
 

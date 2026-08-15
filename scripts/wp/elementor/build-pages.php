@@ -332,12 +332,12 @@ function build_instructors() {
 	$instructors = function_exists( 'buckleup_get_instructors' ) ? buckleup_get_instructors() : array();
 	$wa = preg_replace( '/\D/', '', function_exists( 'buckleup_get_setting' ) ? buckleup_get_setting( 'whatsapp', '16044413677' ) : '16044413677' );
 	// Was "10,000+ Students Taught / 94% Avg Pass Rate / 4.8 Avg Rating" — all
-	// unverifiable, and the 4.8 contradicted the 4.98 shown everywhere else. These
+	// unverifiable, and the 4.8 contradicted the rating shown everywhere else. These
 	// three are checkable: the instructor count comes from the CPT, and the rating
 	// and review count come from the real Google reviews the testimonials are seeded from.
 	$stats = array(
 		array( (string) max( 1, count( $instructors ) ), 'ICBC-Certified Instructors' ),
-		array( '4.98★', 'Google rating' ),
+		array( '5.0★', 'Google rating' ),
 		array( '200+', 'Google reviews' ),
 	);
 	$why = array(

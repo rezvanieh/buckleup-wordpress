@@ -69,11 +69,11 @@ function build_hero( $hero_bg, $hero_card ) {
 			el_container(
 				array( 'content_width' => 'full', 'flex_direction' => 'row', 'flex_align_items' => 'center', 'flex_gap' => array( 'unit' => 'px', 'size' => 12, 'column' => '12', 'row' => '12' ) ),
 				array(
-					el_heading( '4.98', array( 'tag' => 'div', 'size' => 30, 'weight' => 800, 'color_global' => 'primary' ) ),
+					el_heading( '5.0', array( 'tag' => 'div', 'size' => 30, 'weight' => 800, 'color_global' => 'primary' ) ),
 					el_col(
 						array(
 							el_stars( 5, array( 'color' => '#F59E0B' ) ),
-							el_text( 'Based on 200+ reviews', array( 'size' => 13, 'color_global' => 'mutedcol' ) ),
+							el_text( 'Based on 33 Google reviews', array( 'size' => 13, 'color_global' => 'mutedcol' ) ),
 						),
 						array( 'gap' => 4 )
 					),

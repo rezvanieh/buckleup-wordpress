@@ -31,7 +31,7 @@ $stats = array(
 	// The stats band used to read 98% Pass Rate / 5000+ Graduates / 15+ Years /
 	// 50+ Instructors. None could be substantiated and they contradicted each other
 	// and the rest of the site, so they were removed rather than restated.
-	array( 'value' => '4.98★', 'label' => __( 'Google rating', 'buckleup' ),   'icon' => 'star' ),
+	array( 'value' => '5.0★', 'label' => __( 'Google rating', 'buckleup' ),   'icon' => 'star' ),
 	array( 'value' => '200+',  'label' => __( 'Google reviews', 'buckleup' ),  'icon' => 'star' ),
 );
 
