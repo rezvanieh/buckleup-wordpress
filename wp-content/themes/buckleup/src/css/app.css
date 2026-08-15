@@ -691,9 +691,20 @@ html {
   margin-bottom: 0;
 }
 
-/* ElementsKit tints the card header; the reference rows are the card colour. */
-.ekit-wid-con .elementskit-accordion .elementskit-card-header {
+/* ElementsKit tints the card header and sets its own near-black text colour at
+   three-class specificity, which beat the rule above and left the questions
+   pure black (rgb(0,0,0)) instead of the theme's foreground (rgb(15,23,41)) —
+   close enough to miss by eye, but not the same colour as the home page. */
+.ekit-wid-con .elementskit-accordion .elementskit-card-header,
+.ekit-wid-con .elementskit-accordion .elementskit-card-header .ekit-accordion--toggler,
+.ekit-wid-con .elementskit-accordion .elementskit-card-header .ekit-accordion-title {
   background: transparent;
+  color: hsl(var(--foreground));
+}
+.ekit-wid-con .elementskit-accordion .elementskit-card-header:hover,
+.ekit-wid-con .elementskit-accordion .elementskit-card-header .ekit-accordion--toggler:hover,
+.ekit-wid-con .elementskit-accordion .elementskit-card-header .ekit-accordion--toggler:hover .ekit-accordion-title {
+  color: hsl(var(--primary));
 }
 
 /* Marker.
