@@ -322,7 +322,7 @@ class Buckleup_Hero_Widget extends Widget_Base {
 				'card_image'        => self::media_url( $s, 'card_image' ),
 				'card_alt'          => self::text( $s, 'card_alt' ),
 				'instructor_name'   => self::text( $s, 'instructor_name' ),
-				'instructor_photo'  => self::media_url( $s, 'instructor_photo' ),
+				'instructor_photo'  => self::media_url( $s, 'instructor_photo', 'thumbnail' ), // 48x48 chip
 				'instructor_role'   => self::text( $s, 'instructor_role' ),
 				'instructor_rating' => self::text( $s, 'instructor_rating' ),
 				'rating_value'      => self::text( $s, 'rating_value' ),
@@ -383,11 +383,33 @@ class Buckleup_Hero_Widget extends Widget_Base {
 	 * @param string $key Control name.
 	 * @return string
 	 */
-	private static function media_url( array $s, string $key ): string {
+	private static function media_url( array $s, string $key, string $size = 'full' ): string {
 		if ( empty( $s[ $key ] ) || ! is_array( $s[ $key ] ) ) {
 			return '';
 		}
 		$image = $s[ $key ];
+
+		/*
+		 * Elementor's media control stores both an id and a full-size url, and the
+		 * url is what gets saved into the document. Reading it directly means a
+		 * photo displayed at 48x48 was served at its full 1024x682. When a smaller
+		 * size is asked for, resolve the attachment and let WordPress hand back the
+		 * generated crop instead — including for documents saved before this, where
+		 * only the full-size url is present.
+		 */
+		if ( 'full' !== $size ) {
+			$id = ! empty( $image['id'] ) ? (int) $image['id'] : 0;
+			if ( ! $id && ! empty( $image['url'] ) ) {
+				$id = (int) attachment_url_to_postid( (string) $image['url'] );
+			}
+			if ( $id ) {
+				$sized = wp_get_attachment_image_url( $id, $size );
+				if ( $sized ) {
+					return (string) $sized;
+				}
+			}
+		}
+
 		if ( ! empty( $image['url'] ) ) {
 			return (string) $image['url'];
 		}

@@ -72,10 +72,11 @@ function buckleup_logo( string $class = 'h-8 min-[1100px]:h-16 w-auto transition
  * slug here. Falls back to the attachment whose slug literally matches the
  * filename, then to a theme assets/brand/ copy if present.
  */
-function buckleup_asset_url( string $filename ): string {
+function buckleup_asset_url( string $filename, string $size = 'full' ): string {
 	static $cache = array();
-	if ( isset( $cache[ $filename ] ) ) {
-		return $cache[ $filename ];
+	$cache_key = $filename . '|' . $size;
+	if ( isset( $cache[ $cache_key ] ) ) {
+		return $cache[ $cache_key ];
 	}
 
 	// Source filename → migrated Media-Library attachment slug (CONTENT task).
@@ -105,7 +106,12 @@ function buckleup_asset_url( string $filename ): string {
 			'no_found_rows'  => true,
 		) );
 		if ( ! empty( $found ) ) {
-			$url = (string) wp_get_attachment_url( $found[0] );
+			// wp_get_attachment_image_url() falls back to the full size on its own
+			// when the requested size was never generated, so asking for a small
+			// size can never produce a broken URL.
+			$url = 'full' === $size
+				? (string) wp_get_attachment_url( $found[0] )
+				: (string) wp_get_attachment_image_url( $found[0], $size );
 			break;
 		}
 	}
@@ -114,7 +120,7 @@ function buckleup_asset_url( string $filename ): string {
 		$url = get_theme_file_uri( "assets/brand/$filename" );
 	}
 
-	$cache[ $filename ] = $url;
+	$cache[ $cache_key ] = $url;
 	return $url;
 }
 
@@ -229,8 +235,15 @@ function buckleup_hero_visual( array $args = array() ): string {
 	// falls back to the production image instead of blanking the card.
 	$card        = '' !== $args['card_image'] ? $args['card_image'] : buckleup_asset_url( 'hero_card_image.png' );
 	$card_webp   = buckleup_webp_sibling_url( $card );   // ~136KB vs 184KB JPG
-	$farhad      = '' !== $args['instructor_photo'] ? $args['instructor_photo'] : buckleup_asset_url( 'farhad-instructor.jpg' );
-	$farhad_webp = buckleup_webp_sibling_url( $farhad ); // ~135KB vs 434KB JPG
+	/*
+	 * The chip renders at 48x48 (w-12 h-12), but this was requesting the FULL-size
+	 * upload: a 1024x682 photo weighing 134 KB as WebP, downloaded on first paint
+	 * of every page with a hero. WordPress had already generated a 150x150 crop of
+	 * it at 6.8 KB — 95% smaller and still 3x the displayed size, so it stays sharp
+	 * on a retina screen. This is the single largest image saving on the home page.
+	 */
+	$farhad      = '' !== $args['instructor_photo'] ? $args['instructor_photo'] : buckleup_asset_url( 'farhad-instructor.jpg', 'thumbnail' );
+	$farhad_webp = buckleup_webp_sibling_url( $farhad ); // 150x150: ~6.8KB WebP
 
 	// Initials shown only when the chip photo is missing. Derived from the name so a
 	// renamed instructor stays correct; the default name yields the previous "FS".
