@@ -886,10 +886,15 @@ function buckleup_seo_page_faq_items() {
 	mysqli_report( MYSQLI_REPORT_OFF );
 	$res = mysqli_query( $wpdb->dbh, "SELECT meta_value FROM {$wpdb->postmeta} WHERE post_id=" . (int) $post_id . " AND meta_key='_elementor_data' LIMIT 1" );
 	$row = $res ? mysqli_fetch_row( $res ) : null;
-	if ( ! $row || '' === $row[0] ) { return $cache; }
 
-	$data = json_decode( $row[0], true );
-	if ( ! is_array( $data ) ) { return $cache; }
+	/*
+	 * No Elementor document does NOT mean no FAQ: the blog articles written from
+	 * the content plan are ordinary post_content. Returning early here is what
+	 * left those six posts without FAQ markup on first publish, so an absent
+	 * document falls through to the classic parser below instead.
+	 */
+	$data = ( $row && '' !== $row[0] ) ? json_decode( $row[0], true ) : null;
+	if ( ! is_array( $data ) ) { $data = array(); }
 
 	// Flatten to widgets in document order.
 	$widgets = array();
@@ -928,7 +933,27 @@ function buckleup_seo_page_faq_items() {
 	}
 	if ( $cache ) { return $cache; }
 
-	// 3: the service pages' plain heading/text run under "Common questions".
+	/*
+	 * 3: classic posts. The blog articles written from the content plan are
+	 * ordinary post_content, not Elementor documents, so there is no widget tree
+	 * to walk. They use the same shape as the service pages: an H2 "Common
+	 * questions" followed by H3 + paragraph pairs.
+	 */
+	if ( ! $widgets ) {
+		$post = get_post( $post_id );
+		if ( $post && '' !== $post->post_content ) {
+			$html = $post->post_content;
+			// Narrow to the FAQ block: from the H2 that opens it to the next H2.
+			if ( preg_match( '#<h2[^>]*>\s*(?:common questions|frequently asked questions)\s*</h2>(.*?)(?=<h2|$)#is', $html, $mm ) ) {
+				if ( preg_match_all( '#<h3[^>]*>(.*?)</h3>\s*<p[^>]*>(.*?)</p>#is', $mm[1], $pairs, PREG_SET_ORDER ) ) {
+					foreach ( $pairs as $pair ) { $add( $pair[1], $pair[2] ); }
+				}
+			}
+		}
+		if ( $cache ) { return $cache; }
+	}
+
+	// 4: the service pages' plain heading/text run under "Common questions".
 	$in_faq   = false;
 	$question = '';
 	foreach ( $widgets as $w ) {
