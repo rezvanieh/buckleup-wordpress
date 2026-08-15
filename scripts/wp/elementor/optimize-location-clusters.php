@@ -141,10 +141,29 @@ bu_walk( $co, function ( &$el ) use ( $nearby, &$seen ) {
 	}
 } );
 
+/*
+ * The "Call or text" CTA pointed at /services/, so tapping it on a phone opened
+ * the pricing page instead of the dialer. It is the only call CTA of its kind on
+ * the site, which is why nothing else exhibited the bug. The number matches the
+ * canonical one used by the footer and the contact page (buckleup_settings
+ * phone_e164), not the digits scraped out of the WhatsApp link.
+ */
+bu_walk( $co, function ( &$el ) use ( &$seen ) {
+	if ( '3bc43a1' !== ( $el['id'] ?? '' ) || 'button' !== ( $el['widgetType'] ?? '' ) ) { return; }
+	if ( 'tel:+16044413677' === ( $el['settings']['link']['url'] ?? '' ) ) { return; }
+	$el['settings']['link'] = array(
+		'url'               => 'tel:+16044413677',
+		'is_external'       => '',
+		'nofollow'          => '',
+		'custom_attributes' => '',
+	);
+	$seen[] = 'CTA "Call or text" -> tel:+16044413677 (was /services/)';
+} );
+
 bu_save( $file, $co );
 echo "coquitlam.json\n";
 foreach ( $seen as $s ) { echo "  $s\n"; }
-if ( count( $seen ) < 7 ) { echo "  WARNING: expected 7 edits, applied " . count( $seen ) . " (already optimised?)\n"; }
+if ( count( $seen ) < 8 ) { echo "  WARNING: expected 8 edits, applied " . count( $seen ) . " (already optimised?)\n"; }
 
 /* ========================================================= PORT COQUITLAM == */
 
