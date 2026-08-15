@@ -112,7 +112,7 @@ function buckleup_seo_settings() {
 		'country'        => 'CA',
 		'lat'            => 49.2838,
 		'lng'            => -122.8556,
-		'opens'          => '09:00',
+		'opens'          => '07:00',
 		'closes'         => '21:00',
 		'price_range'    => '$$',
 		'payments'       => array( 'Cash', 'E-Transfer' ),

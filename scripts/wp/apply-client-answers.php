@@ -2,7 +2,7 @@
 /**
  * Apply the three business facts the client confirmed on 2026-08-15.
  *
- *   Hours    - closes 9pm (the settings option already said 21:00; the code
+ *   Hours    - open 7am to 9pm (confirmed against the Google Business Profile) (the settings option already said 21:00; the code
  *              defaults said 18:00 and are fixed in the plugin/theme/mu-plugin).
  *   Payments - cash and e-transfer only, no credit card.
  *   /instructors/ - should be indexed. Instructor bios are strong trust content
@@ -16,9 +16,9 @@ if (!defined('ABSPATH')) exit;
 
 $s = get_option('buckleup_settings');
 if (is_array($s)) {
-  $s['hours_open']    = '09:00';
+  $s['hours_open']    = '07:00';
   $s['hours_close']   = '21:00';
-  $s['hours_display'] = 'Mon–Sun 9am–9pm';
+  $s['hours_display'] = 'Mon–Sun 7am–9pm';
   $s['payments']      = array('Cash', 'E-Transfer');
   update_option('buckleup_settings', $s);
   echo "  settings: hours 09:00-21:00 (Mon-Sun 9am-9pm), payments Cash + E-Transfer\n";

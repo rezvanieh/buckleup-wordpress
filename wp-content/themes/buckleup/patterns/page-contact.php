@@ -30,7 +30,7 @@ $map_q      = '136+Maple+Dr,+Port+Moody,+BC+V3H+0A8,+Canada';
 
 // 4 info cards matching production: Phone / Email / Office / Hours.
 $methods = array(
-	array( 'icon' => 'phone',   'label' => __( 'Phone', 'buckleup' ),  'value' => $phone,                          'desc' => __( 'Mon–Sun, 9am–9pm PST', 'buckleup' ),      'href' => 'tel:' . $phone_e164 ),
+	array( 'icon' => 'phone',   'label' => __( 'Phone', 'buckleup' ),  'value' => $phone,                          'desc' => __( 'Mon–Sun, 7am–9pm PST', 'buckleup' ),      'href' => 'tel:' . $phone_e164 ),
 	array( 'icon' => 'mail',    'label' => __( 'Email', 'buckleup' ),  'value' => $email,                          'desc' => __( 'We reply within 24 hours', 'buckleup' ),  'href' => 'mailto:' . $email ),
 	array( 'icon' => 'map-pin', 'label' => __( 'Office', 'buckleup' ), 'value' => $get( 'street_address', '136 Maple Dr' ), 'desc' => __( 'Port Moody, BC V3H 0A8, Canada', 'buckleup' ), 'href' => 'https://maps.google.com/maps?q=136+Maple+Dr,+Port+Moody,+BC+V3H+0A8,+Canada' ),
 	array( 'icon' => 'clock',   'label' => __( 'Hours', 'buckleup' ),  'value' => __( 'Mon – Sun', 'buckleup' ),   'desc' => __( '9:00 AM – 6:00 PM', 'buckleup' ),         'href' => null ),

@@ -35,10 +35,10 @@ $esc     = $bs . 'u2013';             // en-dash as Elementor stores it
 $endash  = "\xE2\x80\x93";            // en-dash as raw UTF-8
 
 $pairs = array(
-	'9am' . $esc . '6pm'    => '9am' . $esc . '9pm',
-	'9am' . $endash . '6pm' => '9am' . $endash . '9pm',
-	'9am-6pm'               => '9am-9pm',
-	'9am 6pm'               => '9am 9pm',
+	'9am' . $esc . '9pm'    => '7am' . $esc . '9pm',
+	'9am' . $endash . '9pm' => '7am' . $endash . '9pm',
+	'9am-9pm'               => '7am-9pm',
+	'9am 9pm'               => '7am 9pm',
 );
 
 $n = 0;
