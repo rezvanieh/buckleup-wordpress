@@ -66,9 +66,13 @@ function buckleup_rendered_elementor_data(): array {
 	$post_id = get_queried_object_id();
 	if ( $post_id ) { $ids[] = (int) $post_id; }
 
-	// The footer is an Elementor library template embedded on every page.
-	$footer = get_page_by_path( 'site-footer', OBJECT, 'elementor_library' );
-	if ( $footer ) { $ids[] = (int) $footer->ID; }
+	/*
+	 * The footer used to be an Elementor library template embedded on every page,
+	 * and it had to be included here because its widgets could pull in assets. It
+	 * is now the theme's own pattern (parts/footer.html), so the queried post is
+	 * the only Elementor document that renders. If the footer is ever switched
+	 * back, add its template id here again or these checks will under-report.
+	 */
 
 	$out = array();
 	foreach ( array_unique( $ids ) as $id ) {
@@ -262,6 +266,37 @@ function buckleup_asset_diet(): void {
 	 * Elementor renders anything on the page, which is every page while the footer
 	 * is an Elementor template.
 	 */
+
+	/*
+	 * Elementor's own base CSS on pages with NO Elementor content.
+	 *
+	 * Elementor enqueues frontend.css and the global "kit" stylesheet on every
+	 * request, whether or not the page renders anything it built. That was
+	 * unavoidable while the footer was an Elementor template — every page was an
+	 * Elementor page. Now that the footer is the theme's pattern, roughly 25 pages
+	 * (all the Class 4 practice-test pages, the blog index, and the classic blog
+	 * posts) contain no Elementor content at all and can drop it: 64 KB of CSS
+	 * that styles nothing on them.
+	 *
+	 * Keyed off the page's own data, so the moment someone builds one of these
+	 * pages in Elementor the stylesheet comes back on its own.
+	 */
+	if ( ! buckleup_rendered_elementor_data() ) {
+		foreach ( array( 'elementor-frontend', 'elementor-post-165', 'buckleup-elementor-fixes' ) as $h ) {
+			wp_dequeue_style( $h );
+		}
+		// The per-kit stylesheet handle carries the kit's post id, which differs
+		// between installs, so match it by source path rather than by name.
+		$styles = wp_styles();
+		if ( $styles && ! empty( $styles->queue ) ) {
+			foreach ( $styles->queue as $handle ) {
+				$src = isset( $styles->registered[ $handle ] ) ? (string) $styles->registered[ $handle ]->src : '';
+				if ( '' !== $src && false !== strpos( $src, '/uploads/elementor/css/post-' ) ) {
+					wp_dequeue_style( $handle );
+				}
+			}
+		}
+	}
 
 	// Font Awesome only where an icon actually uses it.
 	if ( ! buckleup_page_uses_font_awesome() ) {

@@ -1,14 +1,21 @@
-<!-- Site footer is authored in Elementor (library template "Site Footer") and embedded
-     here so it renders site-wide and stays Elementor-editable. Referenced by SLUG, not
-     id: build-chrome.php creates the template and the id it lands on differs between
-     installs (it was 164 on the original build). The original buckleup/section
-     site-footer pattern is retained in patterns/ but no longer referenced. -->
-<!-- wp:shortcode -->
-[buckleup_elementor slug="site-footer"]
-<!-- /wp:shortcode -->
+<!-- The site footer is the THEME pattern (patterns/site-footer.php), not the
+     Elementor library template it used to embed.
 
-<!-- Discreet image-credits link (CC attribution for the location hero photos).
-     Theme-level so it doesn't touch the shared Elementor footer template (164). -->
+     Why: the Elementor footer made every page on the site an Elementor page. That
+     forced Elementor's frontend CSS/JS, jQuery and jQuery UI — roughly 720 KB
+     uncompressed — onto ~25 pages that otherwise contain no Elementor content at
+     all, including every Class 4 practice-test page and six blog posts. Rendering
+     the footer from the theme instead lets those pages drop the whole stack.
+
+     The pattern reproduces the same content — brand blurb, socials, quick links,
+     service areas from the location CPT, the three latest posts, and the NAP and
+     hours from the plugin settings — with the theme's own icons and styling.
+
+     The Elementor template "Site Footer" is left in place, unreferenced, so it can
+     be restored by putting the shortcode back here. -->
+<!-- wp:pattern {"slug":"buckleup/site-footer"} /-->
+
+<!-- Discreet image-credits link (CC attribution for the location hero photos). -->
 <!-- wp:html -->
 <div class="bu-footer-credits" style="text-align:center;padding:10px 16px 16px;font-size:12px;">
 	<a href="/image-credits/" style="color:rgba(100,116,139,.8);text-decoration:none;">Image credits</a>

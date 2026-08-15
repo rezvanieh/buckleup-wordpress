@@ -38,7 +38,10 @@ $recent = get_posts( array( 'numberposts' => 3, 'post_status' => 'publish', 'no_
 $quick_links = array(
 	array( 'label' => 'Services & Pricing', 'href' => home_url( '/services/' ) ),
 	array( 'label' => 'About Us',           'href' => home_url( '/about/' ) ),
-	array( 'label' => 'Book a Lesson',      'href' => home_url( '/#single-session' ) ),
+	// #pricing, not #single-session: there is no element with id="single-session"
+	// on the home page, so that anchor scrolled nowhere. #pricing exists and is
+	// what the Elementor footer this replaces pointed at.
+	array( 'label' => 'Book a Lesson',      'href' => home_url( '/#pricing' ) ),
 	array( 'label' => 'FAQ',                'href' => home_url( '/#faq' ) ),
 );
 ?>
@@ -46,7 +49,20 @@ $quick_links = array(
 <footer class="bg-card border-t border-border relative overflow-hidden">
 	<div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
 
-	<?php if ( $is_landing ) : ?>
+	<?php
+	/*
+	 * The "Ready to Start Driving?" band is OFF.
+	 *
+	 * This pattern was written when the home page did not carry that CTA itself.
+	 * It does now — the same headline lives in the home page's own Elementor body —
+	 * so rendering it here as well would show the identical call to action twice,
+	 * stacked, at the bottom of the front page. The block is kept rather than
+	 * deleted so it can be switched back on if the CTA is ever removed from the
+	 * page body.
+	 */
+	$show_footer_cta = false;
+	?>
+	<?php if ( $is_landing && $show_footer_cta ) : ?>
 		<div class="container mx-auto px-4 relative z-10 mb-12">
 			<div data-reveal data-reveal-y="30" class="bg-card border border-border rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6 shadow-lg">
 				<div>
