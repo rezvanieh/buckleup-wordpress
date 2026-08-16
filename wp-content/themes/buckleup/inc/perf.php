@@ -315,6 +315,54 @@ add_action( 'elementor/frontend/after_enqueue_styles', 'buckleup_asset_diet', 99
 add_action( 'elementor/frontend/after_enqueue_scripts', 'buckleup_asset_diet', 9999 );
 
 /**
+ * Preload the hero image, which is the front page's LCP element.
+ *
+ * PageSpeed's LCP breakdown on mobile (16 Aug 2026) put 660ms of the 3.2s into
+ * "resource load delay", against only 60ms of actual load duration. The image is
+ * not slow; it is found late. It sits deep inside an Elementor document, inside
+ * a <picture>, so the preload scanner reaches it well after the stylesheets in
+ * <head> have been requested.
+ *
+ * A preload hint moves that discovery to the first bytes of the document. The
+ * URL must match EXACTLY what <picture> ends up choosing or the browser fetches
+ * the image twice, so this resolves it the same way buckleup_hero_markup() does:
+ * the widget's own background image when one is set, otherwise the migrated
+ * brand asset, then the WebP sibling that the <source> element serves.
+ */
+add_action( 'wp_head', function () {
+	if ( ! is_front_page() || is_admin() ) { return; }
+	if ( ! function_exists( 'buckleup_asset_url' ) || ! function_exists( 'buckleup_webp_sibling_url' ) ) { return; }
+
+	$bg = '';
+
+	// Prefer whatever the hero widget is actually set to render.
+	$post_id = get_queried_object_id();
+	if ( $post_id ) {
+		global $wpdb;
+		mysqli_report( MYSQLI_REPORT_OFF );
+		$res = mysqli_query( $wpdb->dbh, "SELECT meta_value FROM {$wpdb->postmeta} WHERE post_id=" . (int) $post_id . " AND meta_key='_elementor_data' LIMIT 1" );
+		$row = $res ? mysqli_fetch_row( $res ) : null;
+		if ( $row && '' !== $row[0] && preg_match( '#"widgetType":"buckleup-hero".*?"background_image":\{"url":"(.*?)"#', $row[0], $m ) ) {
+			$bg = stripslashes( $m[1] );
+		}
+	}
+
+	// An unset control falls back to the brand asset, exactly as the hero does.
+	if ( '' === $bg ) { $bg = buckleup_asset_url( 'image2.png' ); }
+	if ( '' === $bg ) { return; }
+
+	$webp = buckleup_webp_sibling_url( $bg );
+	$href = $webp ? $webp : $bg;
+	$type = $webp ? ' type="image/webp"' : '';
+
+	printf(
+		'<link rel="preload" as="image" href="%s"%s fetchpriority="high">' . "\n",
+		esc_url( $href ),
+		$type // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed literal.
+	);
+}, 2 );
+
+/**
  * Move jQuery to the footer.
  *
  * After the diet above, jQuery (285 KB) was the ONLY render-blocking script left
