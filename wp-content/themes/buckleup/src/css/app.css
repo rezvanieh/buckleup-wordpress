@@ -842,6 +842,15 @@ html {
 }
 .elementor-widget-text-editor a:hover { color: hsl(var(--primary) / 0.85); }
 
+/* Same story for paragraph spacing: Tailwind's preflight zeroes the margin on
+ * every <p>, and the text-editor bodies are not wrapped in .prose, so a widget
+ * holding more than one paragraph rendered as a single unbroken wall of text.
+ * It went unnoticed while these widgets were all single-paragraph; the Class 7
+ * GLP-stage and "Which stage are you at?" blocks are the first multi-paragraph
+ * ones. Scoped to the text widget, and to p + p so a widget's first paragraph
+ * never adds space the section's own padding already provides. */
+.elementor-widget-text-editor p + p { margin-top: 1em; }
+
 /* Chrome links (header nav, footer, mobile tab bar) never carry the WordPress
  * global content-link underline — only in-content prose links (.prose a) do. */
 header a,
